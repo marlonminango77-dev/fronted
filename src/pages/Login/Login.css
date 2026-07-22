@@ -1,0 +1,128 @@
+.login-page {
+  min-height: 100vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 30px;
+  background: linear-gradient(135deg, #087443, #0f9b57);
+}
+
+.login-container {
+  width: 100%;
+  max-width: 1050px;
+  display: grid;
+  grid-template-columns: 1fr 420px;
+  overflow: hidden;
+  border-radius: 24px;
+  background-color: #ffffff;
+  box-shadow: 0 20px 60px rgba(0, 0, 0, 0.22);
+}
+
+.login-information {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  padding: 70px 60px;
+  color: #ffffff;
+  background:
+    linear-gradient(rgba(5, 92, 52, 0.88), rgba(5, 92, 52, 0.88)),
+    url("/school-background.jpg") center/cover;
+}
+
+.institution-logo img {
+  width: 110px;
+  height: 110px;
+  object-fit: contain;
+  padding: 10px;
+  margin-bottom: 25px;
+  border-radius: 50%;
+  background-color: #ffffff;
+}
+
+.login-subtitle {
+  margin-bottom: 8px;
+  color: #ffca28;
+  font-size: 1.1rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+}
+
+.login-information h1 {
+  margin-bottom: 5px;
+  font-size: 2.1rem;
+  font-weight: 700;
+}
+
+.login-information h2 {
+  margin-bottom: 25px;
+  color: #ffca28;
+  font-size: 2.4rem;
+  font-weight: 800;
+}
+
+.login-description {
+  max-width: 500px;
+  margin: 0;
+  font-size: 1.05rem;
+  line-height: 1.7;
+}
+
+.login-card {
+  padding: 65px 45px;
+}
+
+.login-card-header {
+  margin-bottom: 35px;
+  text-align: center;
+}
+
+.login-card-header i {
+  color: #087443;
+  font-size: 4rem;
+}
+
+.login-card-header h3 {
+  margin-top: 12px;
+  margin-bottom: 8px;
+  color: #263238;
+  font-weight: 700;
+}
+
+.login-card-header p {
+  color: #6c757d;
+}
+
+.login-button {
+  padding: 12px;
+  color: #ffffff;
+  font-weight: 700;
+  background-color: #087443;
+  border: none;
+}
+
+.login-button:hover {
+  color: #ffffff;
+  background-color: #065f37;
+}
+
+@media (max-width: 850px) {
+  .login-container {
+    max-width: 500px;
+    grid-template-columns: 1fr;
+  }
+
+  .login-information {
+    padding: 40px 30px;
+    text-align: center;
+  }
+
+  .institution-logo {
+    display: flex;
+    justify-content: center;
+  }
+
+  .login-card {
+    padding: 40px 30px;
+  }
+}
