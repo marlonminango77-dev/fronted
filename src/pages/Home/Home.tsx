@@ -106,6 +106,7 @@ function Home() {
             </div>
           </article>
         </section>
+        <br/>
         <section className="modules-section">
           <div className="section-title">
             <div>
