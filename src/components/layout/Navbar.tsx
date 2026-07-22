@@ -17,7 +17,7 @@ function Navbar() {
   return (
     <nav className="system-navbar">
       <div className="navbar-brand-container">
-        <img src="/logo.png" alt="Logo" className="navbar-logo" />
+        <img src="/Logo.png" alt="Logo" className="navbar-logo" />
 
         <div>
           <strong>Sistema Académico</strong>
