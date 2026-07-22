@@ -1,10 +1,7 @@
+import AppRoutes from "./routes/AppRoutes";
+
 function App() {
-  return (
-    <div className="container mt-5">
-      <h1>Sistema Académico</h1>
-      <p>Escuela de Educación Básica República de Venezuela</p>
-    </div>
-  );
+  return <AppRoutes />;
 }
 
 export default App;
