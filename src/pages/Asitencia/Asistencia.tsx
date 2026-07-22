@@ -12,9 +12,9 @@ function Asistencia() {
   return (
     <div className="contenedor">
 
-      {/* Barra lateral */}
+      {/* Menú lateral */}
       <aside className="sidebar">
-        <h2>Escuela</h2>
+        <h2>🏫 Escuela</h2>
 
         <ul>
           <li>🏠 Inicio</li>
@@ -37,7 +37,8 @@ function Asistencia() {
             <label>Grado</label>
             <select>
               <option>5° A</option>
-              <option>6</option>
+              <option>6° A</option>
+              <option>7° A</option>
             </select>
           </div>
 
@@ -52,13 +53,14 @@ function Asistencia() {
               <option>Matemáticas</option>
               <option>Lengua</option>
               <option>Ciencias</option>
+              <option>Estudios Sociales</option>
             </select>
           </div>
 
         </div>
 
         {/* Tabla */}
-        <table>
+        <table className="tabla-asistencia">
 
           <thead>
             <tr>
@@ -71,9 +73,9 @@ function Asistencia() {
           <tbody>
 
             {estudiantes.map((estudiante) => (
-
               <tr key={estudiante.id}>
                 <td>{estudiante.id}</td>
+
                 <td>{estudiante.nombre}</td>
 
                 <td>
@@ -82,29 +84,31 @@ function Asistencia() {
                     defaultChecked={estudiante.presente}
                   />
                 </td>
-
               </tr>
-
             ))}
 
           </tbody>
 
         </table>
 
-        {/* Leyenda */}
+        {/* Estado */}
         <div className="estado">
+
           <label>
-            <input type="checkbox" checked readOnly /> Presente
+            <input type="checkbox" checked readOnly />
+            Presente
           </label>
 
           <label>
-            <input type="checkbox" readOnly /> Ausente
+            <input type="checkbox" readOnly />
+            Ausente
           </label>
+
         </div>
 
         {/* Botón */}
         <button className="btnGuardar">
-          Guardar Asistencia
+          💾 Guardar Asistencia
         </button>
 
       </main>
