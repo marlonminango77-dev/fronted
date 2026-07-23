@@ -46,100 +46,8 @@ button {
 .pagina-asistencia {
   display: flex;
   flex-direction: column;
-  min-height: 100vh;
+  min-height: 100%;
   background-color: #f2f7f4;
-}
-
-/* Barra superior */
-
-.barra-superior {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  min-height: 66px;
-  padding: 9px 26px;
-  color: #ffffff;
-  background-color: #087a3f;
-  box-shadow: 0 2px 7px rgba(0, 0, 0, 0.18);
-}
-
-.marca-sistema,
-.usuario-sistema,
-.usuario-informacion {
-  display: flex;
-  align-items: center;
-}
-
-.marca-sistema {
-  gap: 11px;
-}
-
-.marca-logo {
-  display: grid;
-  place-items: center;
-  width: 43px;
-  height: 43px;
-  font-size: 24px;
-  background-color: #ffffff;
-  border-radius: 50%;
-}
-
-.marca-sistema div:last-child,
-.usuario-informacion div:last-child {
-  display: flex;
-  flex-direction: column;
-}
-
-.marca-sistema strong {
-  font-size: 16px;
-}
-
-.marca-sistema span {
-  margin-top: 2px;
-  font-size: 10px;
-  opacity: 0.9;
-}
-
-.usuario-sistema {
-  gap: 18px;
-}
-
-.usuario-informacion {
-  gap: 8px;
-}
-
-.usuario-icono {
-  display: grid;
-  place-items: center;
-  width: 32px;
-  height: 32px;
-  color: #087a3f;
-  background-color: #ffffff;
-  border-radius: 50%;
-}
-
-.usuario-informacion strong {
-  font-size: 11px;
-}
-
-.usuario-informacion span {
-  font-size: 9px;
-  opacity: 0.9;
-}
-
-.boton-cerrar {
-  min-height: 38px;
-  padding: 0 16px;
-  color: #ffffff;
-  font-size: 12px;
-  font-weight: 700;
-  background-color: transparent;
-  border: 1px solid rgba(255, 255, 255, 0.75);
-  border-radius: 6px;
-}
-
-.boton-cerrar:hover {
-  background-color: rgba(255, 255, 255, 0.12);
 }
 
 /* Contenido */
@@ -628,31 +536,9 @@ button {
   text-align: center;
 }
 
-/* Footer */
-
-.pie-pagina {
-  display: grid;
-  place-items: center;
-  min-height: 47px;
-  padding: 12px;
-  color: #ffffff;
-  font-size: 10px;
-  font-weight: 700;
-  text-align: center;
-  background-color: #076834;
-}
-
 /* Diseño adaptable */
 
 @media (max-width: 800px) {
-  .barra-superior {
-    padding: 10px 15px;
-  }
-
-  .usuario-informacion {
-    display: none;
-  }
-
   .contenido-asistencia {
     padding: 24px 15px 35px;
   }
@@ -682,19 +568,6 @@ button {
 }
 
 @media (max-width: 560px) {
-  .marca-sistema strong {
-    font-size: 13px;
-  }
-
-  .marca-sistema span {
-    font-size: 8px;
-  }
-
-  .boton-cerrar {
-    padding: 0 10px;
-    font-size: 10px;
-  }
-
   .encabezado-pagina {
     flex-direction: column;
   }

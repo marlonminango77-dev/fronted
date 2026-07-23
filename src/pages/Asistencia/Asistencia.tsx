@@ -1,5 +1,6 @@
 import { useMemo, useState } from "react";
 import { useNavigate } from "react-router-dom";
+import MainLayout from "../../layouts/MainLayout";
 import "./Asistencia.css";
 
 interface Estudiante {
@@ -130,44 +131,9 @@ function Asistencia() {
     }, 500);
   };
 
-  const cerrarSesion = () => {
-    localStorage.removeItem("usuarioAutenticado");
-    navigate("/login");
-  };
-
   return (
-    <div className="pagina-asistencia">
-      {/* Barra superior */}
-      <header className="barra-superior">
-        <div className="marca-sistema">
-          <div className="marca-logo">🏫</div>
-
-          <div>
-            <strong>Sistema Académico</strong>
-            <span>República de Venezuela</span>
-          </div>
-        </div>
-
-        <div className="usuario-sistema">
-          <div className="usuario-informacion">
-            <div className="usuario-icono">👤</div>
-
-            <div>
-              <strong>Usuario del sistema</strong>
-              <span>Sesión activa</span>
-            </div>
-          </div>
-
-          <button
-            type="button"
-            className="boton-cerrar"
-            onClick={cerrarSesion}
-          >
-            ↪ Cerrar sesión
-          </button>
-        </div>
-      </header>
-
+    <MainLayout>
+      <div className="pagina-asistencia">
       {/* Contenido */}
       <main className="contenido-asistencia">
         <section className="encabezado-pagina">
@@ -405,10 +371,8 @@ function Asistencia() {
         </section>
       </main>
 
-      <footer className="pie-pagina">
-        © 2026 Escuela de Educación Básica República de Venezuela
-      </footer>
-    </div>
+      </div>
+    </MainLayout>
   );
 }
 
