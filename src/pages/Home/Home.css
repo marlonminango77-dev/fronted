@@ -1,9 +1,4 @@
-.home-page {
-  min-height: 100vh;
-  display: flex;
-  flex-direction: column;
-  background-color: #f2f6f4;
-}
+
 
 .home-content {
   width: 100%;
@@ -196,17 +191,6 @@
   margin-bottom: 0;
   color: #5f6b70;
   line-height: 1.7;
-}
-
-.home-footer {
-  padding: 20px;
-  color: #ffffff;
-  text-align: center;
-  background-color: #075d36;
-}
-
-.home-footer p {
-  margin: 0;
 }
 
 @media (max-width: 1000px) {

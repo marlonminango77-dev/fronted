@@ -1,5 +1,5 @@
 import { Link, Navigate } from "react-router-dom";
-import Navbar from "../../components/layout/Navbar";
+import MainLayout from "../../layouts/MainLayout";
 import "./Home.css";
 
 interface ModuleCard {
@@ -53,10 +53,8 @@ function Home() {
     localStorage.getItem("nombreUsuario") || "Usuario";
 
   return (
-    <div className="home-page">
-      <Navbar />
-
-      <main className="home-content">
+    <MainLayout>
+      <div className="home-content">
         <section className="welcome-section">
           <div>
             <p className="welcome-label">Panel principal</p>
@@ -64,8 +62,8 @@ function Home() {
             <h1>Bienvenido, {nombreUsuario}</h1>
 
             <p>
-              Administra la información académica de la Escuela de Educación
-              Básica República de Venezuela.
+              Administra la información académica de la Escuela de
+              Educación Básica República de Venezuela.
             </p>
           </div>
 
@@ -73,6 +71,7 @@ function Home() {
             <i className="bi bi-mortarboard-fill"></i>
           </div>
         </section>
+
         <section className="institution-section">
           <article className="institution-card">
             <div className="institution-icon">
@@ -100,19 +99,16 @@ function Home() {
 
               <p>
                 Ser una institución reconocida por su excelencia académica,
-                innovación educativa y formación de ciudadanos íntegros que
-                contribuyan al desarrollo de la sociedad.
+                innovación educativa y formación de ciudadanos íntegros.
               </p>
             </div>
           </article>
         </section>
-        <br/>
+
         <section className="modules-section">
           <div className="section-title">
-            <div>
-              <p>Accesos rápidos</p>
-              <h2>Módulos del sistema</h2>
-            </div>
+            <p>Accesos rápidos</p>
+            <h2>Módulos del sistema</h2>
           </div>
 
           <div className="modules-grid">
@@ -139,16 +135,8 @@ function Home() {
             ))}
           </div>
         </section>
-
-        
-      </main>
-
-      <footer className="home-footer">
-        <p>
-          © 2026 Escuela de Educación Básica República de Venezuela
-        </p>
-      </footer>
-    </div>
+      </div>
+    </MainLayout>
   );
 }
 

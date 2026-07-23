@@ -1,0 +1,13 @@
+.system-footer {
+  width: 100%;
+  padding: 18px 20px;
+  color: #ffffff;
+  text-align: center;
+  background-color: #075d36;
+}
+
+.system-footer p {
+  margin: 0;
+  font-size: 0.9rem;
+  font-weight: 600;
+}
