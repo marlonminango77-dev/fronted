@@ -40,6 +40,13 @@ const modules: ModuleCard[] = [
     path: "/padres",
     colorClass: "parents-card",
   },
+  {
+    title: "Ingreso de representantes",
+    description: "Registrar y administrar los representantes de estudiantes.",
+    icon: "bi-person-vcard-fill",
+    path: "/ingreso-padres",
+    colorClass: "parents-card",
+  },
     {
     title: "Mensajes",
     description: "Enviar mensajes a los cursos",

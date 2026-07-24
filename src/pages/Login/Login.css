@@ -13,8 +13,8 @@
   position: absolute;
   inset: 0;
   background-image:
-    linear-gradient(rgba(0, 80, 45, 0.45), rgba(0, 80, 45, 0.45)),
-    url("https://i.postimg.cc/WzLjtkk3/escuela-venezuela-exterior.jpg");
+    radial-gradient(circle at 18% 22%, rgba(255, 202, 40, 0.2), transparent 28%),
+    linear-gradient(135deg, #034629 0%, #087443 52%, #052f20 100%);
   background-size: cover;
   background-position: center;
   filter: blur(2px);
@@ -42,8 +42,7 @@
   padding: 60px;
   color: #ffffff;
   background:
-    linear-gradient(rgba(5, 92, 52, 0.88), rgba(5, 92, 52, 0.88)),
-    url("/school-background.jpg") center/cover;
+    linear-gradient(145deg, rgba(4, 72, 42, 0.98), rgba(8, 116, 67, 0.92));
 }
 
 .institution-logo img {
@@ -145,4 +144,18 @@
   .login-card {
     padding: 40px 30px;
   }
+}
+
+.password-toggle {
+  color: #53645d;
+  background: #f8faf9;
+  border: 1px solid #dee2e6;
+  border-left: 0;
+}
+
+.password-toggle:hover,
+.password-toggle:focus-visible {
+  color: #087443;
+  background: #eef7f2;
+  border-color: #a9cdbb;
 }
