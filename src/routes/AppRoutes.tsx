@@ -5,6 +5,7 @@ import Notas from "../pages/Notas/Notas";
 import Padres from "../pages/Padres/Padres";
 import Asistencia from "../pages/Asistencia/Asistencia";
 import Roles from "../pages/Roles/Roles";
+import Mensajes from "../pages/Mensajes/Mensajes";
 import Estudiantes from "../pages/Estudiantes/Estudiantes";
 
 function AppRoutes() {
@@ -33,6 +34,7 @@ function AppRoutes() {
 
       <Route path="/padres" element={<Padres />} />
 
+      <Route path="/mensajes" element={<Mensajes />} />
       <Route path="/estudiantes" element={<Estudiantes />} />
 
       <Route path="*" element={<Navigate to="/login" replace />} />

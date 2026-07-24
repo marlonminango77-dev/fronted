@@ -202,6 +202,15 @@
   line-height: 1.7;
 }
 
+.messages-card {
+  border-top-color: #00897b;
+}
+
+.messages-card .module-icon {
+  color: #00897b;
+  background-color: #e0f2f1;
+}
+
 @media (max-width: 1000px) {
   .modules-grid {
     grid-template-columns: repeat(2, 1fr);

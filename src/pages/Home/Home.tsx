@@ -40,6 +40,13 @@ const modules: ModuleCard[] = [
     path: "/padres",
     colorClass: "parents-card",
   },
+
+    {
+    title: "Mensajes",
+    description: "Enviar mensajes a los cursos",
+    icon: "bi-chat-left-text-fill",
+    path: "/mensajes",
+    colorClass: "messages-card",
   {
     title: "Ingreso de estudiantes",
     description: "Registrar y consultar la información de los estudiantes.",
