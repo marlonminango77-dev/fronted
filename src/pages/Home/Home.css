@@ -154,6 +154,15 @@
   background-color: #f3e5f5;
 }
 
+.students-card {
+  border-top-color: #00838f;
+}
+
+.students-card .module-icon {
+  color: #00838f;
+  background-color: #e0f4f5;
+}
+
 .institution-section {
   display: grid;
   grid-template-columns: repeat(2, 1fr);

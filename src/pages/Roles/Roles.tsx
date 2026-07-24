@@ -1,6 +1,8 @@
 import { useMemo, useState, type FormEvent } from "react";
 import { Navigate } from "react-router-dom";
 import MainLayout from "../../layouts/MainLayout";
+import BackHomeButton from "../../components/common/BackHomeButton";
+import Card from "../../components/common/Card";
 import "./Roles.css";
 
 interface Role {
@@ -102,27 +104,30 @@ export default function Roles() {
             <h1>Gestión de roles</h1>
             <p className="roles-subtitle">Organiza los niveles de acceso de los usuarios del sistema.</p>
           </div>
-          <button className="roles-primary-button" onClick={openCreateModal}>
-            <i className="bi bi-plus-lg" aria-hidden="true"></i> Nuevo rol
-          </button>
+          <div className="roles-heading-actions">
+            <BackHomeButton />
+            <button className="roles-primary-button" onClick={openCreateModal}>
+              <i className="bi bi-plus-lg" aria-hidden="true"></i> Nuevo rol
+            </button>
+          </div>
         </header>
 
         <section className="roles-summary" aria-label="Resumen de roles">
-          <article>
+          <Card as="article">
             <span className="roles-summary-icon roles-summary-icon--green"><i className="bi bi-shield-check"></i></span>
             <div><strong>{roles.length}</strong><span>Roles registrados</span></div>
-          </article>
-          <article>
+          </Card>
+          <Card as="article">
             <span className="roles-summary-icon roles-summary-icon--blue"><i className="bi bi-person-check"></i></span>
             <div><strong>{roles.filter((role) => role.status === "Activo").length}</strong><span>Roles activos</span></div>
-          </article>
-          <article>
+          </Card>
+          <Card as="article">
             <span className="roles-summary-icon roles-summary-icon--orange"><i className="bi bi-people"></i></span>
             <div><strong>{roles.reduce((total, role) => total + role.users, 0)}</strong><span>Usuarios asignados</span></div>
-          </article>
+          </Card>
         </section>
 
-        <section className="roles-panel">
+        <Card as="section" className="roles-panel">
           <div className="roles-toolbar">
             <div><h2>Roles del sistema</h2><p>{filteredRoles.length} resultados encontrados</p></div>
             <label className="roles-search">
@@ -158,7 +163,7 @@ export default function Roles() {
             </table>
             {filteredRoles.length === 0 && <div className="roles-empty"><i className="bi bi-search"></i><h3>No encontramos roles</h3><p>Prueba con otro término de búsqueda.</p></div>}
           </div>
-        </section>
+        </Card>
       </div>
 
       {isModalOpen && (

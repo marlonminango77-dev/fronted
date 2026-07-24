@@ -1,5 +1,6 @@
 import { Link, Navigate } from "react-router-dom";
 import MainLayout from "../../layouts/MainLayout";
+import Card from "../../components/common/Card";
 import "./Home.css";
 
 interface ModuleCard {
@@ -46,6 +47,12 @@ const modules: ModuleCard[] = [
     icon: "bi-chat-left-text-fill",
     path: "/mensajes",
     colorClass: "messages-card",
+  {
+    title: "Ingreso de estudiantes",
+    description: "Registrar y consultar la información de los estudiantes.",
+    icon: "bi-person-plus-fill",
+    path: "/estudiantes",
+    colorClass: "students-card",
   },
 ];
 
@@ -81,7 +88,7 @@ function Home() {
         </section>
 
         <section className="institution-section">
-          <article className="institution-card">
+          <Card as="article" className="institution-card">
             <div className="institution-icon">
               <i className="bi bi-bullseye"></i>
             </div>
@@ -95,9 +102,9 @@ function Home() {
                 integral y de calidad.
               </p>
             </div>
-          </article>
+          </Card>
 
-          <article className="institution-card">
+          <Card as="article" className="institution-card">
             <div className="institution-icon">
               <i className="bi bi-eye-fill"></i>
             </div>
@@ -110,7 +117,7 @@ function Home() {
                 innovación educativa y formación de ciudadanos íntegros.
               </p>
             </div>
-          </article>
+          </Card>
         </section>
         <br/>
         <section className="modules-section">
