@@ -154,6 +154,15 @@
   background-color: #f3e5f5;
 }
 
+.students-card {
+  border-top-color: #00838f;
+}
+
+.students-card .module-icon {
+  color: #00838f;
+  background-color: #e0f4f5;
+}
+
 .institution-section {
   display: grid;
   grid-template-columns: repeat(2, 1fr);
@@ -191,6 +200,15 @@
   margin-bottom: 0;
   color: #5f6b70;
   line-height: 1.7;
+}
+
+.messages-card {
+  border-top-color: #00897b;
+}
+
+.messages-card .module-icon {
+  color: #00897b;
+  background-color: #e0f2f1;
 }
 
 @media (max-width: 1000px) {

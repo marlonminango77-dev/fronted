@@ -1,6 +1,8 @@
 import { useState } from "react";
 import { Link } from "react-router-dom";
 import MainLayout from "../../layouts/MainLayout";
+import BackHomeButton from "../../components/common/BackHomeButton";
+import Card from "../../components/common/Card";
 import "./Notas.css";
 
 type Estudiante = {
@@ -357,6 +359,15 @@ export default function Notas() {
         <div className="filtros">
 
           <div className="grupo">
+        <section className="notas-header">
+          <div>
+            <p>Gestión académica</p>
+            <h1>Ingreso de Notas</h1>
+          </div>
+          <BackHomeButton />
+        </section>
+
+        <Card as="section" className="filtros-section">
 
             <label>Grado</label>
 
@@ -400,6 +411,9 @@ export default function Notas() {
         </div>
 
         <div className="tabla-container">
+        </Card>
+
+        <Card as="section" className="tabla-section">
 
           <table className="tabla-notas">
 
@@ -511,6 +525,7 @@ export default function Notas() {
           </table>
 
         </div>
+        </Card>
 
         <div className="acciones">
 
@@ -1180,3 +1195,4 @@ export default function Notas() {
 
 }
 
+export default Notas;
