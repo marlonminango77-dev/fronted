@@ -1,3 +1,4 @@
+import type { ReactNode } from "react";
 import { Navigate, Route, Routes } from "react-router-dom";
 import Login from "../pages/Login/Login";
 import Home from "../pages/Home/Home";
@@ -7,6 +8,14 @@ import Asistencia from "../pages/Asistencia/Asistencia";
 import Roles from "../pages/Roles/Roles";
 import Mensajes from "../pages/Mensajes/Mensajes";
 import Estudiantes from "../pages/Estudiantes/Estudiantes";
+import IngresoPadres from "../pages/IngresoPadres/IngresoPadres";
+
+function RutaProtegida({ children }: { children: ReactNode }) {
+  const autenticado =
+    localStorage.getItem("usuarioAutenticado") === "true";
+
+  return autenticado ? children : <Navigate to="/login" replace />;
+}
 
 function AppRoutes() {
   return (
@@ -15,27 +24,14 @@ function AppRoutes() {
 
       <Route path="/login" element={<Login />} />
 
-      <Route path="/home" element={<Home />} />
-
-      <Route
-        path="/roles"
-        element={<Roles />}
-      />
-
-      <Route
-        path="/notas"
-        element={<Notas/>}
-      />
-
-      <Route
-        path="/asistencia"
-        element={<Asistencia />}
-      />
-
-      <Route path="/padres" element={<Padres />} />
-
-      <Route path="/Mensajes" element={<Mensajes />} />
-      <Route path="/estudiantes" element={<Estudiantes />} />
+      <Route path="/home" element={<RutaProtegida><Home /></RutaProtegida>} />
+      <Route path="/roles" element={<RutaProtegida><Roles /></RutaProtegida>} />
+      <Route path="/notas" element={<RutaProtegida><Notas /></RutaProtegida>} />
+      <Route path="/asistencia" element={<RutaProtegida><Asistencia /></RutaProtegida>} />
+      <Route path="/padres" element={<RutaProtegida><Padres /></RutaProtegida>} />
+      <Route path="/ingreso-padres" element={<RutaProtegida><IngresoPadres /></RutaProtegida>} />
+      <Route path="/mensajes" element={<RutaProtegida><Mensajes /></RutaProtegida>} />
+      <Route path="/estudiantes" element={<RutaProtegida><Estudiantes /></RutaProtegida>} />
 
       <Route path="*" element={<Navigate to="/login" replace />} />
     </Routes>
