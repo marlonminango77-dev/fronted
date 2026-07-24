@@ -1,6 +1,7 @@
 import { useMemo, useState } from "react";
-import { useNavigate } from "react-router-dom";
 import MainLayout from "../../layouts/MainLayout";
+import BackHomeButton from "../../components/common/BackHomeButton";
+import Card from "../../components/common/Card";
 import "./Asistencia.css";
 
 interface Estudiante {
@@ -20,8 +21,6 @@ function obtenerFechaActual(): string {
 }
 
 function Asistencia() {
-  const navigate = useNavigate();
-
   const [estudiantes, setEstudiantes] = useState<Estudiante[]>([
     {
       id: 1,
@@ -143,17 +142,11 @@ function Asistencia() {
             <p>Registra y verifica la asistencia diaria de los estudiantes.</p>
           </div>
 
-          <button
-            type="button"
-            className="boton-volver"
-            onClick={() => navigate("/home")}
-          >
-            ← Volver al inicio
-          </button>
+          <BackHomeButton />
         </section>
 
         {/* Datos de la clase */}
-        <section className="tarjeta tarjeta-filtros">
+        <Card as="section" className="tarjeta tarjeta-filtros">
           <div className="titulo-tarjeta">
             <div className="icono-tarjeta">▼</div>
 
@@ -210,40 +203,40 @@ function Asistencia() {
               </select>
             </div>
           </div>
-        </section>
+        </Card>
 
         {/* Resumen */}
         <section className="resumen-asistencia">
-          <article className="resumen-card">
+          <Card as="article" className="resumen-card">
             <div className="resumen-icono resumen-icono-total">👥</div>
 
             <div>
               <span>Total estudiantes</span>
               <strong>{estudiantes.length}</strong>
             </div>
-          </article>
+          </Card>
 
-          <article className="resumen-card">
+          <Card as="article" className="resumen-card">
             <div className="resumen-icono resumen-icono-presente">✓</div>
 
             <div>
               <span>Presentes</span>
               <strong>{totalPresentes}</strong>
             </div>
-          </article>
+          </Card>
 
-          <article className="resumen-card">
+          <Card as="article" className="resumen-card">
             <div className="resumen-icono resumen-icono-ausente">✕</div>
 
             <div>
               <span>Ausentes</span>
               <strong>{totalAusentes}</strong>
             </div>
-          </article>
+          </Card>
         </section>
 
         {/* Lista de estudiantes */}
-        <section className="tarjeta tarjeta-estudiantes">
+        <Card as="section" className="tarjeta tarjeta-estudiantes">
           <div className="titulo-tarjeta">
             <div className="icono-tarjeta">▣</div>
 
@@ -368,7 +361,7 @@ function Asistencia() {
               {guardando ? "Guardando..." : "▣ Guardar asistencia"}
             </button>
           </div>
-        </section>
+        </Card>
       </main>
 
       </div>

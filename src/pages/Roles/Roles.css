@@ -11,6 +11,11 @@
     gap: 25px;
     margin-bottom: 28px;
 }
+.roles-heading-actions {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+}
 .roles-eyebrow {
     margin: 0 0 5px;
     color: #087443;
@@ -432,6 +437,10 @@
         padding: 27px 15px 40px;
     }
     .roles-heading {
+        align-items: stretch;
+        flex-direction: column;
+    }
+    .roles-heading-actions {
         align-items: stretch;
         flex-direction: column;
     }

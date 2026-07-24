@@ -43,24 +43,6 @@
   color: #607078;
 }
 
-.back-home-button {
-  display: flex;
-  align-items: center;
-  gap: 9px;
-  padding: 11px 18px;
-  color: #087443;
-  font-weight: 700;
-  border: 1px solid #087443;
-  border-radius: 9px;
-  background-color: #ffffff;
-  transition: all 0.2s ease;
-}
-
-.back-home-button:hover {
-  color: #ffffff;
-  background-color: #087443;
-}
-
 .student-card {
   display: flex;
   align-items: center;

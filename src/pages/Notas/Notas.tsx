@@ -1,4 +1,6 @@
 import MainLayout from "../../layouts/MainLayout";
+import BackHomeButton from "../../components/common/BackHomeButton";
+import Card from "../../components/common/Card";
 import "./Notas.css";
 
 function Notas() {
@@ -7,10 +9,14 @@ function Notas() {
       <div className="notas-content">
 
         <section className="notas-header">
-          <h1>Ingreso de Notas</h1>
+          <div>
+            <p>Gestión académica</p>
+            <h1>Ingreso de Notas</h1>
+          </div>
+          <BackHomeButton />
         </section>
 
-        <section className="filtros-section">
+        <Card as="section" className="filtros-section">
 
           <div className="filtro">
             <label>Grado</label>
@@ -33,9 +39,9 @@ function Notas() {
             </select>
           </div>
 
-        </section>
+        </Card>
 
-        <section className="tabla-section">
+        <Card as="section" className="tabla-section">
 
           <table className="tabla-notas">
 
@@ -119,7 +125,7 @@ function Notas() {
 
           </table>
 
-        </section>
+        </Card>
 
         <section className="botones-section">
 

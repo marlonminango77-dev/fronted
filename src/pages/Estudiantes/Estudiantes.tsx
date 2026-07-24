@@ -1,6 +1,8 @@
 import { useMemo, useState, type FormEvent } from "react";
-import { Navigate, useNavigate } from "react-router-dom";
+import { Navigate } from "react-router-dom";
 import MainLayout from "../../layouts/MainLayout";
+import BackHomeButton from "../../components/common/BackHomeButton";
+import Card from "../../components/common/Card";
 import "./Estudiantes.css";
 
 interface Estudiante {
@@ -52,7 +54,6 @@ const formularioInicial = {
 };
 
 function Estudiantes() {
-  const navigate = useNavigate();
   const autenticado =
     localStorage.getItem("usuarioAutenticado") === "true";
 
@@ -212,17 +213,10 @@ function Estudiantes() {
             <p>Registra la información académica y del representante.</p>
           </div>
 
-          <button
-            type="button"
-            className="students-back-button"
-            onClick={() => navigate("/home")}
-          >
-            <i className="bi bi-arrow-left"></i>
-            Volver al inicio
-          </button>
+          <BackHomeButton />
         </header>
 
-        <section className="students-form-card">
+        <Card as="section" className="students-form-card">
           <div className="students-card-title">
             <span><i className="bi bi-person-plus-fill"></i></span>
             <div>
@@ -376,7 +370,7 @@ function Estudiantes() {
               </button>
             </div>
           </form>
-        </section>
+        </Card>
 
         <section className="students-course-summary">
           <button
@@ -420,7 +414,7 @@ function Estudiantes() {
           ))}
         </section>
 
-        <section className="students-list-card">
+        <Card as="section" className="students-list-card">
           <div className="students-list-header">
             <div>
               <p className="students-label">Registros</p>
@@ -583,7 +577,7 @@ function Estudiantes() {
               </button>
             </div>
           )}
-        </section>
+        </Card>
       </div>
     </MainLayout>
   );
