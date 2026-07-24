@@ -7,7 +7,6 @@ function Login() {
 
   const [usuario, setUsuario] = useState("");
   const [contrasena, setContrasena] = useState("");
-  const [mostrarContrasena, setMostrarContrasena] = useState(false);
   const [error, setError] = useState("");
 
   function iniciarSesion(event: FormEvent<HTMLFormElement>) {
@@ -30,11 +29,12 @@ function Login() {
   }
 
   return (
+    
     <main className="login-page">
       <section className="login-container">
         <div className="login-information">
           <div className="institution-logo">
-            <img src="/Logo.png" alt="Escudo de la Escuela República de Venezuela" />
+            <img src="../assets/logoescuela.png" />
           </div>
 
           <p className="login-subtitle">Sistema Académico</p>
@@ -92,21 +92,12 @@ function Login() {
 
                 <input
                   id="contrasena"
-                  type={mostrarContrasena ? "text" : "password"}
+                  type="password"
                   className="form-control"
                   placeholder="Ingrese su contraseña"
                   value={contrasena}
                   onChange={(event) => setContrasena(event.target.value)}
                 />
-                <button
-                  type="button"
-                  className="btn password-toggle"
-                  onClick={() => setMostrarContrasena((visible) => !visible)}
-                  aria-label={mostrarContrasena ? "Ocultar contraseña" : "Mostrar contraseña"}
-                  aria-pressed={mostrarContrasena}
-                >
-                  <i className={`bi ${mostrarContrasena ? "bi-eye-slash" : "bi-eye"}`}></i>
-                </button>
               </div>
             </div>
 
