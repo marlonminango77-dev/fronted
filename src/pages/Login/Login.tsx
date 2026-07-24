@@ -29,7 +29,6 @@ function Login() {
   }
 
   return (
-    
     <main className="login-page">
       <section className="login-container">
         <div className="login-information">
