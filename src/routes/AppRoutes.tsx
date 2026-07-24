@@ -2,6 +2,7 @@ import { Navigate, Route, Routes } from "react-router-dom";
 import Login from "../pages/Login/Login";
 import Home from "../pages/Home/Home";
 import Notas from "../pages/Notas/Notas";
+import Padres from "../pages/Padres/Padres";
 
 function PaginaTemporal({ titulo }: { titulo: string }) {
   return (
@@ -36,10 +37,7 @@ function AppRoutes() {
         element={<PaginaTemporal titulo="Ingreso de asistencia" />}
       />
 
-      <Route
-        path="/padres"
-        element={<PaginaTemporal titulo="Vista de padres de familia" />}
-      />
+      <Route path="/padres" element={<Padres />} />
 
       <Route path="*" element={<Navigate to="/login" replace />} />
     </Routes>
