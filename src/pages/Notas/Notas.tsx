@@ -1,117 +1,141 @@
+import MainLayout from "../../layouts/MainLayout";
 import "./Notas.css";
 
-
-export default function Notas() {
+function Notas() {
   return (
-    <div className="container">
+    <MainLayout>
+      <div className="notas-content">
 
-      {/* Header */}
-      <header className="header">
+        <section className="notas-header">
+          <h1>Ingreso de Notas</h1>
+        </section>
 
-        <div className="logo-container">
-          <img
-            src="/logo.png"
-            alt="Logo"
-            className="logo"
-          />
+        <section className="filtros-section">
 
-          <div>
-            <h2>Escuela de Educación Básica</h2>
-            <h1>República de Venezuela</h1>
-            <p>Sistema de Gestión Académica</p>
+          <div className="filtro">
+            <label>Grado</label>
+            <select>
+              <option>5° A</option>
+            </select>
           </div>
-        </div>
 
-        <div className="usuario">
-          <img
-            src="/usuario.png"
-            alt="Usuario"
-            className="avatar"
-          />
-
-          <div>
-            <h3>Julio Rosero</h3>
-            <span>Docente</span>
+          <div className="filtro">
+            <label>Asignatura</label>
+            <select>
+              <option>Matemáticas</option>
+            </select>
           </div>
-        </div>
 
-      </header>
+          <div className="filtro">
+            <label>Período</label>
+            <select>
+              <option>Segundo Parcial</option>
+            </select>
+          </div>
 
-      <div className="contenido">
+        </section>
 
-        <aside className="sidebar">
+        <section className="tabla-section">
 
-          <h3 className="menu-titulo">Menu</h3>
-          <button className="menu-item">Inicio</button>
-          <button className="menu-item active">Notas</button>
-          <button className="menu-item">Asistencia</button>
-          <button className="menu-item">Estudiantes</button>
-          <button className="menu-item">Reportes</button>
-          <button className="menu-item salir">Cerrar Sesion</button>
+          <table className="tabla-notas">
 
-        </aside>
-        <main className="main"></main>
+            <thead>
+
+              <tr>
+                <th>#</th>
+                <th>Estudiante</th>
+
+                <th>
+                  Tareas
+                  <br />
+                  <span>30%</span>
+                </th>
+
+                <th>
+                  Lecciones
+                  <br />
+                  <span>30%</span>
+                </th>
+
+                <th>
+                  Examen
+                  <br />
+                  <span>40%</span>
+                </th>
+
+                <th>Nota Final</th>
+              </tr>
+
+            </thead>
+
+            <tbody>
+
+              <tr>
+                <td>1</td>
+                <td>María José Pérez</td>
+                <td><input type="text" defaultValue="8.5" /></td>
+                <td><input type="text" defaultValue="9.0" /></td>
+                <td><input type="text" defaultValue="9.2" /></td>
+                <td className="nota-final">8.92</td>
+              </tr>
+
+              <tr>
+                <td>2</td>
+                <td>Juan Carlos López</td>
+                <td><input type="text" defaultValue="7.8" /></td>
+                <td><input type="text" defaultValue="8.0" /></td>
+                <td><input type="text" defaultValue="8.4" /></td>
+                <td className="nota-final">8.08</td>
+              </tr>
+
+              <tr>
+                <td>3</td>
+                <td>Ana Sofía Martínez</td>
+                <td><input type="text" defaultValue="9.5" /></td>
+                <td><input type="text" defaultValue="9.8" /></td>
+                <td><input type="text" defaultValue="9.7" /></td>
+                <td className="nota-final">9.67</td>
+              </tr>
+
+              <tr>
+                <td>4</td>
+                <td>Carlos Andrade</td>
+                <td><input type="text" defaultValue="6.9" /></td>
+                <td><input type="text" defaultValue="7.5" /></td>
+                <td><input type="text" defaultValue="7.8" /></td>
+                <td className="nota-final">7.44</td>
+              </tr>
+
+              <tr>
+                <td>5</td>
+                <td>Valeria Torres</td>
+                <td><input type="text" defaultValue="10" /></td>
+                <td><input type="text" defaultValue="9.8" /></td>
+                <td><input type="text" defaultValue="9.9" /></td>
+                <td className="nota-final">9.90</td>
+              </tr>
+
+            </tbody>
+
+          </table>
+
+        </section>
+
+        <section className="botones-section">
+
+          <button className="btn-cancelar">
+            Cancelar
+          </button>
+
+          <button className="btn-guardar">
+            Guardar Notas
+          </button>
+
+        </section>
 
       </div>
-
-      <main className="main">
-
-        <h2 className="titulo">Ingreso de notas</h2>
-        <div className="filtros">
-        <div className="campo">
-          <label>Grado</label>
-          <select>
-            <option>Seleccione un grado</option>
-            <option>1° EGB</option>
-            <option>2° EGB</option>
-            <option>3° EGB</option>
-            <option>4° EGB</option>
-            <option>5° EGB</option>
-            <option>6° EGB</option>
-          </select>
-        </div>
-
-        <div className="campo">
-          <label>Materia</label>
-          <select>
-            <option>Seleccione una materia</option>
-            <option>Matematicas</option>
-            <option>Lengua y Literatura</option>
-            <option>Ciencias Naturales</option>
-            <option>Estudios Sociales</option>
-          </select>
-        </div>
-
-
-        <div className="campo">
-          <label>Periodo</label>
-          <select>
-            <option>Seleccione un periodo</option>
-            <option>Primer Parcial</option>
-            <option>Segundo Parcial</option>
-            <option>Examen Final</option>
-          </select>
-        </div>
-        
-
-
-
-        </div>
-        
-
-
-
-
-      </main>
-
-
-
-    </div>
-
-
-  
-
-
-
+    </MainLayout>
   );
 }
+
+export default Notas;
