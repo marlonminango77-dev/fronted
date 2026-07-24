@@ -4,6 +4,7 @@ import Home from "../pages/Home/Home";
 import Roles from "../pages/Roles/Roles";
 import Notas from "../pages/Notas/Notas";
 import Asistencia from "../pages/Asistencia/Asistencia";
+import Padres from "../pages/Padres/Padres";
 
 function PaginaTemporal({ titulo }: { titulo: string }) {
   return (
@@ -27,6 +28,24 @@ function AppRoutes() {
         path="/padres"
         element={<PaginaTemporal titulo="Vista de padres de familia" />}
       />
+
+      <Route
+        path="/roles"
+        element={<PaginaTemporal titulo="Gestión de roles" />}
+      />
+
+      <Route
+        path="/notas"
+        element={<Notas/>}
+      />
+
+      <Route
+        path="/asistencia"
+        element={<PaginaTemporal titulo="Ingreso de asistencia" />}
+      />
+
+      <Route path="/padres" element={<Padres />} />
+
       <Route path="*" element={<Navigate to="/login" replace />} />
     </Routes>
   );
