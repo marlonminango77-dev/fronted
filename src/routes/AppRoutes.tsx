@@ -4,15 +4,7 @@ import Home from "../pages/Home/Home";
 import Notas from "../pages/Notas/Notas";
 import Padres from "../pages/Padres/Padres";
 import Asistencia from "../pages/Asistencia/Asistencia";
-
-function PaginaTemporal({ titulo }: { titulo: string }) {
-  return (
-    <div className="container py-5">
-      <h1>{titulo}</h1>
-      <p>Esta pantalla se desarrollará posteriormente.</p>
-    </div>
-  );
-}
+import Roles from "../pages/Roles/Roles";
 
 function AppRoutes() {
   return (
@@ -25,7 +17,7 @@ function AppRoutes() {
 
       <Route
         path="/roles"
-        element={<PaginaTemporal titulo="Gestión de roles" />}
+        element={<Roles />}
       />
 
       <Route
