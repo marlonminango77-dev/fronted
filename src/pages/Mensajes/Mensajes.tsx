@@ -1,5 +1,6 @@
 import { useState } from "react";
 import MainLayout from "../../layouts/MainLayout";
+import BackHomeButton from "../../components/common/BackHomeButton";
 import "./Mensajes.css";
 
 
@@ -124,7 +125,14 @@ function Mensajes() {
   return (
     <MainLayout>
       <div className="mensajes-content">
-        <h1>Mensajes</h1>
+        <header className="mensajes-header">
+          <div>
+            <p>Comunicación académica</p>
+            <h1>Mensajes</h1>
+          </div>
+
+          <BackHomeButton />
+        </header>
 
         <div className="mensaje-formulario">
           <label htmlFor="fecha">Ingrese la fecha:</label>
