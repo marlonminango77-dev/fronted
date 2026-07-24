@@ -89,21 +89,6 @@ button {
   font-size: 13px;
 }
 
-.boton-volver {
-  min-height: 39px;
-  padding: 0 17px;
-  color: #087a3f;
-  font-size: 12px;
-  font-weight: 800;
-  background-color: #ffffff;
-  border: 1px solid #a9d6be;
-  border-radius: 7px;
-}
-
-.boton-volver:hover {
-  background-color: #edf8f2;
-}
-
 /* Tarjetas */
 
 .tarjeta {
@@ -570,10 +555,6 @@ button {
 @media (max-width: 560px) {
   .encabezado-pagina {
     flex-direction: column;
-  }
-
-  .boton-volver {
-    width: 100%;
   }
 
   .encabezado-pagina h1 {

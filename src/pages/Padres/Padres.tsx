@@ -1,7 +1,9 @@
 import { useMemo, useState } from "react";
-import { Link, Navigate } from "react-router-dom";
+import { Navigate } from "react-router-dom";
 import "./Padres.css";
 import MainLayout from "../../layouts/MainLayout";
+import BackHomeButton from "../../components/common/BackHomeButton";
+import Card from "../../components/common/Card";
 
 interface Calificacion {
   id: number;
@@ -107,13 +109,10 @@ function Padres() {
             </p>
           </div>
 
-          <Link to="/home" className="back-home-button">
-            <i className="bi bi-arrow-left"></i>
-            Volver al inicio
-          </Link>
+          <BackHomeButton />
         </section>
 
-        <section className="student-card">
+        <Card as="section" className="student-card">
           <div className="student-avatar">
             <i className="bi bi-person-fill"></i>
           </div>
@@ -142,9 +141,9 @@ function Padres() {
             <span>Estado</span>
             <strong>Matriculado</strong>
           </div>
-        </section>
+        </Card>
 
-        <section className="grades-section">
+        <Card as="section" className="grades-section">
           <div className="grades-header">
             <div>
               <p className="section-label">
@@ -255,10 +254,10 @@ function Padres() {
               </tbody>
             </table>
           </div>
-        </section>
+        </Card>
 
         <section className="academic-summary">
-          <article className="summary-card">
+          <Card as="article" className="summary-card">
             <div className="summary-icon">
               <i className="bi bi-bar-chart-fill"></i>
             </div>
@@ -267,9 +266,9 @@ function Padres() {
               <span>Promedio general</span>
               <strong>{promedioGeneral} / 10</strong>
             </div>
-          </article>
+          </Card>
 
-          <article className="summary-card">
+          <Card as="article" className="summary-card">
             <div className="summary-icon">
               <i className="bi bi-journal-check"></i>
             </div>
@@ -280,9 +279,9 @@ function Padres() {
                 {calificacionesIniciales.length}
               </strong>
             </div>
-          </article>
+          </Card>
 
-          <article className="summary-card">
+          <Card as="article" className="summary-card">
             <div className="summary-icon">
               <i className="bi bi-patch-check-fill"></i>
             </div>
@@ -296,7 +295,7 @@ function Padres() {
                   : "Reprobado"}
               </strong>
             </div>
-          </article>
+          </Card>
         </section>
       </main>
 
