@@ -5,6 +5,7 @@ import Notas from "../pages/Notas/Notas";
 import Padres from "../pages/Padres/Padres";
 import Asistencia from "../pages/Asistencia/Asistencia";
 import Roles from "../pages/Roles/Roles";
+import Estudiantes from "../pages/Estudiantes/Estudiantes";
 
 function AppRoutes() {
   return (
@@ -31,6 +32,8 @@ function AppRoutes() {
       />
 
       <Route path="/padres" element={<Padres />} />
+
+      <Route path="/estudiantes" element={<Estudiantes />} />
 
       <Route path="*" element={<Navigate to="/login" replace />} />
     </Routes>

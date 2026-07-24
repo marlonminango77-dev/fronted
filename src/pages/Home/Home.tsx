@@ -39,6 +39,13 @@ const modules: ModuleCard[] = [
     path: "/padres",
     colorClass: "parents-card",
   },
+  {
+    title: "Ingreso de estudiantes",
+    description: "Registrar y consultar la información de los estudiantes.",
+    icon: "bi-person-plus-fill",
+    path: "/estudiantes",
+    colorClass: "students-card",
+  },
 ];
 
 function Home() {
