@@ -1,10 +1,9 @@
 import { Navigate, Route, Routes } from "react-router-dom";
 import Login from "../pages/Login/Login";
 import Home from "../pages/Home/Home";
-import Roles from "../pages/Roles/Roles";
 import Notas from "../pages/Notas/Notas";
-import Asistencia from "../pages/Asistencia/Asistencia";
 import Padres from "../pages/Padres/Padres";
+import Asistencia from "../pages/Asistencia/Asistencia";
 
 function PaginaTemporal({ titulo }: { titulo: string }) {
   return (
@@ -19,15 +18,10 @@ function AppRoutes() {
   return (
     <Routes>
       <Route path="/" element={<Navigate to="/login" replace />} />
+
       <Route path="/login" element={<Login />} />
+
       <Route path="/home" element={<Home />} />
-      <Route path="/roles" element={<Roles />} />
-      <Route path="/notas" element={<Notas />} />
-      <Route path="/asistencia" element={<Asistencia />} />
-      <Route
-        path="/padres"
-        element={<PaginaTemporal titulo="Vista de padres de familia" />}
-      />
 
       <Route
         path="/roles"
@@ -41,7 +35,7 @@ function AppRoutes() {
 
       <Route
         path="/asistencia"
-        element={<PaginaTemporal titulo="Ingreso de asistencia" />}
+        element={<Asistencia />}
       />
 
       <Route path="/padres" element={<Padres />} />
