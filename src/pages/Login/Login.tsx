@@ -33,7 +33,7 @@ function Login() {
       <section className="login-container">
         <div className="login-information">
           <div className="institution-logo">
-            <img src="https://i.postimg.cc/Y0pq2Fgv/logoescuela.jpg" />
+            <img src="../assets/logoescuela.png" />
           </div>
 
           <p className="login-subtitle">Sistema Académico</p>
