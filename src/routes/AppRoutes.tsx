@@ -34,7 +34,7 @@ function AppRoutes() {
 
       <Route path="/padres" element={<Padres />} />
 
-      <Route path="/mensajes" element={<Mensajes />} />
+      <Route path="/Mensajes" element={<Mensajes />} />
       <Route path="/estudiantes" element={<Estudiantes />} />
 
       <Route path="*" element={<Navigate to="/login" replace />} />
