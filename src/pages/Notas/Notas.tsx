@@ -16,10 +16,6 @@ type Estudiante = {
 
 export default function Notas() {
 
-  //==========================
-  // COLUMNAS
-  //==========================
-
   const [tareas, setTareas] = useState([
     "Actividad 1",
     "Actividad 2",
@@ -43,9 +39,7 @@ export default function Notas() {
     "Supletorio"
   ]);
 
-  //==========================
-  // DATOS
-  //==========================
+  
 
   const estudiantesIniciales: Estudiante[] = [
 
@@ -96,9 +90,7 @@ export default function Notas() {
 
   ];
 
-  //==========================
-  // ESTADOS
-  //==========================
+ 
 
   const [estudiantes, setEstudiantes] = useState(estudiantesIniciales);
 
@@ -112,10 +104,6 @@ export default function Notas() {
   const [dialogNotas, setDialogNotas] = useState(false);
 
   const [mensajeError, setMensajeError] = useState("");
-
-  //==========================
-  // MODALES
-  //==========================
 
   const abrirTareas = () => {
     setMensajeError("");
@@ -200,9 +188,6 @@ export default function Notas() {
 
   };
 
-  //==========================
-  // CAMBIAR TAREAS
-  //==========================
 
   const cambiarTarea = (
     estudiante: number,
@@ -218,9 +203,6 @@ export default function Notas() {
 
   };
 
-  //==========================
-  // CAMBIAR LECCIONES
-  //==========================
 
   const cambiarLeccion = (
     estudiante: number,
@@ -236,9 +218,6 @@ export default function Notas() {
 
   };
 
-  //==========================
-  // CAMBIAR EXÁMENES
-  //==========================
 
   const cambiarExamen = (
     estudiante: number,
@@ -254,9 +233,6 @@ export default function Notas() {
 
   };
 
-  //==========================
-  // OBSERVACIÓN
-  //==========================
 
   const cambiarObservacion = (
     estudiante: number,
@@ -271,9 +247,6 @@ export default function Notas() {
 
   };
 
-  //==========================
-  // VALIDACIÓN
-  //==========================
 
   const validarNotas = () => {
 
@@ -301,10 +274,6 @@ export default function Notas() {
     return true;
 
   };
-
-  //==========================
-  // GUARDAR
-  //==========================
 
   const guardarTareas = () => {
 
@@ -545,8 +514,6 @@ export default function Notas() {
           </button>
 
         </div>
-
-        {/* MODAL TAREAS */}
         {mostrarTareas && (
 
           <div className="modal-overlay">
@@ -741,8 +708,6 @@ export default function Notas() {
           </div>
 
         )}
-        {/* MODAL LECCIONES */}
-
         {mostrarLecciones && (
 
           <div className="modal-overlay">

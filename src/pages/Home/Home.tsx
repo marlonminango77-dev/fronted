@@ -126,7 +126,9 @@ function Home() {
             </div>
           </Card>
         </section>
-        <br/>
+
+        <br />
+
         <section className="modules-section">
           <div className="section-title">
             <p>Accesos rápidos</p>
