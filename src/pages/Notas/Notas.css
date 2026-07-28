@@ -221,15 +221,17 @@ body{
     justify-content:center;
     align-items:center;
     z-index:1000;
-    padding:20px;
+    padding:0;
     -webkit-backdrop-filter:blur(4px);
     backdrop-filter:blur(4px);
 }
 
 .modal-grande{
-    width:min(96%, 1350px);
-    max-width:1350px;
-    max-height:92vh;
+    width:min(calc(100vw - 120px), 1250px);
+    max-width:1250px;
+    height:auto;
+    max-height:88vh;
+    margin:60px;
     background:#fff;
     border:1px solid #dfe8e3;
     border-radius:18px;
@@ -246,7 +248,7 @@ body{
     justify-content:space-between;
     align-items:center;
     gap:30px;
-    padding:20px 26px;
+    padding:22px 28px !important;
     border-bottom:1px solid #e5e5e5;
     background:#fff;
     box-shadow:0 4px 14px rgba(38,50,56,.06);
@@ -345,9 +347,11 @@ body{
     font-weight:700;
 }
 .tabla-modal{
-    width:100%;
+    width:calc(100% - 48px);
+    margin:18px 24px 0;
+    border:1px solid #e1e8e5;
     border-collapse:collapse;
-    min-width:1200px;
+    min-width:1100px;
 }
 
 .tabla-modal thead{
@@ -364,6 +368,26 @@ body{
     font-size:14px;
     font-weight:600;
     border:1px solid #0b5f39;
+}
+
+.input-nombre-actividad{
+    width:130px;
+    padding:8px 10px;
+    color:#fff;
+    border:1px solid rgba(255,255,255,.55);
+    border-radius:6px;
+    outline:none;
+    background:rgba(255,255,255,.12);
+    font:inherit;
+    font-weight:600;
+    text-align:center;
+}
+
+.input-nombre-actividad:focus{
+    border-color:#fff;
+    background:#fff;
+    color:#1f2937;
+    box-shadow:0 0 0 3px rgba(255,255,255,.22);
 }
 
 .tabla-modal tbody td{
@@ -433,7 +457,7 @@ body{
     display:flex;
     justify-content:flex-end;
     gap:15px;
-    padding:18px 25px;
+    padding:20px 28px !important;
     border-top:1px solid #ececec;
     background:#fafafa;
     box-shadow:0 -4px 14px rgba(38,50,56,.07);
@@ -533,6 +557,12 @@ body{
     .contenedor-notas{
         padding:15px;
     }
+
+    .modal-overlay{padding:0;}
+    .modal-grande{width:100vw;height:100vh;max-height:100vh;margin:0;border-radius:0;}
+    .modal-header{padding:18px !important;}
+    .tabla-modal{width:100%;margin:0;min-width:900px;}
+    .modal-footer{padding:16px !important;}
 
     .encabezado h1{
         font-size:24px;

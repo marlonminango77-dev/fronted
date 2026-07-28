@@ -1,4 +1,4 @@
-import { useRef, useState } from "react";
+﻿import { useRef, useState } from "react";
 import MainLayout from "../../layouts/MainLayout";
 import BackHomeButton from "../../components/common/BackHomeButton";
 import Card from "../../components/common/Card";
@@ -16,6 +16,11 @@ type Estudiante = {
 
 export default function Notas() {
   const respaldoEstudiantes = useRef<Estudiante[] | null>(null);
+  const respaldoActividades = useRef<{
+    tareas: string[];
+    lecciones: string[];
+    examenes: string[];
+  } | null>(null);
 
   const [tareas, setTareas] = useState([
     "Actividad 1",
@@ -112,18 +117,33 @@ export default function Notas() {
   const abrirTareas = () => {
     setMensajeError("");
     respaldoEstudiantes.current = structuredClone(estudiantes);
+    respaldoActividades.current = {
+      tareas: [...tareas],
+      lecciones: [...lecciones],
+      examenes: [...examenes],
+    };
     setMostrarTareas(true);
   };
 
   const abrirLecciones = () => {
     setMensajeError("");
     respaldoEstudiantes.current = structuredClone(estudiantes);
+    respaldoActividades.current = {
+      tareas: [...tareas],
+      lecciones: [...lecciones],
+      examenes: [...examenes],
+    };
     setMostrarLecciones(true);
   };
 
   const abrirExamenes = () => {
     setMensajeError("");
     respaldoEstudiantes.current = structuredClone(estudiantes);
+    respaldoActividades.current = {
+      tareas: [...tareas],
+      lecciones: [...lecciones],
+      examenes: [...examenes],
+    };
     setMostrarExamenes(true);
   };
 
@@ -132,7 +152,28 @@ export default function Notas() {
       setEstudiantes(respaldoEstudiantes.current);
       respaldoEstudiantes.current = null;
     }
+    if (respaldoActividades.current) {
+      setTareas(respaldoActividades.current.tareas);
+      setLecciones(respaldoActividades.current.lecciones);
+      setExamenes(respaldoActividades.current.examenes);
+      respaldoActividades.current = null;
+    }
     setMensajeError("");
+  };
+
+  const cambiarNombreActividad = (
+    categoria: "tareas" | "lecciones" | "examenes",
+    indice: number,
+    nombre: string,
+  ) => {
+    const actualizar = (actividades: string[]) =>
+      actividades.map((actividad, posicion) =>
+        posicion === indice ? nombre : actividad,
+      );
+
+    if (categoria === "tareas") setTareas(actualizar);
+    if (categoria === "lecciones") setLecciones(actualizar);
+    if (categoria === "examenes") setExamenes(actualizar);
   };
 
   const cerrarTareas = () => {
@@ -299,11 +340,17 @@ export default function Notas() {
     categoria: "tareas" | "lecciones" | "examenes",
     etiqueta: string,
   ) => {
+    const actividades = { tareas, lecciones, examenes }[categoria];
+
+    if (actividades.some((actividad) => actividad.trim() === "")) {
+      setMensajeError("Cada actividad debe tener un nombre.");
+      return false;
+    }
+
     for (const estudiante of estudiantes) {
       for (const nota of estudiante[categoria]) {
         if (nota.trim() === "") {
-          setMensajeError(`Debe completar todas las ${etiqueta}.`);
-          return false;
+          continue;
         }
 
         const valor = Number(nota);
@@ -325,6 +372,7 @@ export default function Notas() {
     if (!validarCategoria("tareas", "tareas")) return;
 
     respaldoEstudiantes.current = null;
+    respaldoActividades.current = null;
     setMostrarTareas(false);
     setDialogTarea(true);
 
@@ -335,6 +383,7 @@ export default function Notas() {
     if (!validarCategoria("lecciones", "lecciones")) return;
 
     respaldoEstudiantes.current = null;
+    respaldoActividades.current = null;
     setMostrarLecciones(false);
     setDialogLeccion(true);
 
@@ -345,6 +394,7 @@ export default function Notas() {
     if (!validarCategoria("examenes", "evaluaciones")) return;
 
     respaldoEstudiantes.current = null;
+    respaldoActividades.current = null;
     setMostrarExamenes(false);
     setDialogExamen(true);
 
@@ -592,7 +642,7 @@ export default function Notas() {
 
                   >
 
-                    ✖
+                    ✕
 
                   </button>
 
@@ -652,7 +702,15 @@ export default function Notas() {
                     {tareas.map((actividad, index) => (
 
                       <th key={index}>
-                        {actividad}
+                        <input
+                          className="input-nombre-actividad"
+                          type="text"
+                          value={actividad}
+                          aria-label={`Nombre de la tarea ${index + 1}`}
+                          onChange={(event) =>
+                            cambiarNombreActividad("tareas", index, event.target.value)
+                          }
+                        />
                       </th>
 
                     ))}
@@ -792,7 +850,7 @@ export default function Notas() {
 
                   >
 
-                    ✖
+                    ✕
 
                   </button>
 
@@ -852,7 +910,15 @@ export default function Notas() {
                     {lecciones.map((leccion, index) => (
 
                       <th key={index}>
-                        {leccion}
+                        <input
+                          className="input-nombre-actividad"
+                          type="text"
+                          value={leccion}
+                          aria-label={`Nombre de la lección ${index + 1}`}
+                          onChange={(event) =>
+                            cambiarNombreActividad("lecciones", index, event.target.value)
+                          }
+                        />
                       </th>
 
                     ))}
@@ -982,7 +1048,7 @@ export default function Notas() {
             className="btn-cerrar"
             onClick={cerrarExamenes}
           >
-            ✖
+            ✕
           </button>
         </div>
       </div>
@@ -1024,7 +1090,15 @@ export default function Notas() {
 
             {examenes.map((examen, index) => (
               <th key={index}>
-                {examen}
+                <input
+                          className="input-nombre-actividad"
+                          type="text"
+                          value={examen}
+                          aria-label={`Nombre del examen ${index + 1}`}
+                          onChange={(event) =>
+                            cambiarNombreActividad("examenes", index, event.target.value)
+                          }
+                        />
               </th>
             ))}
 

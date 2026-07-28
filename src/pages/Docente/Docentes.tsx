@@ -1,10 +1,11 @@
 import { useMemo, useState, type FormEvent } from "react";
-import { Navigate } from "react-router-dom";
+import { Navigate, useSearchParams } from "react-router-dom";
 import MainLayout from "../../layouts/MainLayout";
 
 import "./Docentes.css";
 import BackHomeButton from "../../components/common/BackHomeButton";
 import Card from "../../components/common/Card";
+import { cargarRoles } from "../../utils/rolesStorage";
 
 interface Docente {
   id: number;
@@ -16,6 +17,7 @@ interface Docente {
   titulo: string;
   telefono: string;
   correo: string;
+  rolId: number | null;
 }
 
 const docentesIniciales: Docente[] = [
@@ -29,6 +31,7 @@ const docentesIniciales: Docente[] = [
     titulo: "Licenciado en Matemáticas",
     telefono: "0991234567",
     correo: "carlos.ramirez@escuela.edu.ec",
+    rolId: 2,
   },
   {
     id: 2,
@@ -40,6 +43,7 @@ const docentesIniciales: Docente[] = [
     titulo: "Licenciada en Educación",
     telefono: "0987654321",
     correo: "andrea.mendoza@escuela.edu.ec",
+    rolId: 2,
   },
 ];
 
@@ -52,9 +56,11 @@ const formularioInicial = {
   titulo: "",
   telefono: "",
   correo: "",
+  rolId: "",
 };
 
 function Docentes() {
+  const [parametros] = useSearchParams();
   const autenticado =
     localStorage.getItem("usuarioAutenticado") === "true";
 
@@ -62,7 +68,7 @@ function Docentes() {
     useState<Docente[]>(docentesIniciales);
 
   const [formulario, setFormulario] =
-    useState(formularioInicial);
+    useState(() => ({ ...formularioInicial, rolId: parametros.get("rol") ?? "" }));
 
   const [busqueda, setBusqueda] = useState("");
 
@@ -74,6 +80,7 @@ function Docentes() {
     useState<number | null>(null);
 
   const docentesPorPagina = 10;
+  const rolesActivos = cargarRoles().filter((rol) => rol.estado === "Activo");
 
   const docentesFiltrados = useMemo(() => {
     const termino = busqueda.trim().toLowerCase();
@@ -147,6 +154,7 @@ function registrarDocente(event: FormEvent<HTMLFormElement>) {
     titulo: formulario.titulo.trim(),
     telefono: formulario.telefono.trim(),
     correo: formulario.correo.trim(),
+    rolId: formulario.rolId ? Number(formulario.rolId) : null,
   };
 
   if (editandoId !== null) {
@@ -188,6 +196,7 @@ function editarDocente(docente: Docente) {
     titulo: docente.titulo,
     telefono: docente.telefono,
     correo: docente.correo,
+    rolId: docente.rolId ? String(docente.rolId) : "",
   });
 
   setEditandoId(docente.id);
@@ -351,6 +360,14 @@ return (
             </label>
 
             <label>
+              <span>Rol asignado</span>
+              <select required value={formulario.rolId} onChange={(e) => actualizarCampo("rolId", e.target.value)}>
+                <option value="">Seleccione un rol</option>
+                {rolesActivos.map((rol) => <option key={rol.id} value={rol.id}>{rol.nombre}</option>)}
+              </select>
+            </label>
+
+            <label>
               <span>Correo electrónico</span>
 
               <input
@@ -439,6 +456,7 @@ return (
                 <th>Título</th>
                 <th>Teléfono</th>
                 <th>Correo</th>
+                <th>Rol</th>
                 <th>Acciones</th>
               </tr>
             </thead>
@@ -468,6 +486,8 @@ return (
                   <td>{docente.telefono}</td>
 
                   <td>{docente.correo}</td>
+
+                  <td><span className="students-role-badge">{rolesActivos.find((rol) => rol.id === docente.rolId)?.nombre ?? "Sin rol"}</span></td>
 
                   <td>
 
