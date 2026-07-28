@@ -133,6 +133,19 @@
   font-weight: 800;
 }
 
+.grading-hint {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  max-width: 290px;
+  padding: 10px 13px;
+  color: #087443;
+  border-radius: 9px;
+  background-color: #edf8f2;
+  font-size: 0.84rem;
+  font-weight: 700;
+}
+
 .period-filter {
   display: flex;
   flex-direction: column;
@@ -218,6 +231,34 @@
 .grade-average {
   color: #087443;
   font-size: 1rem;
+}
+
+.trimester-grade {
+  display: inline-block;
+  min-width: 48px;
+  padding: 7px 10px;
+  color: #087443;
+  border-radius: 9px;
+  background-color: #edf8f2;
+  text-align: center;
+  font-size: 1rem;
+  font-weight: 700;
+}
+
+.exam-grade {
+  color: #b77500;
+  font-size: 1rem;
+}
+
+.project-grade {
+  display: inline-flex;
+  align-items: center;
+  gap: 7px;
+  padding: 7px 10px;
+  color: #7b1fa2;
+  border-radius: 9px;
+  background-color: #f3e5f5;
+  font-weight: 800;
 }
 
 .status-badge {
@@ -327,4 +368,5 @@
   .grades-section {
     padding: 20px 15px;
   }
+
 }
