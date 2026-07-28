@@ -9,6 +9,7 @@ import Roles from "../pages/Roles/Roles";
 import Mensajes from "../pages/Mensajes/Mensajes";
 import Estudiantes from "../pages/Estudiantes/Estudiantes";
 import IngresoPadres from "../pages/IngresoPadres/IngresoPadres";
+import Docentes from "../pages/Docente/Docentes";
 
 function RutaProtegida({ children }: { children: ReactNode }) {
   const autenticado =
@@ -32,6 +33,7 @@ function AppRoutes() {
       <Route path="/ingreso-padres" element={<RutaProtegida><IngresoPadres /></RutaProtegida>} />
       <Route path="/mensajes" element={<RutaProtegida><Mensajes /></RutaProtegida>} />
       <Route path="/estudiantes" element={<RutaProtegida><Estudiantes /></RutaProtegida>} />
+      <Route path="/docentes" element={<Docentes />} />
 
       <Route path="*" element={<Navigate to="/login" replace />} />
     </Routes>

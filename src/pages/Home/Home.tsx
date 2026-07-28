@@ -61,6 +61,13 @@ const modules: ModuleCard[] = [
     path: "/estudiantes",
     colorClass: "students-card",
   },
+  {
+  title: "Registro de docentes",
+  description: "Registrar, editar y administrar la información de los docentes.",
+  icon: "bi-person-badge-fill",
+  path: "/docentes",
+  colorClass: "teachers-card",
+},
 ];
 
 function Home() {
@@ -126,7 +133,9 @@ function Home() {
             </div>
           </Card>
         </section>
-        <br/>
+
+        <br />
+
         <section className="modules-section">
           <div className="section-title">
             <p>Accesos rápidos</p>

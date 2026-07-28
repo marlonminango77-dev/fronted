@@ -13,11 +13,7 @@ type Estudiante = {
   observacion: string;
 };
 
-export default function Notas() {
-
-  //==========================
-  // COLUMNAS
-  //==========================
+export function Notas() {
 
   const [tareas, setTareas] = useState([
     "Actividad 1",
@@ -42,9 +38,7 @@ export default function Notas() {
     "Supletorio"
   ]);
 
-  //==========================
-  // DATOS
-  //==========================
+  
 
   const estudiantesIniciales: Estudiante[] = [
 
@@ -95,9 +89,7 @@ export default function Notas() {
 
   ];
 
-  //==========================
-  // ESTADOS
-  //==========================
+ 
 
   const [estudiantes, setEstudiantes] = useState(estudiantesIniciales);
 
@@ -111,10 +103,6 @@ export default function Notas() {
   const [dialogNotas, setDialogNotas] = useState(false);
 
   const [mensajeError, setMensajeError] = useState("");
-
-  //==========================
-  // MODALES
-  //==========================
 
   const abrirTareas = () => {
     setMensajeError("");
@@ -199,9 +187,6 @@ export default function Notas() {
 
   };
 
-  //==========================
-  // CAMBIAR TAREAS
-  //==========================
 
   const cambiarTarea = (
     estudiante: number,
@@ -217,9 +202,6 @@ export default function Notas() {
 
   };
 
-  //==========================
-  // CAMBIAR LECCIONES
-  //==========================
 
   const cambiarLeccion = (
     estudiante: number,
@@ -235,9 +217,6 @@ export default function Notas() {
 
   };
 
-  //==========================
-  // CAMBIAR EXÁMENES
-  //==========================
 
   const cambiarExamen = (
     estudiante: number,
@@ -253,9 +232,6 @@ export default function Notas() {
 
   };
 
-  //==========================
-  // OBSERVACIÓN
-  //==========================
 
   const cambiarObservacion = (
     estudiante: number,
@@ -270,9 +246,6 @@ export default function Notas() {
 
   };
 
-  //==========================
-  // VALIDACIÓN
-  //==========================
 
   const validarNotas = () => {
 
@@ -300,10 +273,6 @@ export default function Notas() {
     return true;
 
   };
-
-  //==========================
-  // GUARDAR
-  //==========================
 
   const guardarTareas = () => {
 
@@ -338,19 +307,28 @@ export default function Notas() {
 
   };
 
-  return (
+ return (
+  <MainLayout>
+    <div className="contenedor-notas">
 
-    <MainLayout>
-      <div className="contenedor-notas">
-
-        <div className="encabezado">
-
+    
           <h1>Gestión de Notas</h1>
 
           <BackHomeButton />
 
+      <section className="notas-header">
+        <div>
+          <p>Gestión académica</p>
+          <h1>Ingreso de Notas</h1>
         </div>
 
+        <BackHomeButton />
+      </section>
+
+      <Card as="section" className="filtros-section">
+        <div className="filtros">
+
+          <div className="grupo">
         <Card as="section" className="filtros">
 
           <div className="grupo">
@@ -358,42 +336,35 @@ export default function Notas() {
             <label>Grado</label>
 
             <select>
-
               <option>Octavo EGB</option>
               <option>Noveno EGB</option>
               <option>Décimo EGB</option>
-
             </select>
-
           </div>
 
           <div className="grupo">
-
             <label>Asignatura</label>
 
             <select>
-
               <option>Matemáticas</option>
               <option>Lengua</option>
               <option>Ciencias</option>
-
             </select>
-
           </div>
 
           <div className="grupo">
-
             <label>Periodo</label>
 
             <select>
-
               <option>Primer Parcial</option>
               <option>Segundo Parcial</option>
-
             </select>
-
           </div>
 
+        </div>
+      </Card>
+
+      <div className="tabla-container">
         </Card>
 
         <Card as="section" className="tabla-container">
@@ -401,50 +372,40 @@ export default function Notas() {
           <table className="tabla-notas">
 
             <thead>
-
               <tr>
-
                 <th>#</th>
 
                 <th>Estudiante</th>
 
                 <th>
-
                   <button
                     className="btn-columna"
                     onClick={abrirTareas}
                   >
                     Tareas
                   </button>
-
                 </th>
 
                 <th>
-
                   <button
                     className="btn-columna"
                     onClick={abrirLecciones}
                   >
                     Lecciones
                   </button>
-
                 </th>
 
                 <th>
-
                   <button
                     className="btn-columna"
                     onClick={abrirExamenes}
                   >
                     Exámenes
                   </button>
-
                 </th>
 
                 <th>Nota Final</th>
-
               </tr>
-
             </thead>
 
             <tbody>
@@ -507,6 +468,8 @@ export default function Notas() {
 
           </table>
 
+</Card>
+</div>
         </Card>
 
         <div className="acciones">
@@ -527,8 +490,6 @@ export default function Notas() {
           </button>
 
         </div>
-
-        {/* MODAL TAREAS */}
         {mostrarTareas && (
 
           <div className="modal-overlay">
@@ -723,8 +684,6 @@ export default function Notas() {
           </div>
 
         )}
-        {/* MODAL LECCIONES */}
-
         {mostrarLecciones && (
 
           <div className="modal-overlay">
