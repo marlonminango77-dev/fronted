@@ -10,6 +10,7 @@ import Mensajes from "../pages/Mensajes/Mensajes";
 import Estudiantes from "../pages/Estudiantes/Estudiantes";
 import IngresoPadres from "../pages/IngresoPadres/IngresoPadres";
 import Docentes from "../pages/Docente/Docentes";
+import Usuarios from "../pages/Usuarios/Usuarios";
 
 function RutaProtegida({ children }: { children: ReactNode }) {
   const autenticado =
@@ -27,13 +28,14 @@ function AppRoutes() {
 
       <Route path="/home" element={<RutaProtegida><Home /></RutaProtegida>} />
       <Route path="/roles" element={<RutaProtegida><Roles /></RutaProtegida>} />
+      <Route path="/usuarios" element={<RutaProtegida><Usuarios /></RutaProtegida>} />
       <Route path="/notas" element={<RutaProtegida><Notas /></RutaProtegida>} />
       <Route path="/asistencia" element={<RutaProtegida><Asistencia /></RutaProtegida>} />
       <Route path="/padres" element={<RutaProtegida><Padres /></RutaProtegida>} />
       <Route path="/ingreso-padres" element={<RutaProtegida><IngresoPadres /></RutaProtegida>} />
       <Route path="/mensajes" element={<RutaProtegida><Mensajes /></RutaProtegida>} />
       <Route path="/estudiantes" element={<RutaProtegida><Estudiantes /></RutaProtegida>} />
-      <Route path="/docentes" element={<Docentes />} />
+      <Route path="/docentes" element={<RutaProtegida><Docentes /></RutaProtegida>} />
 
       <Route path="*" element={<Navigate to="/login" replace />} />
     </Routes>

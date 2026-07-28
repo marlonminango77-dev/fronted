@@ -1,4 +1,4 @@
-import { Link, Navigate } from "react-router-dom";
+﻿import { Link, Navigate } from "react-router-dom";
 import MainLayout from "../../layouts/MainLayout";
 import Card from "../../components/common/Card";
 import "./Home.css";
@@ -9,21 +9,32 @@ interface ModuleCard {
   icon: string;
   path: string;
   colorClass: string;
+  permission: string;
 }
 
 const modules: ModuleCard[] = [
   {
-    title: "Gestión de roles",
+    title: "Gestion de usuarios",
+    description: "Crear cuentas y asignar roles a los usuarios.",
+    icon: "bi-person-gear",
+    path: "/usuarios",
+    permission: "Gestion de roles",
+    colorClass: "roles-card",
+  },
+  {
+    title: "GestiÃ³n de roles",
     description: "Administrar los permisos y roles de los usuarios.",
     icon: "bi-people-fill",
     path: "/roles",
+    permission: "Gestion de roles",
     colorClass: "roles-card",
   },
   {
     title: "Ingreso de notas",
-    description: "Registrar y actualizar las calificaciones académicas.",
+    description: "Registrar y actualizar las calificaciones acadÃ©micas.",
     icon: "bi-journal-check",
     path: "/notas",
+    permission: "Notas",
     colorClass: "grades-card",
   },
   {
@@ -31,6 +42,7 @@ const modules: ModuleCard[] = [
     description: "Registrar la asistencia diaria de los estudiantes.",
     icon: "bi-calendar-check-fill",
     path: "/asistencia",
+    permission: "Asistencia",
     colorClass: "attendance-card",
   },
   {
@@ -38,6 +50,7 @@ const modules: ModuleCard[] = [
     description: "Consultar las calificaciones de los estudiantes.",
     icon: "bi-person-hearts",
     path: "/padres",
+    permission: "Notas",
     colorClass: "parents-card",
   },
   {
@@ -45,6 +58,7 @@ const modules: ModuleCard[] = [
     description: "Registrar y administrar los representantes de estudiantes.",
     icon: "bi-person-vcard-fill",
     path: "/ingreso-padres",
+    permission: "Representantes",
     colorClass: "parents-card",
   },
     {
@@ -52,20 +66,23 @@ const modules: ModuleCard[] = [
     description: "Enviar mensajes a los cursos",
     icon: "bi-chat-left-text-fill",
     path: "/mensajes",
+    permission: "Mensajes",
     colorClass: "messages-card",
     },
   {
     title: "Ingreso de estudiantes",
-    description: "Registrar y consultar la información de los estudiantes.",
+    description: "Registrar y consultar la informaciÃ³n de los estudiantes.",
     icon: "bi-person-plus-fill",
     path: "/estudiantes",
+    permission: "Estudiantes",
     colorClass: "students-card",
   },
   {
   title: "Registro de docentes",
-  description: "Registrar, editar y administrar la información de los docentes.",
+  description: "Registrar, editar y administrar la informaciÃ³n de los docentes.",
   icon: "bi-person-badge-fill",
   path: "/docentes",
+  permission: "Docentes",
   colorClass: "teachers-card",
 },
 ];
@@ -80,6 +97,8 @@ function Home() {
 
   const nombreUsuario =
     localStorage.getItem("nombreUsuario") || "Usuario";
+  const permisos: string[] = JSON.parse(localStorage.getItem("permisosUsuario") ?? "[]");
+  const modulosVisibles = modules.filter((modulo) => permisos.includes(modulo.permission));
 
   return (
     <MainLayout>
@@ -91,8 +110,8 @@ function Home() {
             <h1>Bienvenido, {nombreUsuario}</h1>
 
             <p>
-              Administra la información académica de la Escuela de
-              Educación Básica República de Venezuela.
+              Administra la informaciÃ³n acadÃ©mica de la Escuela de
+              EducaciÃ³n BÃ¡sica RepÃºblica de Venezuela.
             </p>
           </div>
 
@@ -108,11 +127,11 @@ function Home() {
             </div>
 
             <div>
-              <h2>Misión</h2>
+              <h2>MisiÃ³n</h2>
 
               <p>
-                Formar estudiantes con valores, pensamiento crítico,
-                responsabilidad y compromiso social mediante una educación
+                Formar estudiantes con valores, pensamiento crÃ­tico,
+                responsabilidad y compromiso social mediante una educaciÃ³n
                 integral y de calidad.
               </p>
             </div>
@@ -124,11 +143,11 @@ function Home() {
             </div>
 
             <div>
-              <h2>Visión</h2>
+              <h2>VisiÃ³n</h2>
 
               <p>
-                Ser una institución reconocida por su excelencia académica,
-                innovación educativa y formación de ciudadanos íntegros.
+                Ser una instituciÃ³n reconocida por su excelencia acadÃ©mica,
+                innovaciÃ³n educativa y formaciÃ³n de ciudadanos Ã­ntegros.
               </p>
             </div>
           </Card>
@@ -138,12 +157,12 @@ function Home() {
 
         <section className="modules-section">
           <div className="section-title">
-            <p>Accesos rápidos</p>
-            <h2>Módulos del sistema</h2>
+            <p>Accesos rÃ¡pidos</p>
+            <h2>MÃ³dulos del sistema</h2>
           </div>
 
           <div className="modules-grid">
-            {modules.map((module) => (
+            {modulosVisibles.map((module) => (
               <Link
                 to={module.path}
                 className={`module-card ${module.colorClass}`}
@@ -172,3 +191,4 @@ function Home() {
 }
 
 export default Home;
+
