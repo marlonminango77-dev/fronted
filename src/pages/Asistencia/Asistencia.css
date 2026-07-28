@@ -54,9 +54,9 @@ button {
 
 .contenido-asistencia {
   flex: 1;
-  width: min(100%, 980px);
+  width: min(100%, 1500px);
   margin: 0 auto;
-  padding: 30px 20px 45px;
+  padding: 35px 25px 55px;
 }
 
 .encabezado-pagina {
@@ -100,7 +100,7 @@ button {
 }
 
 .tarjeta-filtros {
-  padding: 20px;
+  padding: 24px;
 }
 
 .titulo-tarjeta {
@@ -178,7 +178,7 @@ button {
 
 .resumen-asistencia {
   display: grid;
-  grid-template-columns: repeat(3, minmax(0, 1fr));
+  grid-template-columns: repeat(4, minmax(0, 1fr));
   gap: 17px;
   margin: 20px 0;
 }
@@ -187,8 +187,8 @@ button {
   display: flex;
   align-items: center;
   gap: 13px;
-  min-height: 74px;
-  padding: 15px 18px;
+  min-height: 82px;
+  padding: 17px 20px;
   background-color: #ffffff;
   border: 1px solid #dfe9e3;
   border-radius: 11px;
@@ -221,6 +221,11 @@ button {
   background-color: #fde4e4;
 }
 
+.resumen-icono-atraso {
+  color: #b36b00;
+  background-color: #fff0d6;
+}
+
 .resumen-card div:last-child {
   display: flex;
   flex-direction: column;
@@ -240,12 +245,12 @@ button {
 /* Lista */
 
 .tarjeta-estudiantes {
-  padding: 20px;
+  padding: 24px;
 }
 
 .barra-herramientas {
   display: flex;
-  justify-content: space-between;
+  justify-content: flex-start;
   align-items: center;
   gap: 17px;
   margin: 20px 0 15px;
@@ -254,7 +259,7 @@ button {
 .buscador-estudiantes {
   display: flex;
   align-items: center;
-  width: min(100%, 295px);
+  width: min(100%, 360px);
   height: 41px;
   padding: 0 12px;
   border: 1px solid #c7d6cd;
@@ -281,26 +286,6 @@ button {
   font-size: 12px;
 }
 
-.acciones-lista {
-  display: flex;
-  gap: 9px;
-}
-
-.boton-secundario {
-  min-height: 40px;
-  padding: 0 14px;
-  color: #087a3f;
-  font-size: 11px;
-  font-weight: 800;
-  background-color: #ffffff;
-  border: 1px solid #9ed0b5;
-  border-radius: 7px;
-}
-
-.boton-secundario:hover {
-  background-color: #ecf8f1;
-}
-
 /* Tabla */
 
 .contenedor-tabla {
@@ -313,7 +298,7 @@ button {
 
 .tabla-asistencia {
   width: 100%;
-  min-width: 680px;
+  min-width: 720px;
   border-collapse: collapse;
 }
 
@@ -337,8 +322,9 @@ button {
 }
 
 .tabla-asistencia th:nth-child(3),
-.tabla-asistencia th:nth-child(4) {
-  width: 145px;
+.tabla-asistencia th:nth-child(4),
+.tabla-asistencia th:nth-child(5) {
+  width: 120px;
   text-align: center;
 }
 
@@ -351,7 +337,8 @@ button {
 
 .tabla-asistencia td:first-child,
 .tabla-asistencia td:nth-child(3),
-.tabla-asistencia td:nth-child(4) {
+.tabla-asistencia td:nth-child(4),
+.tabla-asistencia td:nth-child(5) {
   text-align: center;
 }
 
@@ -398,72 +385,62 @@ button {
   font-size: 9px;
 }
 
-/* Estados */
+/* Casillas de asistencia */
 
-.estado {
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  min-width: 76px;
-  padding: 5px 9px;
-  font-size: 9px;
-  font-weight: 900;
-  border-radius: 20px;
-}
-
-.estado-presente {
-  color: #087a3f;
-  background-color: #dff4e8;
-}
-
-.estado-ausente {
-  color: #bd3434;
-  background-color: #fde3e3;
-}
-
-/* Interruptor */
-
-.interruptor {
+.casilla-asistencia {
   position: relative;
-  display: inline-block;
-  width: 39px;
-  height: 22px;
-}
-
-.interruptor input {
-  width: 0;
-  height: 0;
-  opacity: 0;
-}
-
-.interruptor-control {
-  position: absolute;
-  inset: 0;
-  background-color: #cad6cf;
-  border-radius: 22px;
+  display: inline-grid;
+  width: 27px;
+  height: 27px;
+  place-items: center;
   cursor: pointer;
-  transition: 0.25s;
 }
 
-.interruptor-control::before {
+.casilla-asistencia input {
   position: absolute;
-  bottom: 3px;
-  left: 3px;
-  width: 16px;
-  height: 16px;
-  content: "";
-  background-color: #ffffff;
-  border-radius: 50%;
-  box-shadow: 0 1px 4px rgba(0, 0, 0, 0.2);
-  transition: 0.25s;
+  opacity: 0;
+  pointer-events: none;
 }
 
-.interruptor input:checked + .interruptor-control {
-  background-color: #078249;
+.casilla-asistencia span {
+  width: 25px;
+  height: 25px;
+  display: grid;
+  place-items: center;
+  color: transparent;
+  border: 2px solid #bdcbc4;
+  border-radius: 6px;
+  background: #fff;
+  font-size: 14px;
+  font-weight: 900;
+  transition: 0.18s ease;
 }
 
-.interruptor input:checked + .interruptor-control::before {
-  transform: translateX(17px);
+.casilla-asistencia:hover span {
+  border-color: #7e9d8d;
+}
+
+.casilla-asistencia input:focus-visible + span {
+  outline: 3px solid rgba(22, 139, 82, 0.18);
+  outline-offset: 2px;
+}
+
+.casilla-presente input:checked + span {
+  color: #fff;
+  border-color: #078249;
+  background: #078249;
+}
+
+.casilla-atraso input:checked + span {
+  color: #fff;
+  border-color: #d18412;
+  background: #d18412;
+}
+
+.casilla-falta input:checked + span {
+  color: #fff;
+  border-color: #d24343;
+  background: #d24343;
 }
 
 /* Pie de la lista */
@@ -523,14 +500,21 @@ button {
 
 /* Diseño adaptable */
 
-@media (max-width: 800px) {
+@media (max-width: 900px) {
   .contenido-asistencia {
-    padding: 24px 15px 35px;
+    padding: 28px 20px 40px;
   }
 
-  .filtros-asistencia,
+  .filtros-asistencia {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+
   .resumen-asistencia {
-    grid-template-columns: 1fr;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+
+  .filtros-asistencia .campo:last-child {
+    grid-column: 1 / -1;
   }
 
   .barra-herramientas {
@@ -543,31 +527,35 @@ button {
     max-width: none;
   }
 
-  .acciones-lista {
-    width: 100%;
-  }
-
-  .boton-secundario {
-    flex: 1;
-  }
 }
 
-@media (max-width: 560px) {
+@media (max-width: 650px) {
+  .contenido-asistencia {
+    padding: 22px 14px 35px;
+  }
+
   .encabezado-pagina {
+    align-items: stretch;
     flex-direction: column;
+    gap: 16px;
   }
 
   .encabezado-pagina h1 {
     font-size: 25px;
   }
 
-  .tarjeta-filtros,
-  .tarjeta-estudiantes {
-    padding: 15px;
+  .filtros-asistencia,
+  .resumen-asistencia {
+    grid-template-columns: 1fr;
   }
 
-  .acciones-lista {
-    flex-direction: column;
+  .filtros-asistencia .campo:last-child {
+    grid-column: auto;
+  }
+
+  .tarjeta-filtros,
+  .tarjeta-estudiantes {
+    padding: 18px 15px;
   }
 
   .pie-lista {
@@ -577,5 +565,108 @@ button {
 
   .boton-guardar {
     width: 100%;
+  }
+
+  .contenedor-tabla {
+    margin-inline: -15px;
+    width: calc(100% + 30px);
+    border-right: 0;
+    border-left: 0;
+    border-radius: 0;
+  }
+
+  .tabla-asistencia {
+    min-width: 620px;
+  }
+
+  .tabla-asistencia th,
+  .tabla-asistencia td {
+    padding-inline: 12px;
+  }
+}
+
+@media (min-width: 1400px) {
+  .contenido-asistencia {
+    max-width: 1600px;
+    padding: 45px 35px 65px;
+  }
+
+  .tarjeta-filtros,
+  .tarjeta-estudiantes {
+    padding: 30px;
+  }
+
+  .filtros-asistencia,
+  .resumen-asistencia {
+    gap: 24px;
+  }
+
+  .encabezado-pagina h1 {
+    font-size: 36px;
+  }
+
+  .encabezado-pagina p {
+    font-size: 16px;
+  }
+
+  .etiqueta-pagina,
+  .titulo-tarjeta p,
+  .resumen-card span,
+  .pie-lista p,
+  .boton-guardar,
+  .mensaje-exito {
+    font-size: 13px;
+  }
+
+  .titulo-tarjeta h2 {
+    font-size: 21px;
+  }
+
+  .campo label,
+  .tabla-asistencia td,
+  .informacion-estudiante strong {
+    font-size: 14px;
+  }
+
+  .campo input,
+  .campo select {
+    height: 48px;
+  }
+
+  .resumen-card {
+    min-height: 96px;
+  }
+
+  .resumen-card strong {
+    font-size: 25px;
+  }
+
+  .buscador-estudiantes {
+    width: min(100%, 430px);
+    height: 47px;
+  }
+
+  .buscador-estudiantes input::placeholder,
+  .tabla-asistencia th {
+    font-size: 13px;
+  }
+
+  .tabla-asistencia td {
+    padding-block: 15px;
+  }
+
+  .informacion-estudiante span {
+    font-size: 11px;
+  }
+
+  .avatar-estudiante {
+    width: 40px;
+    min-width: 40px;
+    height: 40px;
+    font-size: 14px;
+  }
+
+  .boton-guardar {
+    min-height: 46px;
   }
 }

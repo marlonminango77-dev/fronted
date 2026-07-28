@@ -7,6 +7,8 @@
 body{
     font-family: Arial, Helvetica, sans-serif;
     background:#f4f7f6;
+    font-size: 16px;
+    line-height: 1.45;
 }
 
 a{
@@ -15,4 +17,10 @@ a{
 
 ul{
     list-style:none;
+}
+
+@media (min-width: 1400px) {
+    body {
+        font-size: 18px;
+    }
 }

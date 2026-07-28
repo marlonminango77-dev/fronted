@@ -1,5 +1,5 @@
 import { useMemo, useState, type FormEvent } from "react";
-import { Navigate } from "react-router-dom";
+import { Navigate, useNavigate } from "react-router-dom";
 import MainLayout from "../../layouts/MainLayout";
 import BackHomeButton from "../../components/common/BackHomeButton";
 import Card from "../../components/common/Card";
@@ -31,6 +31,7 @@ const formularioInicial = {
 };
 
 function Roles() {
+  const navigate = useNavigate();
   const autenticado = localStorage.getItem("usuarioAutenticado") === "true";
   const [roles, setRoles] = useState<Rol[]>(rolesIniciales);
   const [formulario, setFormulario] = useState(formularioInicial);
@@ -127,6 +128,17 @@ function Roles() {
     );
   }
 
+  function cambiarTodosLosEstados(estado: EstadoRol) {
+    setRoles((actuales) =>
+      actuales.map((rol) => ({ ...rol, estado })),
+    );
+    setMensaje(
+      estado === "Activo"
+        ? "Todos los roles fueron activados."
+        : "Todos los roles fueron desactivados.",
+    );
+  }
+
   function eliminarRol(rol: Rol) {
     if (rol.usuarios > 0) {
       setMensaje(`No se puede eliminar "${rol.nombre}" porque tiene usuarios asignados.`);
@@ -210,12 +222,25 @@ function Roles() {
 
         <Card as="section" className="roles-list-card">
           <div className="roles-list-header">
-            <div><p className="roles-label">Registros</p><h2>Roles del sistema</h2></div>
+            <div className="roles-card-title">
+              <span><i className="bi bi-shield-lock-fill"></i></span>
+              <div>
+                <h2>Lista de roles</h2>
+                <p>{roles.length} roles registrados en el sistema</p>
+              </div>
+            </div>
+          </div>
+
+          <div className="roles-list-tools">
             <label className="roles-search"><i className="bi bi-search"></i><input type="search" aria-label="Buscar roles" placeholder="Buscar por nombre o permiso" value={busqueda} onChange={(e) => { setBusqueda(e.target.value); setPaginaActual(1); }} /></label>
+            <div className="roles-bulk-actions">
+              <button type="button" onClick={() => cambiarTodosLosEstados("Activo")}><i className="bi bi-check-lg"></i> Todos activos</button>
+              <button type="button" onClick={() => cambiarTodosLosEstados("Inactivo")}><i className="bi bi-x-lg"></i> Todos inactivos</button>
+            </div>
           </div>
 
           <div className="roles-filters">
-            <label><span>Estado</span><select value={filtroEstado} onChange={(e) => { setFiltroEstado(e.target.value); setPaginaActual(1); }}><option value="">Todos los estados</option><option>Activo</option><option>Inactivo</option></select></label>
+            <label><span>Filtrar por estado</span><select value={filtroEstado} onChange={(e) => { setFiltroEstado(e.target.value); setPaginaActual(1); }}><option value="">Todos los estados</option><option>Activo</option><option>Inactivo</option></select></label>
             <p>Mostrando <strong>{rolesFiltrados.length}</strong> de <strong>{roles.length}</strong> roles</p>
           </div>
 
@@ -231,6 +256,23 @@ function Roles() {
                     <td>{rol.usuarios}</td>
                     <td><button type="button" className={`roles-status roles-status--${rol.estado.toLowerCase()}`} onClick={() => cambiarEstado(rol.id)}><span></span>{rol.estado}</button></td>
                     <td><div className="roles-actions">
+                      {["Administrador", "Representante", "Secretaría"].includes(rol.nombre) && (
+                        <button
+                          type="button"
+                          className="roles-action-button roles-action-button--users"
+                          onClick={() =>
+                            navigate({
+                              Administrador: "/administradores",
+                              Representante: "/ingreso-padres",
+                              Secretaría: "/secretaria",
+                            }[rol.nombre] ?? "/roles")
+                          }
+                          aria-label={`Gestionar ${rol.nombre.toLowerCase()}s`}
+                          title={`Ver lista de ${rol.nombre.toLowerCase()}s`}
+                        >
+                          <i className="bi bi-people-fill"></i>
+                        </button>
+                      )}
                       <button type="button" className="roles-action-button roles-action-button--edit" onClick={() => editarRol(rol)} aria-label={`Editar ${rol.nombre}`} title="Editar"><i className="bi bi-pencil-square"></i></button>
                       <button type="button" className="roles-action-button roles-action-button--delete" onClick={() => eliminarRol(rol)} aria-label={`Eliminar ${rol.nombre}`} title={rol.usuarios > 0 ? "El rol tiene usuarios asignados" : "Eliminar"}><i className="bi bi-trash3"></i></button>
                     </div></td>

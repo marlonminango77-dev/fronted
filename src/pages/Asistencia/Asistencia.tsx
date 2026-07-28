@@ -8,7 +8,7 @@ interface Estudiante {
   id: number;
   nombre: string;
   identificacion: string;
-  presente: boolean;
+  estado: "Presente" | "Atraso" | "Falta";
 }
 
 function obtenerFechaActual(): string {
@@ -26,31 +26,31 @@ function Asistencia() {
       id: 1,
       nombre: "María José Pérez",
       identificacion: "1750012345",
-      presente: true,
+      estado: "Presente",
     },
     {
       id: 2,
       nombre: "Juan Carlos López",
       identificacion: "1750012346",
-      presente: true,
+      estado: "Presente",
     },
     {
       id: 3,
       nombre: "Ana Sofía Martínez",
       identificacion: "1750012347",
-      presente: true,
+      estado: "Atraso",
     },
     {
       id: 4,
       nombre: "Diego Alejandro Ruiz",
       identificacion: "1750012348",
-      presente: false,
+      estado: "Falta",
     },
     {
       id: 5,
       nombre: "Valeria Fernández",
       identificacion: "1750012349",
-      presente: true,
+      estado: "Presente",
     },
   ]);
 
@@ -76,34 +76,29 @@ function Asistencia() {
   }, [busqueda, estudiantes]);
 
   const totalPresentes = estudiantes.filter(
-    (estudiante) => estudiante.presente
+    (estudiante) => estudiante.estado === "Presente"
   ).length;
 
-  const totalAusentes = estudiantes.length - totalPresentes;
+  const totalAtrasos = estudiantes.filter(
+    (estudiante) => estudiante.estado === "Atraso"
+  ).length;
 
-  const cambiarAsistencia = (id: number) => {
+  const totalFaltas = estudiantes.filter(
+    (estudiante) => estudiante.estado === "Falta"
+  ).length;
+
+  const cambiarAsistencia = (
+    id: number,
+    estado: Estudiante["estado"],
+  ) => {
     setMensaje("");
 
     setEstudiantes((listaActual) =>
       listaActual.map((estudiante) =>
         estudiante.id === id
-          ? {
-              ...estudiante,
-              presente: !estudiante.presente,
-            }
+          ? { ...estudiante, estado }
           : estudiante
       )
-    );
-  };
-
-  const marcarTodos = (presente: boolean) => {
-    setMensaje("");
-
-    setEstudiantes((listaActual) =>
-      listaActual.map((estudiante) => ({
-        ...estudiante,
-        presente,
-      }))
     );
   };
 
@@ -220,8 +215,17 @@ function Asistencia() {
             <div className="resumen-icono resumen-icono-presente">✓</div>
 
             <div>
-              <span>Presentes</span>
+              <span>Asistencia</span>
               <strong>{totalPresentes}</strong>
+            </div>
+          </Card>
+
+          <Card as="article" className="resumen-card">
+            <div className="resumen-icono resumen-icono-atraso">◷</div>
+
+            <div>
+              <span>Atrasos</span>
+              <strong>{totalAtrasos}</strong>
             </div>
           </Card>
 
@@ -229,8 +233,8 @@ function Asistencia() {
             <div className="resumen-icono resumen-icono-ausente">✕</div>
 
             <div>
-              <span>Ausentes</span>
-              <strong>{totalAusentes}</strong>
+              <span>Faltas</span>
+              <strong>{totalFaltas}</strong>
             </div>
           </Card>
         </section>
@@ -260,23 +264,6 @@ function Asistencia() {
               />
             </div>
 
-            <div className="acciones-lista">
-              <button
-                type="button"
-                className="boton-secundario"
-                onClick={() => marcarTodos(true)}
-              >
-                ✓ Todos presentes
-              </button>
-
-              <button
-                type="button"
-                className="boton-secundario"
-                onClick={() => marcarTodos(false)}
-              >
-                ✕ Todos ausentes
-              </button>
-            </div>
           </div>
 
           <div className="contenedor-tabla">
@@ -285,8 +272,9 @@ function Asistencia() {
                 <tr>
                   <th>#</th>
                   <th>Estudiante</th>
-                  <th>Estado</th>
                   <th>Asistencia</th>
+                  <th>Atraso</th>
+                  <th>Falta</th>
                 </tr>
               </thead>
 
@@ -308,31 +296,20 @@ function Asistencia() {
                       </div>
                     </td>
 
-                    <td>
-                      <span
-                        className={
-                          estudiante.presente
-                            ? "estado estado-presente"
-                            : "estado estado-ausente"
-                        }
-                      >
-                        {estudiante.presente ? "● Presente" : "● Ausente"}
-                      </span>
-                    </td>
-
-                    <td>
-                      <label className="interruptor">
-                        <input
-                          type="checkbox"
-                          checked={estudiante.presente}
-                          onChange={() =>
-                            cambiarAsistencia(estudiante.id)
-                          }
-                        />
-
-                        <span className="interruptor-control" />
-                      </label>
-                    </td>
+                    {(["Presente", "Atraso", "Falta"] as const).map((estado) => (
+                      <td key={estado}>
+                        <label className={`casilla-asistencia casilla-${estado.toLowerCase()}`}>
+                          <input
+                            type="radio"
+                            name={`asistencia-${estudiante.id}`}
+                            checked={estudiante.estado === estado}
+                            onChange={() => cambiarAsistencia(estudiante.id, estado)}
+                            aria-label={`Marcar a ${estudiante.nombre} como ${estado.toLowerCase()}`}
+                          />
+                          <span aria-hidden="true">✓</span>
+                        </label>
+                      </td>
+                    ))}
                   </tr>
                 ))}
               </tbody>
@@ -349,7 +326,7 @@ function Asistencia() {
 
           <div className="pie-lista">
             <p>
-              ⓘ Activa el interruptor para marcar al estudiante como presente.
+              ⓘ Selecciona una opción por estudiante: asistencia, atraso o falta.
             </p>
 
             <button
