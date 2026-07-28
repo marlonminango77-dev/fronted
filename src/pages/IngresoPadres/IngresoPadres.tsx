@@ -1,7 +1,8 @@
-import { useMemo, useState, type FormEvent } from "react";
+import { useEffect, useMemo, useState, type FormEvent } from "react";
 import { Link, Navigate } from "react-router-dom";
 import MainLayout from "../../layouts/MainLayout";
 import "./IngresoPadres.css";
+import { api, getApiErrorMessage } from "../../api/client";
 
 interface Representante {
     id: number;
@@ -17,33 +18,6 @@ interface Representante {
 
 type RepresentanteForm = Omit<Representante, "id">;
 
-const STORAGE_KEY = "representantesRegistrados";
-
-const representantesIniciales: Representante[] = [
-    {
-        id: 1,
-        nombres: "María Elena",
-        apellidos: "García López",
-        identificacion: "0912345678",
-        telefono: "099 123 4567",
-        correo: "maria.garcia@email.com",
-        parentesco: "Madre",
-        estudiante: "Juan Andrés Pérez García",
-        curso: "7.º EGB - A",
-    },
-    {
-        id: 2,
-        nombres: "Carlos Alberto",
-        apellidos: "Mendoza Ruiz",
-        identificacion: "0923456789",
-        telefono: "098 765 4321",
-        correo: "carlos.mendoza@email.com",
-        parentesco: "Padre",
-        estudiante: "Sofía Mendoza Vera",
-        curso: "5.º EGB - B",
-    },
-];
-
 const formularioVacio: RepresentanteForm = {
     nombres: "",
     apellidos: "",
@@ -55,24 +29,19 @@ const formularioVacio: RepresentanteForm = {
     curso: "",
 };
 
-function cargarRepresentantes(): Representante[] {
-    try {
-        const guardados = localStorage.getItem(STORAGE_KEY);
-        return guardados ? JSON.parse(guardados) : representantesIniciales;
-    } catch {
-        return representantesIniciales;
-    }
-}
-
 export default function IngresoPadres() {
     const autenticado = localStorage.getItem("usuarioAutenticado") === "true";
     const [representantes, setRepresentantes] =
-        useState<Representante[]>(cargarRepresentantes);
+        useState<Representante[]>([]);
     const [formulario, setFormulario] =
         useState<RepresentanteForm>(formularioVacio);
     const [editandoId, setEditandoId] = useState<number | null>(null);
     const [busqueda, setBusqueda] = useState("");
     const [mensaje, setMensaje] = useState("");
+
+    useEffect(() => {
+        api.get<Representante[]>("/representantes").then(setRepresentantes).catch((error) => setMensaje(getApiErrorMessage(error)));
+    }, []);
 
     const representantesFiltrados = useMemo(() => {
         const texto = busqueda.trim().toLowerCase();
@@ -102,12 +71,7 @@ export default function IngresoPadres() {
         setMensaje("");
     }
 
-    function guardarEnStorage(lista: Representante[]) {
-        setRepresentantes(lista);
-        localStorage.setItem(STORAGE_KEY, JSON.stringify(lista));
-    }
-
-    function guardarRepresentante(event: FormEvent<HTMLFormElement>) {
+    async function guardarRepresentante(event: FormEvent<HTMLFormElement>) {
         event.preventDefault();
 
         const datos = Object.fromEntries(
@@ -117,22 +81,17 @@ export default function IngresoPadres() {
             ]),
         ) as unknown as RepresentanteForm;
 
-        if (editandoId !== null) {
-            guardarEnStorage(
-                representantes.map((representante) =>
-                    representante.id === editandoId
-                        ? { ...representante, ...datos }
-                        : representante,
-                ),
-            );
-            setMensaje("Los datos del representante se actualizaron correctamente.");
-        } else {
-            guardarEnStorage([
-                ...representantes,
-                { id: Date.now(), ...datos },
-            ]);
-            setMensaje("El representante fue registrado correctamente.");
-        }
+        try {
+            if (editandoId !== null) {
+                const guardado = await api.put<Representante>(`/representantes/${editandoId}`, datos);
+                setRepresentantes((lista) => lista.map((item) => item.id === editandoId ? guardado : item));
+                setMensaje("Los datos del representante se actualizaron correctamente.");
+            } else {
+                const guardado = await api.post<Representante>("/representantes", datos);
+                setRepresentantes((lista) => [...lista, guardado]);
+                setMensaje("El representante fue registrado correctamente.");
+            }
+        } catch (error) { setMensaje(getApiErrorMessage(error)); return; }
 
         setFormulario(formularioVacio);
         setEditandoId(null);
@@ -152,15 +111,16 @@ export default function IngresoPadres() {
         setMensaje("");
     }
 
-    function eliminarRepresentante(representante: Representante) {
+    async function eliminarRepresentante(representante: Representante) {
         if (
             window.confirm(
                 `¿Deseas eliminar a ${representante.nombres} ${representante.apellidos}?`,
             )
         ) {
-            guardarEnStorage(
-                representantes.filter((item) => item.id !== representante.id),
-            );
+            try {
+                await api.delete(`/representantes/${representante.id}`);
+                setRepresentantes((lista) => lista.filter((item) => item.id !== representante.id));
+            } catch (error) { setMensaje(getApiErrorMessage(error)); }
         }
     }
 

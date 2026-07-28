@@ -1,8 +1,9 @@
-import { useMemo, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import MainLayout from "../../layouts/MainLayout";
 import BackHomeButton from "../../components/common/BackHomeButton";
 import Card from "../../components/common/Card";
 import "./Asistencia.css";
+import { api, getApiErrorMessage } from "../../api/client";
 
 interface Estudiante {
   id: number;
@@ -21,38 +22,8 @@ function obtenerFechaActual(): string {
 }
 
 function Asistencia() {
-  const [estudiantes, setEstudiantes] = useState<Estudiante[]>([
-    {
-      id: 1,
-      nombre: "María José Pérez",
-      identificacion: "1750012345",
-      presente: true,
-    },
-    {
-      id: 2,
-      nombre: "Juan Carlos López",
-      identificacion: "1750012346",
-      presente: true,
-    },
-    {
-      id: 3,
-      nombre: "Ana Sofía Martínez",
-      identificacion: "1750012347",
-      presente: true,
-    },
-    {
-      id: 4,
-      nombre: "Diego Alejandro Ruiz",
-      identificacion: "1750012348",
-      presente: false,
-    },
-    {
-      id: 5,
-      nombre: "Valeria Fernández",
-      identificacion: "1750012349",
-      presente: true,
-    },
-  ]);
+  const [estudiantes, setEstudiantes] = useState<Estudiante[]>([]);
+  const [materias, setMaterias] = useState<Array<{ id: number; nombre: string }>>([]);
 
   const [grado, setGrado] = useState("5° A");
   const [fecha, setFecha] = useState(obtenerFechaActual());
@@ -60,6 +31,16 @@ function Asistencia() {
   const [busqueda, setBusqueda] = useState("");
   const [mensaje, setMensaje] = useState("");
   const [guardando, setGuardando] = useState(false);
+
+  useEffect(() => {
+    Promise.all([api.get<any[]>("/alumnos"), api.get<Array<{ id: number; nombre: string }>>("/materias")])
+      .then(([alumnos, listaMaterias]) => {
+        setEstudiantes(alumnos.map((alumno) => ({ id: alumno.id, nombre: `${alumno.nombres} ${alumno.apellidos}`, identificacion: alumno.cedula, presente: false })));
+        setMaterias(listaMaterias);
+        if (listaMaterias.length) setAsignatura(listaMaterias[0].nombre);
+      })
+      .catch((error) => setMensaje(getApiErrorMessage(error)));
+  }, []);
 
   const estudiantesFiltrados = useMemo(() => {
     const texto = busqueda.trim().toLowerCase();
@@ -107,27 +88,22 @@ function Asistencia() {
     );
   };
 
-  const guardarAsistencia = () => {
+  const guardarAsistencia = async () => {
     setGuardando(true);
     setMensaje("");
 
-    const registro = {
-      grado,
-      fecha,
-      asignatura,
-      estudiantes,
-      fechaRegistro: new Date().toISOString(),
-    };
+    const materia = materias.find((item) => item.nombre === asignatura);
+    if (!materia) { setGuardando(false); setMensaje("Seleccione una materia valida."); return; }
+    try {
+      await api.post("/asistencias/lote", {
+        fecha,
+        materiaId: materia.id,
+        estudiantes: estudiantes.map((item) => ({ alumnoId: item.id, presente: item.presente, observacion: "" })),
+      });
+      setMensaje("La asistencia se guardo correctamente.");
+    } catch (error) { setMensaje(getApiErrorMessage(error)); } finally { setGuardando(false); }
 
-    localStorage.setItem(
-      `asistencia-${grado}-${asignatura}-${fecha}`,
-      JSON.stringify(registro)
-    );
 
-    setTimeout(() => {
-      setGuardando(false);
-      setMensaje("La asistencia se guardó correctamente.");
-    }, 500);
   };
 
   return (

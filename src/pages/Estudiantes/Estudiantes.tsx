@@ -1,9 +1,10 @@
-import { useMemo, useState, type FormEvent } from "react";
+import { useEffect, useMemo, useState, type FormEvent } from "react";
 import { Navigate } from "react-router-dom";
 import MainLayout from "../../layouts/MainLayout";
 import BackHomeButton from "../../components/common/BackHomeButton";
 import Card from "../../components/common/Card";
 import "./Estudiantes.css";
+import { api, getApiErrorMessage } from "../../api/client";
 
 interface Estudiante {
   id: number;
@@ -16,31 +17,6 @@ interface Estudiante {
   representante: string;
   telefono: string;
 }
-
-const estudiantesIniciales: Estudiante[] = [
-  {
-    id: 1,
-    cedula: "1750012345",
-    nombres: "María José",
-    apellidos: "Pérez García",
-    fechaNacimiento: "2014-05-18",
-    grado: "Séptimo EGB",
-    paralelo: "A",
-    representante: "Carmen García",
-    telefono: "0991234567",
-  },
-  {
-    id: 2,
-    cedula: "1750012346",
-    nombres: "Juan Carlos",
-    apellidos: "López Torres",
-    fechaNacimiento: "2014-08-03",
-    grado: "Séptimo EGB",
-    paralelo: "A",
-    representante: "Pedro López",
-    telefono: "0987654321",
-  },
-];
 
 const formularioInicial = {
   cedula: "",
@@ -58,7 +34,7 @@ function Estudiantes() {
     localStorage.getItem("usuarioAutenticado") === "true";
 
   const [estudiantes, setEstudiantes] =
-    useState<Estudiante[]>(estudiantesIniciales);
+    useState<Estudiante[]>([]);
   const [formulario, setFormulario] = useState(formularioInicial);
   const [busqueda, setBusqueda] = useState("");
   const [mensaje, setMensaje] = useState("");
@@ -67,6 +43,10 @@ function Estudiantes() {
   const [paginaActual, setPaginaActual] = useState(1);
   const [editandoId, setEditandoId] = useState<number | null>(null);
   const estudiantesPorPagina = 10;
+
+  useEffect(() => {
+    api.get<Estudiante[]>("/alumnos").then(setEstudiantes).catch((error) => setMensaje(getApiErrorMessage(error)));
+  }, []);
 
   const estudiantesFiltrados = useMemo(() => {
     const termino = busqueda.trim().toLowerCase();
@@ -122,7 +102,7 @@ function Estudiantes() {
     setMensaje("");
   }
 
-  function registrarEstudiante(event: FormEvent<HTMLFormElement>) {
+  async function registrarEstudiante(event: FormEvent<HTMLFormElement>) {
     event.preventDefault();
 
     const cedulaRepetida = estudiantes.some(
@@ -145,20 +125,15 @@ function Estudiantes() {
       telefono: formulario.telefono.trim(),
     };
 
-    if (editandoId !== null) {
-      setEstudiantes((actuales) =>
-        actuales.map((estudiante) =>
-          estudiante.id === editandoId
-            ? { ...estudiante, ...datosEstudiante }
-            : estudiante,
-        ),
-      );
-    } else {
-      setEstudiantes((actuales) => [
-        ...actuales,
-        { id: Date.now(), ...datosEstudiante },
-      ]);
-    }
+    try {
+      if (editandoId !== null) {
+        const guardado = await api.put<Estudiante>(`/alumnos/${editandoId}`, datosEstudiante);
+        setEstudiantes((actuales) => actuales.map((estudiante) => estudiante.id === editandoId ? guardado : estudiante));
+      } else {
+        const guardado = await api.post<Estudiante>("/alumnos", datosEstudiante);
+        setEstudiantes((actuales) => [...actuales, guardado]);
+      }
+    } catch (error) { setMensaje(getApiErrorMessage(error)); return; }
 
     setFormulario(formularioInicial);
     setEditandoId(null);
@@ -185,15 +160,16 @@ function Estudiantes() {
     window.scrollTo({ top: 0, behavior: "smooth" });
   }
 
-  function eliminarEstudiante(estudiante: Estudiante) {
+  async function eliminarEstudiante(estudiante: Estudiante) {
     if (
       window.confirm(
         `¿Deseas eliminar a ${estudiante.nombres} ${estudiante.apellidos}?`,
       )
     ) {
-      setEstudiantes((actuales) =>
-        actuales.filter((item) => item.id !== estudiante.id),
-      );
+      try {
+        await api.delete(`/alumnos/${estudiante.id}`);
+        setEstudiantes((actuales) => actuales.filter((item) => item.id !== estudiante.id));
+      } catch (error) { setMensaje(getApiErrorMessage(error)); }
     }
   }
 

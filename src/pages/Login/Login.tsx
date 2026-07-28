@@ -1,6 +1,7 @@
 import { useState, type FormEvent } from "react";
 import { useNavigate } from "react-router-dom";
 import "./Login.css";
+import { api, getApiErrorMessage } from "../../api/client";
 
 function Login() {
   const navigate = useNavigate();
@@ -9,7 +10,7 @@ function Login() {
   const [contrasena, setContrasena] = useState("");
   const [error, setError] = useState("");
 
-  function iniciarSesion(event: FormEvent<HTMLFormElement>) {
+  async function iniciarSesion(event: FormEvent<HTMLFormElement>) {
     event.preventDefault();
 
     if (!usuario.trim() || !contrasena.trim()) {
@@ -17,15 +18,20 @@ function Login() {
       return;
     }
 
-    /*
-     * Login temporal:
-     * mientras no exista backend, aceptamos cualquier usuario
-     * y contraseña que no estén vacíos.
-     */
-    localStorage.setItem("usuarioAutenticado", "true");
-    localStorage.setItem("nombreUsuario", usuario);
-
-    navigate("/home");
+    try {
+      setError("");
+      const sesion = await api.post<{ usuario: string; rol: string; permisos: string[] }>(
+        "/auth/login",
+        { usuario: usuario.trim(), password: contrasena },
+      );
+      localStorage.setItem("usuarioAutenticado", "true");
+      localStorage.setItem("nombreUsuario", sesion.usuario);
+      localStorage.setItem("rolUsuario", sesion.rol);
+      localStorage.setItem("permisosUsuario", JSON.stringify(sesion.permisos));
+      navigate("/home");
+    } catch (error) {
+      setError(getApiErrorMessage(error));
+    }
   }
 
   return (

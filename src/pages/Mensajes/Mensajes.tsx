@@ -1,7 +1,8 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import MainLayout from "../../layouts/MainLayout";
 import BackHomeButton from "../../components/common/BackHomeButton";
 import "./Mensajes.css";
+import { api, getApiErrorMessage } from "../../api/client";
 
 
 //Logica temporal para la funcionalidad de mensajes. Posteriormente se conectará con la base de datos
@@ -41,13 +42,15 @@ function Mensajes() {
   const [mensaje, setMensaje] = useState("");
 
   //Estado para almacenar los mensajes enviados
-  const [mensajesEnviados, setMensajesEnviados] = useState<
-    MensajeEnviado[]
-  >([]);
+  const [mensajesEnviados, setMensajesEnviados] = useState<MensajeEnviado[]>([]);
+
+  useEffect(() => {
+    api.get<any[]>("/mensajes").then((lista) => setMensajesEnviados(lista.map((item) => ({ id: item.id, fecha: item.fecha, cursoId: 0, cursoNombre: item.curso, contenido: item.contenido })))).catch((error) => alert(getApiErrorMessage(error)));
+  }, []);
 
   //funcion para enviar mensaje, valida que los campos no esten vacios y 
   // que la fecha no sea anterior a la actual
-  function enviarMensaje() {
+  async function enviarMensaje() {
 
 //Validar que los campos no estén vacíos
     if (
@@ -79,25 +82,13 @@ function Mensajes() {
 
 //Crear un nuevo mensaje con los datos ingresados
 
-    const nuevoMensaje: MensajeEnviado = {
-      id: Date.now(),
-      fecha: fecha,
-      cursoId: cursoEncontrado.id,
-      cursoNombre: cursoEncontrado.nombre,
-      contenido: mensaje.trim(),
-    };
-
-    setMensajesEnviados((mensajesAnteriores) => [
-      nuevoMensaje,
-      ...mensajesAnteriores,
-    ]);
-
-//console. log de nuevo mensaje
-    console.log("Mensaje enviado:", nuevoMensaje);
-
-    alert("Mensaje enviado correctamente.");
-
-    limpiarFormulario();
+    try {
+      const guardado = await api.post<any>("/mensajes", { fecha, curso: cursoEncontrado.nombre, contenido: mensaje.trim(), estado: "Enviado" });
+      const nuevoMensaje: MensajeEnviado = { id: guardado.id, fecha: guardado.fecha, cursoId: cursoEncontrado.id, cursoNombre: guardado.curso, contenido: guardado.contenido };
+      setMensajesEnviados((anteriores) => [nuevoMensaje, ...anteriores]);
+      alert("Mensaje enviado correctamente.");
+      limpiarFormulario();
+    } catch (error) { alert(getApiErrorMessage(error)); }
   }
 
   //funcion para limpiar el formulario
@@ -108,7 +99,7 @@ function Mensajes() {
   }
 
   //funcion para eliminar el mensaje almacenado en el estado de mensajes enviados.
-  function eliminarMensaje(id: number) {
+  async function eliminarMensaje(id: number) {
     const confirmarEliminacion = window.confirm(
       "¿Está seguro de eliminar este mensaje?"
     );
@@ -117,9 +108,10 @@ function Mensajes() {
       return;
     }
 
-    setMensajesEnviados((mensajesAnteriores) =>
-      mensajesAnteriores.filter((mensaje) => mensaje.id !== id)
-    );
+    try {
+      await api.delete(`/mensajes/${id}`);
+      setMensajesEnviados((anteriores) => anteriores.filter((item) => item.id !== id));
+    } catch (error) { alert(getApiErrorMessage(error)); }
   }
 
   return (

@@ -1,5 +1,6 @@
 import { useNavigate } from "react-router-dom";
 import "./Navbar.css";
+import { api } from "../../api/client";
 
 function Navbar() {
   const navigate = useNavigate();
@@ -7,9 +8,13 @@ function Navbar() {
   const nombreUsuario =
     localStorage.getItem("nombreUsuario") || "Usuario";
 
-  function cerrarSesion() {
+  async function cerrarSesion() {
+    try { await api.post("/auth/logout"); } catch { /* La sesion local se limpia igualmente. */ }
     localStorage.removeItem("usuarioAutenticado");
     localStorage.removeItem("nombreUsuario");
+    localStorage.removeItem("rolUsuario");
+    localStorage.removeItem("permisosUsuario");
+    api.resetCsrf();
 
     navigate("/login");
   }

@@ -1,9 +1,10 @@
-﻿import { useRef, useState } from "react";
+﻿import { useEffect, useRef, useState } from "react";
 import MainLayout from "../../layouts/MainLayout";
 import BackHomeButton from "../../components/common/BackHomeButton";
 import Card from "../../components/common/Card";
 import FeedbackDialog from "../../components/common/FeedbackDialog";
 import "./Notas.css";
+import { api, getApiErrorMessage } from "../../api/client";
 
 type Estudiante = {
   id: number;
@@ -22,83 +23,19 @@ export default function Notas() {
     examenes: string[];
   } | null>(null);
 
-  const [tareas, setTareas] = useState([
-    "Actividad 1",
-    "Actividad 2",
-    "Actividad 3",
-    "Actividad 4",
-    "Actividad 5"
-  ]);
+  const [tareas, setTareas] = useState<string[]>([]);
 
-  const [lecciones, setLecciones] = useState([
-    "Lección 1",
-    "Lección 2",
-    "Lección 3",
-    "Lección 4",
-    "Lección 5"
-  ]);
+  const [lecciones, setLecciones] = useState<string[]>([]);
 
-  const [examenes, setExamenes] = useState([
-    "Parcial",
-    "Final",
-    "Recuperación",
-    "Supletorio"
-  ]);
+  const [examenes, setExamenes] = useState<string[]>([]);
 
   
 
-  const estudiantesIniciales: Estudiante[] = [
-
-    {
-      id: 1,
-      nombre: "María José Pérez",
-      tareas: Array(tareas.length).fill(""),
-      lecciones: Array(lecciones.length).fill(""),
-      examenes: Array(examenes.length).fill(""),
-      observacion: ""
-    },
-
-    {
-      id: 2,
-      nombre: "Juan Carlos López",
-      tareas: Array(tareas.length).fill(""),
-      lecciones: Array(lecciones.length).fill(""),
-      examenes: Array(examenes.length).fill(""),
-      observacion: ""
-    },
-
-    {
-      id: 3,
-      nombre: "Ana Sofía Martínez",
-      tareas: Array(tareas.length).fill(""),
-      lecciones: Array(lecciones.length).fill(""),
-      examenes: Array(examenes.length).fill(""),
-      observacion: ""
-    },
-
-    {
-      id: 4,
-      nombre: "Carlos Andrade",
-      tareas: Array(tareas.length).fill(""),
-      lecciones: Array(lecciones.length).fill(""),
-      examenes: Array(examenes.length).fill(""),
-      observacion: ""
-    },
-
-    {
-      id: 5,
-      nombre: "Valeria Torres",
-      tareas: Array(tareas.length).fill(""),
-      lecciones: Array(lecciones.length).fill(""),
-      examenes: Array(examenes.length).fill(""),
-      observacion: ""
-    }
-
-  ];
-
- 
-
-  const [estudiantes, setEstudiantes] = useState(estudiantesIniciales);
+  const [estudiantes, setEstudiantes] = useState<Estudiante[]>([]);
+  const [materiasApi, setMateriasApi] = useState<Array<{ id: number; nombre: string }>>([]);
+  const [idsTareas, setIdsTareas] = useState<Array<number | null>>([]);
+  const [idsLecciones, setIdsLecciones] = useState<Array<number | null>>([]);
+  const [idsExamenes, setIdsExamenes] = useState<Array<number | null>>([]);
   const [grado, setGrado] = useState("Octavo EGB");
   const [asignatura, setAsignatura] = useState("Matemáticas");
   const [periodo, setPeriodo] = useState("Trimestre 1");
@@ -113,6 +50,24 @@ export default function Notas() {
   const [dialogNotas, setDialogNotas] = useState(false);
 
   const [mensajeError, setMensajeError] = useState("");
+
+  useEffect(() => {
+    Promise.all([api.get<any[]>("/alumnos"), api.get<any[]>("/materias"), api.get<any[]>("/actividades"), api.get<any[]>("/notas")])
+      .then(([alumnos, materias, actividades, notas]) => {
+        setMateriasApi(materias);
+        if (materias.length) setAsignatura(materias[0].nombre);
+        const materiaId = materias[0]?.id;
+        const delPeriodo = actividades.filter((a) => (!materiaId || a.materia?.id === materiaId) && a.periodo === periodo);
+        const porTipo = (tipo: string) => delPeriodo.filter((a) => a.tipo === tipo);
+        const ts = porTipo("Tarea"), ls = porTipo("Leccion"), es = porTipo("Examen");
+        setTareas(ts.map((a) => a.nombre)); setIdsTareas(ts.map((a) => a.id));
+        setLecciones(ls.map((a) => a.nombre)); setIdsLecciones(ls.map((a) => a.id));
+        setExamenes(es.map((a) => a.nombre)); setIdsExamenes(es.map((a) => a.id));
+        const valor = (alumnoId: number, actividadId: number) => String(notas.find((n) => n.alumno?.id === alumnoId && n.actividad?.id === actividadId)?.calificacion ?? "");
+        setEstudiantes(alumnos.map((a) => ({ id: a.id, nombre: `${a.nombres} ${a.apellidos}`, tareas: ts.map((x) => valor(a.id, x.id)), lecciones: ls.map((x) => valor(a.id, x.id)), examenes: es.map((x) => valor(a.id, x.id)), observacion: "" })));
+      })
+      .catch((error) => setMensajeError(getApiErrorMessage(error)));
+  }, []);
 
   const abrirTareas = () => {
     setMensajeError("");
@@ -192,6 +147,7 @@ export default function Notas() {
   };
   const agregarActividadTarea = () => {
 
+    setIdsTareas(prev => [...prev, null]);
     setTareas(prev => [
       ...prev,
       `Actividad ${prev.length + 1}`
@@ -215,6 +171,7 @@ export default function Notas() {
   };
   const agregarActividadLeccion = () => {
 
+    setIdsLecciones(prev => [...prev, null]);
     setLecciones(prev => [
       ...prev,
       `Lección ${prev.length + 1}`
@@ -233,6 +190,7 @@ export default function Notas() {
   };
   const agregarActividadExamen = () => {
 
+    setIdsExamenes(prev => [...prev, null]);
     setExamenes(prev => [
       ...prev,
       `Examen ${prev.length + 1}`
@@ -367,36 +325,63 @@ export default function Notas() {
     return true;
   };
 
-  const guardarTareas = () => {
+  const guardarTareas = async () => {
 
     if (!validarCategoria("tareas", "tareas")) return;
-
-    respaldoEstudiantes.current = null;
-    respaldoActividades.current = null;
-    setMostrarTareas(false);
-    setDialogTarea(true);
+    const materia = materiasApi.find((item) => item.nombre === asignatura);
+    if (!materia) { setMensajeError("Debe existir una materia registrada."); return; }
+    try {
+      const nuevosIds = [...idsTareas];
+      for (let i = 0; i < tareas.length; i++) {
+        const payload = { nombre: tareas[i], tipo: "Tarea", periodo, materia: { id: materia.id } };
+        const actividad = nuevosIds[i] ? await api.put<any>(`/actividades/${nuevosIds[i]}`, payload) : await api.post<any>("/actividades", payload);
+        nuevosIds[i] = actividad.id;
+        await api.post("/notas/lote", { actividadId: actividad.id, notas: estudiantes.map((estudiante) => ({ alumnoId: estudiante.id, calificacion: estudiante.tareas[i].trim() === "" ? null : Number(estudiante.tareas[i]), observacion: estudiante.observacion })) });
+      }
+      setIdsTareas(nuevosIds);
+      respaldoEstudiantes.current = null; respaldoActividades.current = null;
+      setMostrarTareas(false); setDialogTarea(true);
+    } catch (error) { setMensajeError(getApiErrorMessage(error)); }
 
   };
 
-  const guardarLecciones = () => {
+  const guardarLecciones = async () => {
 
     if (!validarCategoria("lecciones", "lecciones")) return;
-
-    respaldoEstudiantes.current = null;
-    respaldoActividades.current = null;
-    setMostrarLecciones(false);
-    setDialogLeccion(true);
+    const materia = materiasApi.find((item) => item.nombre === asignatura);
+    if (!materia) { setMensajeError("Debe existir una materia registrada."); return; }
+    try {
+      const nuevosIds = [...idsLecciones];
+      for (let i = 0; i < lecciones.length; i++) {
+        const payload = { nombre: lecciones[i], tipo: "Leccion", periodo, materia: { id: materia.id } };
+        const actividad = nuevosIds[i] ? await api.put<any>(`/actividades/${nuevosIds[i]}`, payload) : await api.post<any>("/actividades", payload);
+        nuevosIds[i] = actividad.id;
+        await api.post("/notas/lote", { actividadId: actividad.id, notas: estudiantes.map((estudiante) => ({ alumnoId: estudiante.id, calificacion: estudiante.lecciones[i].trim() === "" ? null : Number(estudiante.lecciones[i]), observacion: estudiante.observacion })) });
+      }
+      setIdsLecciones(nuevosIds);
+      respaldoEstudiantes.current = null; respaldoActividades.current = null;
+      setMostrarLecciones(false); setDialogLeccion(true);
+    } catch (error) { setMensajeError(getApiErrorMessage(error)); }
 
   };
 
-  const guardarExamenes = () => {
+  const guardarExamenes = async () => {
 
     if (!validarCategoria("examenes", "evaluaciones")) return;
-
-    respaldoEstudiantes.current = null;
-    respaldoActividades.current = null;
-    setMostrarExamenes(false);
-    setDialogExamen(true);
+    const materia = materiasApi.find((item) => item.nombre === asignatura);
+    if (!materia) { setMensajeError("Debe existir una materia registrada."); return; }
+    try {
+      const nuevosIds = [...idsExamenes];
+      for (let i = 0; i < examenes.length; i++) {
+        const payload = { nombre: examenes[i], tipo: "Examen", periodo, materia: { id: materia.id } };
+        const actividad = nuevosIds[i] ? await api.put<any>(`/actividades/${nuevosIds[i]}`, payload) : await api.post<any>("/actividades", payload);
+        nuevosIds[i] = actividad.id;
+        await api.post("/notas/lote", { actividadId: actividad.id, notas: estudiantes.map((estudiante) => ({ alumnoId: estudiante.id, calificacion: estudiante.examenes[i].trim() === "" ? null : Number(estudiante.examenes[i]), observacion: estudiante.observacion })) });
+      }
+      setIdsExamenes(nuevosIds);
+      respaldoEstudiantes.current = null; respaldoActividades.current = null;
+      setMostrarExamenes(false); setDialogExamen(true);
+    } catch (error) { setMensajeError(getApiErrorMessage(error)); }
 
   };
 
@@ -414,7 +399,7 @@ export default function Notas() {
   };
 
   const cancelarNotas = () => {
-    setEstudiantes(estudiantesIniciales);
+    setEstudiantes((actuales) => actuales.map((estudiante) => ({ ...estudiante, tareas: estudiante.tareas.map(() => ""), lecciones: estudiante.lecciones.map(() => ""), examenes: estudiante.examenes.map(() => ""), observacion: "" })));
     setMensajeError("");
   };
 
