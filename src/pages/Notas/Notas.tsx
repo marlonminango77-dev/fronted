@@ -1,7 +1,8 @@
-import { useState } from "react";
+import { useRef, useState } from "react";
 import MainLayout from "../../layouts/MainLayout";
 import BackHomeButton from "../../components/common/BackHomeButton";
 import Card from "../../components/common/Card";
+import FeedbackDialog from "../../components/common/FeedbackDialog";
 import "./Notas.css";
 
 type Estudiante = {
@@ -13,7 +14,8 @@ type Estudiante = {
   observacion: string;
 };
 
-export function Notas() {
+export default function Notas() {
+  const respaldoEstudiantes = useRef<Estudiante[] | null>(null);
 
   const [tareas, setTareas] = useState([
     "Actividad 1",
@@ -92,6 +94,9 @@ export function Notas() {
  
 
   const [estudiantes, setEstudiantes] = useState(estudiantesIniciales);
+  const [grado, setGrado] = useState("Octavo EGB");
+  const [asignatura, setAsignatura] = useState("Matemáticas");
+  const [periodo, setPeriodo] = useState("Trimestre 1");
 
   const [mostrarTareas, setMostrarTareas] = useState(false);
   const [mostrarLecciones, setMostrarLecciones] = useState(false);
@@ -106,22 +111,44 @@ export function Notas() {
 
   const abrirTareas = () => {
     setMensajeError("");
+    respaldoEstudiantes.current = structuredClone(estudiantes);
     setMostrarTareas(true);
   };
 
   const abrirLecciones = () => {
     setMensajeError("");
+    respaldoEstudiantes.current = structuredClone(estudiantes);
     setMostrarLecciones(true);
   };
 
   const abrirExamenes = () => {
     setMensajeError("");
+    respaldoEstudiantes.current = structuredClone(estudiantes);
     setMostrarExamenes(true);
   };
 
-  const cerrarTareas = () => setMostrarTareas(false);
-  const cerrarLecciones = () => setMostrarLecciones(false);
-  const cerrarExamenes = () => setMostrarExamenes(false);
+  const restaurarRespaldo = () => {
+    if (respaldoEstudiantes.current) {
+      setEstudiantes(respaldoEstudiantes.current);
+      respaldoEstudiantes.current = null;
+    }
+    setMensajeError("");
+  };
+
+  const cerrarTareas = () => {
+    restaurarRespaldo();
+    setMostrarTareas(false);
+  };
+
+  const cerrarLecciones = () => {
+    restaurarRespaldo();
+    setMostrarLecciones(false);
+  };
+
+  const cerrarExamenes = () => {
+    restaurarRespaldo();
+    setMostrarExamenes(false);
+  };
   const agregarActividadTarea = () => {
 
     setTareas(prev => [
@@ -194,11 +221,18 @@ export function Notas() {
     valor: string
   ) => {
 
-    const copia = [...estudiantes];
-
-    copia[estudiante].tareas[actividad] = valor;
-
-    setEstudiantes(copia);
+    setEstudiantes((actuales) =>
+      actuales.map((item, fila) =>
+        fila === estudiante
+          ? {
+              ...item,
+              tareas: item.tareas.map((nota, columna) =>
+                columna === actividad ? valor : nota,
+              ),
+            }
+          : item,
+      ),
+    );
 
   };
 
@@ -209,11 +243,18 @@ export function Notas() {
     valor: string
   ) => {
 
-    const copia = [...estudiantes];
-
-    copia[estudiante].lecciones[actividad] = valor;
-
-    setEstudiantes(copia);
+    setEstudiantes((actuales) =>
+      actuales.map((item, fila) =>
+        fila === estudiante
+          ? {
+              ...item,
+              lecciones: item.lecciones.map((nota, columna) =>
+                columna === actividad ? valor : nota,
+              ),
+            }
+          : item,
+      ),
+    );
 
   };
 
@@ -224,11 +265,18 @@ export function Notas() {
     valor: string
   ) => {
 
-    const copia = [...estudiantes];
-
-    copia[estudiante].examenes[actividad] = valor;
-
-    setEstudiantes(copia);
+    setEstudiantes((actuales) =>
+      actuales.map((item, fila) =>
+        fila === estudiante
+          ? {
+              ...item,
+              examenes: item.examenes.map((nota, columna) =>
+                columna === actividad ? valor : nota,
+              ),
+            }
+          : item,
+      ),
+    );
 
   };
 
@@ -238,46 +286,45 @@ export function Notas() {
     texto: string
   ) => {
 
-    const copia = [...estudiantes];
-
-    copia[estudiante].observacion = texto;
-
-    setEstudiantes(copia);
+    setEstudiantes((actuales) =>
+      actuales.map((item, fila) =>
+        fila === estudiante ? { ...item, observacion: texto } : item,
+      ),
+    );
 
   };
 
 
-  const validarNotas = () => {
-
+  const validarCategoria = (
+    categoria: "tareas" | "lecciones" | "examenes",
+    etiqueta: string,
+  ) => {
     for (const estudiante of estudiantes) {
+      for (const nota of estudiante[categoria]) {
+        if (nota.trim() === "") {
+          setMensajeError(`Debe completar todas las ${etiqueta}.`);
+          return false;
+        }
 
-      if (estudiante.tareas.some(n => n === "")) {
-        setMensajeError("Debe completar todas las tareas.");
-        return false;
+        const valor = Number(nota);
+        if (!Number.isFinite(valor) || valor < 0 || valor > 10) {
+          setMensajeError(
+            `Las notas de ${etiqueta} deben estar entre 0 y 10.`,
+          );
+          return false;
+        }
       }
-
-      if (estudiante.lecciones.some(n => n === "")) {
-        setMensajeError("Debe completar todas las lecciones.");
-        return false;
-      }
-
-      if (estudiante.examenes.some(n => n === "")) {
-        setMensajeError("Debe completar todos los exámenes.");
-        return false;
-      }
-
     }
 
     setMensajeError("");
-
     return true;
-
   };
 
   const guardarTareas = () => {
 
-    if (!validarNotas()) return;
+    if (!validarCategoria("tareas", "tareas")) return;
 
+    respaldoEstudiantes.current = null;
     setMostrarTareas(false);
     setDialogTarea(true);
 
@@ -285,8 +332,9 @@ export function Notas() {
 
   const guardarLecciones = () => {
 
-    if (!validarNotas()) return;
+    if (!validarCategoria("lecciones", "lecciones")) return;
 
+    respaldoEstudiantes.current = null;
     setMostrarLecciones(false);
     setDialogLeccion(true);
 
@@ -294,27 +342,35 @@ export function Notas() {
 
   const guardarExamenes = () => {
 
-    if (!validarNotas()) return;
+    if (!validarCategoria("examenes", "evaluaciones")) return;
 
+    respaldoEstudiantes.current = null;
     setMostrarExamenes(false);
     setDialogExamen(true);
 
   };
 
   const guardarNotas = () => {
+    const registro = {
+      grado,
+      asignatura,
+      periodo,
+      estudiantes,
+      fechaRegistro: new Date().toISOString(),
+    };
 
+    localStorage.setItem("registro-notas", JSON.stringify(registro));
     setDialogNotas(true);
+  };
 
+  const cancelarNotas = () => {
+    setEstudiantes(estudiantesIniciales);
+    setMensajeError("");
   };
 
  return (
   <MainLayout>
     <div className="contenedor-notas">
-
-    
-          <h1>Gestión de Notas</h1>
-
-          <BackHomeButton />
 
       <section className="notas-header">
         <div>
@@ -329,13 +385,14 @@ export function Notas() {
         <div className="filtros">
 
           <div className="grupo">
-        <Card as="section" className="filtros">
 
-          <div className="grupo">
+            <label htmlFor="filtro-grado">Grado</label>
 
-            <label>Grado</label>
-
-            <select>
+            <select
+              id="filtro-grado"
+              value={grado}
+              onChange={(event) => setGrado(event.target.value)}
+            >
               <option>Octavo EGB</option>
               <option>Noveno EGB</option>
               <option>Décimo EGB</option>
@@ -343,9 +400,13 @@ export function Notas() {
           </div>
 
           <div className="grupo">
-            <label>Asignatura</label>
+            <label htmlFor="filtro-asignatura">Asignatura</label>
 
-            <select>
+            <select
+              id="filtro-asignatura"
+              value={asignatura}
+              onChange={(event) => setAsignatura(event.target.value)}
+            >
               <option>Matemáticas</option>
               <option>Lengua</option>
               <option>Ciencias</option>
@@ -353,21 +414,24 @@ export function Notas() {
           </div>
 
           <div className="grupo">
-            <label>Periodo</label>
+            <label htmlFor="filtro-periodo">Trimestre</label>
 
-            <select>
-              <option>Primer Parcial</option>
-              <option>Segundo Parcial</option>
+            <select
+              id="filtro-periodo"
+              value={periodo}
+              onChange={(event) => setPeriodo(event.target.value)}
+            >
+              <option>Trimestre 1</option>
+              <option>Trimestre 2</option>
+              <option>Trimestre 3</option>
             </select>
           </div>
 
         </div>
       </Card>
 
-      <div className="tabla-container">
-        </Card>
-
-        <Card as="section" className="tabla-container">
+      <Card as="section" className="tabla-section">
+        <div className="tabla-container">
 
           <table className="tabla-notas">
 
@@ -468,8 +532,7 @@ export function Notas() {
 
           </table>
 
-</Card>
-</div>
+        </div>
         </Card>
 
         <div className="acciones">
@@ -477,6 +540,7 @@ export function Notas() {
           <button
             className="btn-cancelar"
             type="button"
+            onClick={cancelarNotas}
           >
             Cancelar
           </button>
@@ -492,9 +556,15 @@ export function Notas() {
         </div>
         {mostrarTareas && (
 
-          <div className="modal-overlay">
+          <div className="modal-overlay" onMouseDown={cerrarTareas}>
 
-            <div className="modal-grande">
+            <div
+              className="modal-grande"
+              role="dialog"
+              aria-modal="true"
+              aria-label="Registro de tareas"
+              onMouseDown={(event) => event.stopPropagation()}
+            >
 
               <div className="modal-header">
 
@@ -537,7 +607,7 @@ export function Notas() {
 
                   <input
                     type="text"
-                    value="Octavo EGB"
+                    value={grado}
                     readOnly
                   />
 
@@ -549,7 +619,7 @@ export function Notas() {
 
                   <input
                     type="text"
-                    value="Matemáticas"
+                    value={asignatura}
                     readOnly
                   />
 
@@ -561,7 +631,7 @@ export function Notas() {
 
                   <input
                     type="text"
-                    value="Primer Parcial"
+                    value={periodo}
                     readOnly
                   />
 
@@ -686,9 +756,15 @@ export function Notas() {
         )}
         {mostrarLecciones && (
 
-          <div className="modal-overlay">
+          <div className="modal-overlay" onMouseDown={cerrarLecciones}>
 
-            <div className="modal-grande">
+            <div
+              className="modal-grande"
+              role="dialog"
+              aria-modal="true"
+              aria-label="Registro de lecciones"
+              onMouseDown={(event) => event.stopPropagation()}
+            >
 
               <div className="modal-header">
 
@@ -731,7 +807,7 @@ export function Notas() {
 
                   <input
                     type="text"
-                    value="Octavo EGB"
+                    value={grado}
                     readOnly
                   />
 
@@ -743,7 +819,7 @@ export function Notas() {
 
                   <input
                     type="text"
-                    value="Matemáticas"
+                    value={asignatura}
                     readOnly
                   />
 
@@ -755,7 +831,7 @@ export function Notas() {
 
                   <input
                     type="text"
-                    value="Primer Parcial"
+                    value={periodo}
                     readOnly
                   />
 
@@ -882,8 +958,14 @@ export function Notas() {
         {/* MODAL EXÁMENES */}
 
 {mostrarExamenes && (
-  <div className="modal-overlay">
-    <div className="modal-grande">
+  <div className="modal-overlay" onMouseDown={cerrarExamenes}>
+    <div
+      className="modal-grande"
+      role="dialog"
+      aria-modal="true"
+      aria-label="Registro de evaluaciones"
+      onMouseDown={(event) => event.stopPropagation()}
+    >
 
       <div className="modal-header">
         <h2>Registro de Exámenes</h2>
@@ -910,7 +992,7 @@ export function Notas() {
           <label>Grado</label>
           <input
             type="text"
-            value="Octavo EGB"
+            value={grado}
             readOnly
           />
         </div>
@@ -919,7 +1001,7 @@ export function Notas() {
           <label>Asignatura</label>
           <input
             type="text"
-            value="Matemáticas"
+            value={asignatura}
             readOnly
           />
         </div>
@@ -928,7 +1010,7 @@ export function Notas() {
           <label>Periodo</label>
           <input
             type="text"
-            value="Primer Parcial"
+            value={periodo}
             readOnly
           />
         </div>
@@ -1028,103 +1110,34 @@ export function Notas() {
 
         )}
 
-        {/* DIÁLOGOS DE CONFIRMACIÓN */}
-        {dialogTarea && (
+        <FeedbackDialog
+          open={dialogTarea}
+          title="Tareas guardadas"
+          message="Las calificaciones de tareas se actualizaron correctamente."
+          onClose={() => setDialogTarea(false)}
+        />
 
-          <div className="dialog-overlay">
+        <FeedbackDialog
+          open={dialogLeccion}
+          title="Lecciones guardadas"
+          message="Las calificaciones de lecciones se actualizaron correctamente."
+          onClose={() => setDialogLeccion(false)}
+        />
 
-            <div className="dialog-box">
+        <FeedbackDialog
+          open={dialogExamen}
+          title="Evaluaciones guardadas"
+          message="Las calificaciones de evaluaciones se actualizaron correctamente."
+          onClose={() => setDialogExamen(false)}
+        />
 
-              <div className="dialog-icon">✅</div>
-
-              <h3>Tareas guardadas correctamente</h3>
-
-              <button
-                className="btn-guardar"
-                onClick={() => setDialogTarea(false)}
-              >
-                Aceptar
-              </button>
-
-            </div>
-
-          </div>
-
-
-        )}
-
-        {dialogLeccion && (
-
-          <div className="dialog-overlay">
-
-            <div className="dialog-box">
-
-              <div className="dialog-icon">✅</div>
-
-              <h3>Lecciones guardadas correctamente</h3>
-
-              <button
-                className="btn-guardar"
-                onClick={() => setDialogLeccion(false)}
-              >
-                Aceptar
-              </button>
-
-            </div>
-
-          </div>
-
-        )}
-
-        {dialogExamen && (
-
-          <div className="dialog-overlay">
-
-            <div className="dialog-box">
-
-              <div className="dialog-icon">✅</div>
-
-              <h3>Exámenes guardados correctamente</h3>
-
-              <button
-                className="btn-guardar"
-                onClick={() => setDialogExamen(false)}
-              >
-                Aceptar
-              </button>
-
-            </div>
-
-          </div>
-
-        )}
-
-        {dialogNotas && (
-
-          <div className="dialog-overlay">
-
-            <div className="dialog-box">
-
-              <div className="dialog-icon">🎉</div>
-
-              <h2>Notas registradas correctamente</h2>
-
-              <p>
-                Toda la información fue almacenada exitosamente.
-              </p>
-
-              <button
-                className="btn-guardar"
-                onClick={() => setDialogNotas(false)}
-              >
-                Finalizar
-              </button>
-
-            </div>
-
-          </div>
-
-        )}
+        <FeedbackDialog
+          open={dialogNotas}
+          title="Notas registradas"
+          message="Toda la información académica fue almacenada correctamente."
+          buttonLabel="Finalizar"
+          onClose={() => setDialogNotas(false)}
+        />
 
       </div>
 
