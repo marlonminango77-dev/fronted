@@ -234,4 +234,8 @@
   .institution-section {
     grid-template-columns: 1fr;
   }
+  .teachers-card{
+    background: linear-gradient(135deg, #2563eb, #1d4ed8);
+    color: white;
+}
 }

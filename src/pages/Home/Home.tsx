@@ -61,6 +61,13 @@ const modules: ModuleCard[] = [
     path: "/estudiantes",
     colorClass: "students-card",
   },
+  {
+  title: "Registro de docentes",
+  description: "Registrar, editar y administrar la información de los docentes.",
+  icon: "bi-person-badge-fill",
+  path: "/docentes",
+  colorClass: "teachers-card",
+},
 ];
 
 function Home() {

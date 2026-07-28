@@ -14,7 +14,7 @@ type Estudiante = {
   observacion: string;
 };
 
-export default function Notas() {
+export function Notas() {
 
   const [tareas, setTareas] = useState([
     "Actividad 1",
@@ -308,129 +308,97 @@ export default function Notas() {
 
   };
 
-  return (
+ return (
+  <MainLayout>
+    <div className="contenedor-notas">
 
-    <MainLayout>
-      <div className="contenedor-notas">
+    
 
-        <div className="encabezado">
-
-          <h1>Gestión de Notas</h1>
-
-          <Link to="/docente">
-            <button className="btn-regresar">
-              ← Regresar
-            </button>
-          </Link>
-
+      <section className="notas-header">
+        <div>
+          <p>Gestión académica</p>
+          <h1>Ingreso de Notas</h1>
         </div>
 
+        <BackHomeButton />
+      </section>
+
+      <Card as="section" className="filtros-section">
         <div className="filtros">
 
           <div className="grupo">
-        <section className="notas-header">
-          <div>
-            <p>Gestión académica</p>
-            <h1>Ingreso de Notas</h1>
-          </div>
-          <BackHomeButton />
-        </section>
-
-        <Card as="section" className="filtros-section">
-
             <label>Grado</label>
 
             <select>
-
               <option>Octavo EGB</option>
               <option>Noveno EGB</option>
               <option>Décimo EGB</option>
-
             </select>
-
           </div>
 
           <div className="grupo">
-
             <label>Asignatura</label>
 
             <select>
-
               <option>Matemáticas</option>
               <option>Lengua</option>
               <option>Ciencias</option>
-
             </select>
-
           </div>
 
           <div className="grupo">
-
             <label>Periodo</label>
 
             <select>
-
               <option>Primer Parcial</option>
               <option>Segundo Parcial</option>
-
             </select>
-
           </div>
 
         </div>
+      </Card>
 
-        <div className="tabla-container">
-        </Card>
+      <div className="tabla-container">
 
         <Card as="section" className="tabla-section">
 
           <table className="tabla-notas">
 
             <thead>
-
               <tr>
-
                 <th>#</th>
 
                 <th>Estudiante</th>
 
                 <th>
-
                   <button
                     className="btn-columna"
                     onClick={abrirTareas}
                   >
                     Tareas
                   </button>
-
                 </th>
 
                 <th>
-
                   <button
                     className="btn-columna"
                     onClick={abrirLecciones}
                   >
                     Lecciones
                   </button>
-
                 </th>
 
                 <th>
-
                   <button
                     className="btn-columna"
                     onClick={abrirExamenes}
                   >
                     Exámenes
                   </button>
-
                 </th>
 
                 <th>Nota Final</th>
-
               </tr>
-
             </thead>
 
             <tbody>
@@ -493,8 +461,8 @@ export default function Notas() {
 
           </table>
 
-        </div>
-        </Card>
+</Card>
+</div>
 
         <div className="acciones">
 

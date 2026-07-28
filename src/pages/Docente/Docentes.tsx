@@ -3,8 +3,8 @@ import { Navigate } from "react-router-dom";
 import MainLayout from "../../layouts/MainLayout";
 
 import "./Docentes.css";
-import BackHomeButton from '../../../../../docentes/fronted/src/components/common/BackHomeButton';
-import Card from '../../../../../docentes/fronted/src/components/common/Card';
+import BackHomeButton from "../../components/common/BackHomeButton";
+import Card from "../../components/common/Card";
 
 interface Docente {
   id: number;
