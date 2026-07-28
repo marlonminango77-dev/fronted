@@ -215,11 +215,6 @@ function eliminarDocente(docente: Docente) {
 }
 
 
-function limpiarFormulario() {
-  setFormulario(formularioInicial);
-  setEditandoId(null);
-  setMensaje("");
-}
 return (
   <MainLayout>
     <div className="students-page">
