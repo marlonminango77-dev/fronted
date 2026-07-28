@@ -1,5 +1,4 @@
 import { useState } from "react";
-import { Link } from "react-router-dom";
 import MainLayout from "../../layouts/MainLayout";
 import BackHomeButton from "../../components/common/BackHomeButton";
 import Card from "../../components/common/Card";
@@ -348,26 +347,13 @@ export default function Notas() {
 
           <h1>Gestión de Notas</h1>
 
-          <Link to="/docente">
-            <button className="btn-regresar">
-              ← Regresar
-            </button>
-          </Link>
+          <BackHomeButton />
 
         </div>
 
-        <div className="filtros">
+        <Card as="section" className="filtros">
 
           <div className="grupo">
-        <section className="notas-header">
-          <div>
-            <p>Gestión académica</p>
-            <h1>Ingreso de Notas</h1>
-          </div>
-          <BackHomeButton />
-        </section>
-
-        <Card as="section" className="filtros-section">
 
             <label>Grado</label>
 
@@ -408,12 +394,9 @@ export default function Notas() {
 
           </div>
 
-        </div>
-
-        <div className="tabla-container">
         </Card>
 
-        <Card as="section" className="tabla-section">
+        <Card as="section" className="tabla-container">
 
           <table className="tabla-notas">
 
@@ -524,7 +507,6 @@ export default function Notas() {
 
           </table>
 
-        </div>
         </Card>
 
         <div className="acciones">
@@ -1194,5 +1176,3 @@ export default function Notas() {
     ;
 
 }
-
-export default Notas;

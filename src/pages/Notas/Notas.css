@@ -25,28 +25,6 @@ body{
     color:#087443;
     font-size:32px;
     font-weight:700;
-.notas-header {
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    gap: 25px;
-    margin-bottom: 30px;
-}
-
-.notas-header p {
-    margin: 0 0 5px;
-    color: #087443;
-    font-size: 0.84rem;
-    font-weight: 800;
-    letter-spacing: 0.8px;
-    text-transform: uppercase;
-}
-
-.notas-header h1 {
-    margin: 0;
-    font-size: 2rem;
-    color: #1f2937;
-    font-weight: 700;
 }
 
 .btn-regresar{
@@ -437,13 +415,6 @@ body{
     box-shadow:0 15px 35px rgba(0,0,0,.25);
     animation:mostrarDialogo .25s ease;
 }
-@media (max-width: 900px) {
-    .notas-header {
-        align-items: stretch;
-        flex-direction: column;
-    }
-
-
 .dialog-icon{
     font-size:60px;
     margin-bottom:15px;
@@ -583,5 +554,4 @@ body{
     .input-observacion{
         width:170px;
     }
-}
 }
