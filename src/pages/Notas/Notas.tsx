@@ -60,11 +60,20 @@ export default function Notas() {
         const delPeriodo = actividades.filter((a) => (!materiaId || a.materia?.id === materiaId) && a.periodo === periodo);
         const porTipo = (tipo: string) => delPeriodo.filter((a) => a.tipo === tipo);
         const ts = porTipo("Tarea"), ls = porTipo("Leccion"), es = porTipo("Examen");
-        setTareas(ts.map((a) => a.nombre)); setIdsTareas(ts.map((a) => a.id));
-        setLecciones(ls.map((a) => a.nombre)); setIdsLecciones(ls.map((a) => a.id));
-        setExamenes(es.map((a) => a.nombre)); setIdsExamenes(es.map((a) => a.id));
-        const valor = (alumnoId: number, actividadId: number) => String(notas.find((n) => n.alumno?.id === alumnoId && n.actividad?.id === actividadId)?.calificacion ?? "");
-        setEstudiantes(alumnos.map((a) => ({ id: a.id, nombre: `${a.nombres} ${a.apellidos}`, tareas: ts.map((x) => valor(a.id, x.id)), lecciones: ls.map((x) => valor(a.id, x.id)), examenes: es.map((x) => valor(a.id, x.id)), observacion: "" })));
+        setTareas(ts.map((a) => a.nombre));
+        setIdsTareas(ts.map((a) => a.id));
+        setLecciones(ls.map((a) => a.nombre));
+        setIdsLecciones(ls.map((a) => a.id));
+        setExamenes(es.map((a) => a.nombre));
+        setIdsExamenes(es.map((a) => a.id));
+        const valor = (alumnoId: number, actividadId: number) =>
+          String(notas.find((n) => n.alumno?.id === alumnoId && n.actividad?.id === actividadId)?.calificacion ?? "");
+        setEstudiantes(alumnos.map((a) =>
+        ({
+          id: a.id, nombre: `${a.nombres} ${a.apellidos}`,
+          tareas: ts.map((x) => valor(a.id, x.id)),
+          lecciones: ls.map((x) => valor(a.id, x.id)), examenes: es.map((x) => valor(a.id, x.id)), observacion: ""
+        })));
       })
       .catch((error) => setMensajeError(getApiErrorMessage(error)));
   }, []);
@@ -164,7 +173,7 @@ export default function Notas() {
     );
   };
 
-    const eliminarActividadTarea = () => {
+  const eliminarActividadTarea = () => {
     setIdsTareas(prev => prev.slice(0, -1))
     setTareas(prev => prev.slice(0, -1))
 
@@ -194,7 +203,7 @@ export default function Notas() {
     );
   };
 
-    const eliminarActividadLeccion = () => {
+  const eliminarActividadLeccion = () => {
     setIdsLecciones(prev => prev.slice(0, -1))
     setLecciones(prev => prev.slice(0, -1))
 
@@ -224,7 +233,7 @@ export default function Notas() {
     );
   };
 
-    const eliminarActividadExamen = () => {
+  const eliminarActividadExamen = () => {
     setIdsExamenes(prev => prev.slice(0, -1))
     setExamenes(prev => prev.slice(0, -1))
 

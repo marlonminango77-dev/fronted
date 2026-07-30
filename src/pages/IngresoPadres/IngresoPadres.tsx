@@ -130,7 +130,7 @@ export default function IngresoPadres() {
                 <header className="parent-entry-heading">
                     <div>
                         <p className="parent-entry-eyebrow">Gestión estudiantil</p>
-                        <h1>Registro de padres de familia</h1>
+                        <h1>Registro de Representantes Legales</h1>
                         <p>
                             Registra los datos del representante y relaciónalo con un
                             estudiante.
