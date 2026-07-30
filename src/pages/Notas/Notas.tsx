@@ -29,7 +29,7 @@ export default function Notas() {
 
   const [examenes, setExamenes] = useState<string[]>([]);
 
-  
+
 
   const [estudiantes, setEstudiantes] = useState<Estudiante[]>([]);
   const [materiasApi, setMateriasApi] = useState<Array<{ id: number; nombre: string }>>([]);
@@ -145,32 +145,38 @@ export default function Notas() {
     restaurarRespaldo();
     setMostrarExamenes(false);
   };
-  const agregarActividadTarea = () => {
 
+
+  const agregarActividadTarea = () => {
     setIdsTareas(prev => [...prev, null]);
     setTareas(prev => [
       ...prev,
       `Actividad ${prev.length + 1}`
     ]);
-
     setEstudiantes(prev =>
-
       prev.map(estudiante => ({
-
         ...estudiante,
-
         tareas: [
           ...estudiante.tareas,
           ""
         ]
-
       }))
-
     );
-
   };
-  const agregarActividadLeccion = () => {
 
+    const eliminarActividadTarea = () => {
+    setIdsTareas(prev => prev.slice(0, -1))
+    setTareas(prev => prev.slice(0, -1))
+
+    setEstudiantes(prev =>
+      prev.map(estudiante => ({
+        ...estudiante,
+        tareas: estudiante.tareas.slice(0, -1)
+      }))
+    );
+  };
+
+  const agregarActividadLeccion = () => {
     setIdsLecciones(prev => [...prev, null]);
     setLecciones(prev => [
       ...prev,
@@ -186,31 +192,48 @@ export default function Notas() {
         ]
       }))
     );
-
   };
-  const agregarActividadExamen = () => {
 
+    const eliminarActividadLeccion = () => {
+    setIdsLecciones(prev => prev.slice(0, -1))
+    setLecciones(prev => prev.slice(0, -1))
+
+    setEstudiantes(prev =>
+      prev.map(estudiante => ({
+        ...estudiante,
+        lecciones: estudiante.lecciones.slice(0, -1)
+      }))
+    );
+  };
+
+
+  const agregarActividadExamen = () => {
     setIdsExamenes(prev => [...prev, null]);
     setExamenes(prev => [
       ...prev,
       `Examen ${prev.length + 1}`
     ]);
-
     setEstudiantes(prev =>
-
       prev.map(estudiante => ({
-
         ...estudiante,
-
         examenes: [
           ...estudiante.examenes,
           ""
         ]
-
       }))
-
     );
+  };
 
+    const eliminarActividadExamen = () => {
+    setIdsExamenes(prev => prev.slice(0, -1))
+    setExamenes(prev => prev.slice(0, -1))
+
+    setEstudiantes(prev =>
+      prev.map(estudiante => ({
+        ...estudiante,
+        examenes: estudiante.examenes.slice(0, -1)
+      }))
+    );
   };
 
 
@@ -224,11 +247,11 @@ export default function Notas() {
       actuales.map((item, fila) =>
         fila === estudiante
           ? {
-              ...item,
-              tareas: item.tareas.map((nota, columna) =>
-                columna === actividad ? valor : nota,
-              ),
-            }
+            ...item,
+            tareas: item.tareas.map((nota, columna) =>
+              columna === actividad ? valor : nota,
+            ),
+          }
           : item,
       ),
     );
@@ -246,11 +269,11 @@ export default function Notas() {
       actuales.map((item, fila) =>
         fila === estudiante
           ? {
-              ...item,
-              lecciones: item.lecciones.map((nota, columna) =>
-                columna === actividad ? valor : nota,
-              ),
-            }
+            ...item,
+            lecciones: item.lecciones.map((nota, columna) =>
+              columna === actividad ? valor : nota,
+            ),
+          }
           : item,
       ),
     );
@@ -268,11 +291,11 @@ export default function Notas() {
       actuales.map((item, fila) =>
         fila === estudiante
           ? {
-              ...item,
-              examenes: item.examenes.map((nota, columna) =>
-                columna === actividad ? valor : nota,
-              ),
-            }
+            ...item,
+            examenes: item.examenes.map((nota, columna) =>
+              columna === actividad ? valor : nota,
+            ),
+          }
           : item,
       ),
     );
@@ -403,171 +426,171 @@ export default function Notas() {
     setMensajeError("");
   };
 
- return (
-  <MainLayout>
-    <div className="contenedor-notas">
+  return (
+    <MainLayout>
+      <div className="contenedor-notas">
 
-      <section className="notas-header">
-        <div>
-          <p>Gestión académica</p>
-          <h1>Ingreso de Notas</h1>
-        </div>
-
-        <BackHomeButton />
-      </section>
-
-      <Card as="section" className="filtros-section">
-        <div className="filtros">
-
-          <div className="grupo">
-
-            <label htmlFor="filtro-grado">Grado</label>
-
-            <select
-              id="filtro-grado"
-              value={grado}
-              onChange={(event) => setGrado(event.target.value)}
-            >
-              <option>Octavo EGB</option>
-              <option>Noveno EGB</option>
-              <option>Décimo EGB</option>
-            </select>
+        <section className="notas-header">
+          <div>
+            <p>Gestión académica</p>
+            <h1>Ingreso de Notas</h1>
           </div>
 
-          <div className="grupo">
-            <label htmlFor="filtro-asignatura">Asignatura</label>
+          <BackHomeButton />
+        </section>
 
-            <select
-              id="filtro-asignatura"
-              value={asignatura}
-              onChange={(event) => setAsignatura(event.target.value)}
-            >
-              <option>Matemáticas</option>
-              <option>Lengua</option>
-              <option>Ciencias</option>
-            </select>
+        <Card as="section" className="filtros-section">
+          <div className="filtros">
+
+            <div className="grupo">
+
+              <label htmlFor="filtro-grado">Grado</label>
+
+              <select
+                id="filtro-grado"
+                value={grado}
+                onChange={(event) => setGrado(event.target.value)}
+              >
+                <option>Octavo EGB</option>
+                <option>Noveno EGB</option>
+                <option>Décimo EGB</option>
+              </select>
+            </div>
+
+            <div className="grupo">
+              <label htmlFor="filtro-asignatura">Asignatura</label>
+
+              <select
+                id="filtro-asignatura"
+                value={asignatura}
+                onChange={(event) => setAsignatura(event.target.value)}
+              >
+                <option>Matemáticas</option>
+                <option>Lengua</option>
+                <option>Ciencias</option>
+              </select>
+            </div>
+
+            <div className="grupo">
+              <label htmlFor="filtro-periodo">Trimestre</label>
+
+              <select
+                id="filtro-periodo"
+                value={periodo}
+                onChange={(event) => setPeriodo(event.target.value)}
+              >
+                <option>Trimestre 1</option>
+                <option>Trimestre 2</option>
+                <option>Trimestre 3</option>
+              </select>
+            </div>
+
           </div>
+        </Card>
 
-          <div className="grupo">
-            <label htmlFor="filtro-periodo">Trimestre</label>
+        <Card as="section" className="tabla-section">
+          <div className="tabla-container">
 
-            <select
-              id="filtro-periodo"
-              value={periodo}
-              onChange={(event) => setPeriodo(event.target.value)}
-            >
-              <option>Trimestre 1</option>
-              <option>Trimestre 2</option>
-              <option>Trimestre 3</option>
-            </select>
+            <table className="tabla-notas">
+
+              <thead>
+                <tr>
+                  <th>#</th>
+
+                  <th>Estudiante</th>
+
+                  <th>
+                    <button
+                      className="btn-columna"
+                      onClick={abrirTareas}
+                    >
+                      Tareas
+                    </button>
+                  </th>
+
+                  <th>
+                    <button
+                      className="btn-columna"
+                      onClick={abrirLecciones}
+                    >
+                      Lecciones
+                    </button>
+                  </th>
+
+                  <th>
+                    <button
+                      className="btn-columna"
+                      onClick={abrirExamenes}
+                    >
+                      Exámenes
+                    </button>
+                  </th>
+
+                  <th>Nota Final</th>
+                </tr>
+              </thead>
+
+              <tbody>
+
+                {estudiantes.map((estudiante) => {
+
+                  const promedioTareas =
+                    estudiante.tareas.reduce(
+                      (suma, nota) => suma + (Number(nota) || 0),
+                      0
+                    ) / tareas.length;
+
+                  const promedioLecciones =
+                    estudiante.lecciones.reduce(
+                      (suma, nota) => suma + (Number(nota) || 0),
+                      0
+                    ) / lecciones.length;
+
+                  const promedioExamenes =
+                    estudiante.examenes.reduce(
+                      (suma, nota) => suma + (Number(nota) || 0),
+                      0
+                    ) / examenes.length;
+
+                  const notaFinal =
+
+                    promedioTareas * 0.30 +
+
+                    promedioLecciones * 0.30 +
+
+                    promedioExamenes * 0.40;
+
+                  return (
+
+                    <tr key={estudiante.id}>
+
+                      <td>{estudiante.id}</td>
+
+                      <td>{estudiante.nombre}</td>
+
+                      <td>{promedioTareas.toFixed(2)}</td>
+
+                      <td>{promedioLecciones.toFixed(2)}</td>
+
+                      <td>{promedioExamenes.toFixed(2)}</td>
+
+                      <td className="nota-final">
+
+                        {notaFinal.toFixed(2)}
+
+                      </td>
+
+                    </tr>
+
+                  );
+
+                })}
+
+              </tbody>
+
+            </table>
+
           </div>
-
-        </div>
-      </Card>
-
-      <Card as="section" className="tabla-section">
-        <div className="tabla-container">
-
-          <table className="tabla-notas">
-
-            <thead>
-              <tr>
-                <th>#</th>
-
-                <th>Estudiante</th>
-
-                <th>
-                  <button
-                    className="btn-columna"
-                    onClick={abrirTareas}
-                  >
-                    Tareas
-                  </button>
-                </th>
-
-                <th>
-                  <button
-                    className="btn-columna"
-                    onClick={abrirLecciones}
-                  >
-                    Lecciones
-                  </button>
-                </th>
-
-                <th>
-                  <button
-                    className="btn-columna"
-                    onClick={abrirExamenes}
-                  >
-                    Exámenes
-                  </button>
-                </th>
-
-                <th>Nota Final</th>
-              </tr>
-            </thead>
-
-            <tbody>
-
-              {estudiantes.map((estudiante) => {
-
-                const promedioTareas =
-                  estudiante.tareas.reduce(
-                    (suma, nota) => suma + (Number(nota) || 0),
-                    0
-                  ) / tareas.length;
-
-                const promedioLecciones =
-                  estudiante.lecciones.reduce(
-                    (suma, nota) => suma + (Number(nota) || 0),
-                    0
-                  ) / lecciones.length;
-
-                const promedioExamenes =
-                  estudiante.examenes.reduce(
-                    (suma, nota) => suma + (Number(nota) || 0),
-                    0
-                  ) / examenes.length;
-
-                const notaFinal =
-
-                  promedioTareas * 0.30 +
-
-                  promedioLecciones * 0.30 +
-
-                  promedioExamenes * 0.40;
-
-                return (
-
-                  <tr key={estudiante.id}>
-
-                    <td>{estudiante.id}</td>
-
-                    <td>{estudiante.nombre}</td>
-
-                    <td>{promedioTareas.toFixed(2)}</td>
-
-                    <td>{promedioLecciones.toFixed(2)}</td>
-
-                    <td>{promedioExamenes.toFixed(2)}</td>
-
-                    <td className="nota-final">
-
-                      {notaFinal.toFixed(2)}
-
-                    </td>
-
-                  </tr>
-
-                );
-
-              })}
-
-            </tbody>
-
-          </table>
-
-        </div>
         </Card>
 
         <div className="acciones">
@@ -606,31 +629,26 @@ export default function Notas() {
                 <h2>Registro de Tareas</h2>
 
                 <div className="acciones-header">
-
                   <button
-
                     className="btn-agregar-columna"
-
                     onClick={agregarActividadTarea}
-
                   >
-
                     ➕ Añadir actividad
-
                   </button>
 
                   <button
-
-                    className="btn-cerrar"
-
-                    onClick={cerrarTareas}
-
+                    className="btn-eliminar-columna"
+                    onClick={eliminarActividadTarea}
                   >
-
-                    ✕
-
+                    ➖ Eliminar actividad
                   </button>
 
+                  <button
+                    className="btn-cerrar"
+                    onClick={cerrarTareas}
+                  >
+                    ✕
+                  </button>
                 </div>
               </div>
 
@@ -812,31 +830,27 @@ export default function Notas() {
               <div className="modal-header">
 
                 <h2>Registro de Lecciones</h2>
-
                 <div className="acciones-header">
 
                   <button
-
                     className="btn-agregar-columna"
-
                     onClick={agregarActividadLeccion}
-
                   >
-
                     ➕ Añadir actividad
-
                   </button>
 
                   <button
-
-                    className="btn-cerrar"
-
-                    onClick={cerrarLecciones}
-
+                    className="btn-eliminar-columna"
+                    onClick={eliminarActividadLeccion}
                   >
+                    ➖ Eliminar actividad
+                  </button>
 
+                  <button
+                    className="btn-cerrar"
+                    onClick={cerrarLecciones}
+                  >
                     ✕
-
                   </button>
 
                 </div>
@@ -1008,74 +1022,81 @@ export default function Notas() {
 
         {/* MODAL EXÁMENES */}
 
-{mostrarExamenes && (
-  <div className="modal-overlay" onMouseDown={cerrarExamenes}>
-    <div
-      className="modal-grande"
-      role="dialog"
-      aria-modal="true"
-      aria-label="Registro de evaluaciones"
-      onMouseDown={(event) => event.stopPropagation()}
-    >
+        {mostrarExamenes && (
+          <div className="modal-overlay" onMouseDown={cerrarExamenes}>
+            <div
+              className="modal-grande"
+              role="dialog"
+              aria-modal="true"
+              aria-label="Registro de evaluaciones"
+              onMouseDown={(event) => event.stopPropagation()}
+            >
 
-      <div className="modal-header">
-        <h2>Registro de Exámenes</h2>
+              <div className="modal-header">
+                <h2>Registro de Exámenes</h2>
 
-        <div className="acciones-header">
-          <button
-            className="btn-agregar-columna"
-            onClick={agregarActividadExamen}
-          >
-            ➕ Añadir actividad
-          </button>
+                <div className="acciones-header">
+                  <button
+                    className="btn-agregar-columna"
+                    onClick={agregarActividadExamen}
+                  >
+                    ➕ Añadir actividad
+                  </button>
 
-          <button
-            className="btn-cerrar"
-            onClick={cerrarExamenes}
-          >
-            ✕
-          </button>
-        </div>
-      </div>
+                  <button
+                    className="btn-eliminar-columna"
+                    onClick={eliminarActividadExamen}
+                  >
+                    ➖ Eliminar actividad
+                  </button>
 
-      <div className="modal-filtros">
-        <div>
-          <label>Grado</label>
-          <input
-            type="text"
-            value={grado}
-            readOnly
-          />
-        </div>
+                  <button
+                    className="btn-cerrar"
+                    onClick={cerrarExamenes}
+                  >
+                    ✕
+                  </button>
+                </div>
+              </div>
 
-        <div>
-          <label>Asignatura</label>
-          <input
-            type="text"
-            value={asignatura}
-            readOnly
-          />
-        </div>
+              <div className="modal-filtros">
+                <div>
+                  <label>Grado</label>
+                  <input
+                    type="text"
+                    value={grado}
+                    readOnly
+                  />
+                </div>
 
-        <div>
-          <label>Periodo</label>
-          <input
-            type="text"
-            value={periodo}
-            readOnly
-          />
-        </div>
-      </div>
+                <div>
+                  <label>Asignatura</label>
+                  <input
+                    type="text"
+                    value={asignatura}
+                    readOnly
+                  />
+                </div>
 
-      <table className="tabla-modal">
-        <thead>
-          <tr>
-            <th>#</th>
-            <th>Estudiante</th>
+                <div>
+                  <label>Periodo</label>
+                  <input
+                    type="text"
+                    value={periodo}
+                    readOnly
+                  />
+                </div>
+              </div>
 
-            {examenes.map((examen, index) => (
-              <th key={index}>
-                <input
+              <table className="tabla-modal">
+                <thead>
+                  <tr>
+                    <th>#</th>
+                    <th>Estudiante</th>
+
+                    {examenes.map((examen, index) => (
+                      <th key={index}>
+                        <input
                           className="input-nombre-actividad"
                           type="text"
                           value={examen}
@@ -1084,88 +1105,88 @@ export default function Notas() {
                             cambiarNombreActividad("examenes", index, event.target.value)
                           }
                         />
-              </th>
-            ))}
+                      </th>
+                    ))}
 
-            <th>Observación</th>
-          </tr>
-        </thead>
+                    <th>Observación</th>
+                  </tr>
+                </thead>
 
-        <tbody>
-          {estudiantes.map((estudiante, fila) => (
-            <tr key={estudiante.id}>
-              <td>{estudiante.id}</td>
-              <td>{estudiante.nombre}</td>
+                <tbody>
+                  {estudiantes.map((estudiante, fila) => (
+                    <tr key={estudiante.id}>
+                      <td>{estudiante.id}</td>
+                      <td>{estudiante.nombre}</td>
 
-              {examenes.map((_, columna) => (
-                <td key={columna}>
-                  <input
-                    type="number"
-                    min="0"
-                    max="10"
-                    step="0.01"
-                    className="input-nota"
-                    value={estudiante.examenes[columna]}
-                    onChange={(e) =>
-                      cambiarExamen(
-                        fila,
-                        columna,
-                        e.target.value
-                      )
-                    }
-                  />
-                </td>
-              ))}
+                      {examenes.map((_, columna) => (
+                        <td key={columna}>
+                          <input
+                            type="number"
+                            min="0"
+                            max="10"
+                            step="0.01"
+                            className="input-nota"
+                            value={estudiante.examenes[columna]}
+                            onChange={(e) =>
+                              cambiarExamen(
+                                fila,
+                                columna,
+                                e.target.value
+                              )
+                            }
+                          />
+                        </td>
+                      ))}
 
-              <td>
-                <textarea
-                  className="input-observacion"
-                  placeholder="Observaciones..."
-                  value={estudiante.observacion}
-                  onChange={(e) =>
-                    cambiarObservacion(
-                      fila,
-                      e.target.value
-                    )
-                  }
-                />
-              </td>
-            </tr>
-          ))}
-        </tbody>
-      </table>
+                      <td>
+                        <textarea
+                          className="input-observacion"
+                          placeholder="Observaciones..."
+                          value={estudiante.observacion}
+                          onChange={(e) =>
+                            cambiarObservacion(
+                              fila,
+                              e.target.value
+                            )
+                          }
+                        />
+                      </td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
 
-                {mensajeError && (
+              {mensajeError && (
 
-                  <div className="mensaje-error">
+                <div className="mensaje-error">
 
-                    {mensajeError}
-
-                  </div>
-
-                )}
-
-                <div className="modal-footer">
-
-                  <button
-                    className="btn-cancelar"
-                    onClick={cerrarExamenes}
-                  >
-                    Cancelar
-                  </button>
-
-                  <button
-                    className="btn-guardar"
-                    onClick={guardarExamenes}
-                  >
-                    Guardar Exámenes
-                  </button>
+                  {mensajeError}
 
                 </div>
+
+              )}
+
+              <div className="modal-footer">
+
+                <button
+                  className="btn-cancelar"
+                  onClick={cerrarExamenes}
+                >
+                  Cancelar
+                </button>
+
+                <button
+                  className="btn-guardar"
+                  onClick={guardarExamenes}
+                >
+                  Guardar Exámenes
+                </button>
 
               </div>
 
             </div>
+
+          </div>
 
         )}
 
