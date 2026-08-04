@@ -173,16 +173,16 @@ export default function Notas() {
     );
   };
 
-  const eliminarActividadTarea = () => {
-    setIdsTareas(prev => prev.slice(0, -1))
-    setTareas(prev => prev.slice(0, -1))
-
+  const eliminarActividadTarea = (indexAeliminar: number) => {
+    setIdsTareas(prev => prev.filter((_, index) => index !== indexAeliminar));
+    setTareas(prev => prev.filter((_, index) => index !== indexAeliminar));
     setEstudiantes(prev =>
-      prev.map(estudiante => ({
-        ...estudiante,
-        tareas: estudiante.tareas.slice(0, -1)
-      }))
-    );
+      prev.map(estudiantes => ({
+        ...estudiantes,
+        tareas: estudiantes.tareas.filter((_, index) => index !== indexAeliminar)
+      })
+      )
+    )
   };
 
   const agregarActividadLeccion = () => {
@@ -203,16 +203,16 @@ export default function Notas() {
     );
   };
 
-  const eliminarActividadLeccion = () => {
-    setIdsLecciones(prev => prev.slice(0, -1))
-    setLecciones(prev => prev.slice(0, -1))
-
+  const eliminarActividadLeccion = (indexAeliminar: number) => {
+    setIdsLecciones(prev => prev.filter((_, index) => index !== indexAeliminar));
+    setLecciones(prev => prev.filter((_, index) => index !== indexAeliminar));
     setEstudiantes(prev =>
-      prev.map(estudiante => ({
-        ...estudiante,
-        lecciones: estudiante.lecciones.slice(0, -1)
-      }))
-    );
+      prev.map(estudiantes => ({
+        ...estudiantes,
+        lecciones: estudiantes.lecciones.filter((_, index) => index !== indexAeliminar)
+      })
+      )
+    )
   };
 
 
@@ -233,16 +233,16 @@ export default function Notas() {
     );
   };
 
-  const eliminarActividadExamen = () => {
-    setIdsExamenes(prev => prev.slice(0, -1))
-    setExamenes(prev => prev.slice(0, -1))
-
+  const eliminarActividadExamen = (indexAeliminar: number) => {
+    setIdsExamenes(prev => prev.filter((_, index) => index !== indexAeliminar));
+    setExamenes(prev => prev.filter((_, index) => index !== indexAeliminar));
     setEstudiantes(prev =>
-      prev.map(estudiante => ({
-        ...estudiante,
-        examenes: estudiante.examenes.slice(0, -1)
-      }))
-    );
+      prev.map(estudiantes => ({
+        ...estudiantes,
+        examenes: estudiantes.examenes.filter((_, index) => index !== indexAeliminar)
+      })
+      )
+    )
   };
 
 
@@ -355,7 +355,7 @@ export default function Notas() {
 
     setMensajeError("");
     return true;
-  };
+  }
 
   const guardarTareas = async () => {
 
@@ -572,21 +572,13 @@ export default function Notas() {
                   return (
 
                     <tr key={estudiante.id}>
-
                       <td>{estudiante.id}</td>
-
                       <td>{estudiante.nombre}</td>
-
                       <td>{promedioTareas.toFixed(2)}</td>
-
                       <td>{promedioLecciones.toFixed(2)}</td>
-
                       <td>{promedioExamenes.toFixed(2)}</td>
-
                       <td className="nota-final">
-
                         {notaFinal.toFixed(2)}
-
                       </td>
 
                     </tr>
@@ -642,14 +634,7 @@ export default function Notas() {
                     className="btn-agregar-columna"
                     onClick={agregarActividadTarea}
                   >
-                    ➕ Añadir actividad
-                  </button>
-
-                  <button
-                    className="btn-eliminar-columna"
-                    onClick={eliminarActividadTarea}
-                  >
-                    ➖ Eliminar actividad
+                    + Añadir actividad
                   </button>
 
                   <button
@@ -706,9 +691,7 @@ export default function Notas() {
                 <thead>
 
                   <tr>
-
                     <th>#</th>
-
                     <th>Estudiante</th>
 
                     {tareas.map((actividad, index) => (
@@ -723,12 +706,19 @@ export default function Notas() {
                             cambiarNombreActividad("tareas", index, event.target.value)
                           }
                         />
+
+                        <button
+                          className="btn-eliminar-columna"
+                          onClick={() => eliminarActividadTarea(index)}
+                        >
+                          <img src="/assets/menos.png" alt="Icono" width={25} height={25} />
+                        </button>
+
                       </th>
 
                     ))}
 
                     <th>Observación</th>
-
                   </tr>
 
                 </thead>
@@ -845,15 +835,9 @@ export default function Notas() {
                     className="btn-agregar-columna"
                     onClick={agregarActividadLeccion}
                   >
-                    ➕ Añadir actividad
+                    + Añadir actividad
                   </button>
 
-                  <button
-                    className="btn-eliminar-columna"
-                    onClick={eliminarActividadLeccion}
-                  >
-                    ➖ Eliminar actividad
-                  </button>
 
                   <button
                     className="btn-cerrar"
@@ -927,6 +911,13 @@ export default function Notas() {
                             cambiarNombreActividad("lecciones", index, event.target.value)
                           }
                         />
+
+                        <button
+                          className="btn-eliminar-columna"
+                          onClick={() => eliminarActividadLeccion(index)}
+                        >
+                          <img src="/assets/menos.png" alt="Icono" width={25} height={25} />
+                        </button>
                       </th>
 
                     ))}
@@ -1049,14 +1040,7 @@ export default function Notas() {
                     className="btn-agregar-columna"
                     onClick={agregarActividadExamen}
                   >
-                    ➕ Añadir actividad
-                  </button>
-
-                  <button
-                    className="btn-eliminar-columna"
-                    onClick={eliminarActividadExamen}
-                  >
-                    ➖ Eliminar actividad
+                    + Añadir actividad
                   </button>
 
                   <button
@@ -1114,6 +1098,12 @@ export default function Notas() {
                             cambiarNombreActividad("examenes", index, event.target.value)
                           }
                         />
+                        <button
+                          className="btn-eliminar-columna"
+                          onClick={() => eliminarActividadExamen(index)}
+                        >
+                          <img src="/assets/menos.png" alt="Icono" width={25} height={25} />
+                        </button>
                       </th>
                     ))}
 

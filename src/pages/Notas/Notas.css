@@ -282,14 +282,10 @@ body{
 }
 
 .btn-eliminar-columna{
-    background:#b3261e;
-    color:#fff;
     border:none;
-    border-radius:9px;
-    padding:10px 15px;
+    border-radius: 100%;
+    margin:10px 15px;
     cursor:pointer;
-    font-size:14px;
-    font-weight:600;
     transition:.3s;
 }
 
