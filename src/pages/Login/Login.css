@@ -57,16 +57,16 @@
 
 .login-information::after {
   position: absolute;
-  top: 0;
-  right: -50px;
-  width: 130px;
-  height: 100%;
+  right: 0;
+  bottom: 0;
+  left: 0;
+  height: 9px;
   background: linear-gradient(
-    145deg,
-    transparent 0 38%,
-    rgba(167, 173, 179, 0.8) 38% 50%,
-    rgba(200, 16, 46, 0.88) 50% 64%,
-    transparent 64% 100%
+    90deg,
+    #174ea6 0 32%,
+    #9aa3ad 32% 48%,
+    #c8102e 48% 64%,
+    #174ea6 64% 100%
   );
   content: "";
   pointer-events: none;
@@ -191,20 +191,6 @@
     padding: 40px 30px;
   }
 
-  .login-information::after {
-    top: auto;
-    right: 0;
-    bottom: -45px;
-    width: 100%;
-    height: 90px;
-    background: linear-gradient(
-      105deg,
-      transparent 0 56%,
-      rgba(167, 173, 179, 0.78) 56% 65%,
-      rgba(200, 16, 46, 0.88) 65% 76%,
-      transparent 76% 100%
-    );
-  }
 }
 
 @media (max-width: 520px) {
