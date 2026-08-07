@@ -1,5 +1,6 @@
-import { Link, Navigate } from "react-router-dom";
+﻿import { Link, Navigate } from "react-router-dom";
 import MainLayout from "../../layouts/MainLayout";
+import { useAuth } from "../../auth/AuthContext";
 import Card from "../../components/common/Card";
 import "./Home.css";
 
@@ -9,14 +10,23 @@ interface ModuleCard {
   icon: string;
   path: string;
   colorClass: string;
+  permission: string | string[];
 }
-
 const modules: ModuleCard[] = [
+  {
+    title: "Gestión de usuarios",
+    description: "Crear cuentas y asignar roles a los usuarios.",
+    icon: "bi-person-gear",
+    path: "/usuarios",
+    permission: "Gestion de roles",
+    colorClass: "roles-card",
+  },
   {
     title: "Gestión de roles",
     description: "Administrar los permisos y roles de los usuarios.",
     icon: "bi-people-fill",
     path: "/roles",
+    permission: "Gestion de roles",
     colorClass: "roles-card",
   },
   {
@@ -24,6 +34,15 @@ const modules: ModuleCard[] = [
     description: "Registrar y actualizar las calificaciones académicas.",
     icon: "bi-journal-check",
     path: "/notas",
+    permission: "Notas",
+    colorClass: "grades-card",
+  },
+  {
+    title: "Materias",
+    description: "Registrar materias, grados y docentes responsables.",
+    icon: "bi-bookshelf",
+    path: "/materias",
+    permission: "Materias",
     colorClass: "grades-card",
   },
   {
@@ -31,6 +50,7 @@ const modules: ModuleCard[] = [
     description: "Registrar la asistencia diaria de los estudiantes.",
     icon: "bi-calendar-check-fill",
     path: "/asistencia",
+    permission: "Asistencia",
     colorClass: "attendance-card",
   },
   {
@@ -38,27 +58,39 @@ const modules: ModuleCard[] = [
     description: "Consultar las calificaciones de los estudiantes.",
     icon: "bi-person-hearts",
     path: "/padres",
-    colorClass: "parents-card",
+    permission: "Consulta familiar",
+    colorClass: "parents-module-card",
   },
   {
     title: "Ingreso de representantes",
-    description: "Registrar y administrar los representantes de estudiantes.",
+    description: "Registrar y administrar a los representantes de los estudiantes.",
     icon: "bi-person-vcard-fill",
     path: "/ingreso-padres",
-    colorClass: "parents-card",
+    permission: "Representantes",
+    colorClass: "parents-module-card",
   },
-    {
+  {
     title: "Mensajes",
-    description: "Enviar mensajes a los cursos",
+    description: "Enviar o consultar mensajes de los cursos.",
     icon: "bi-chat-left-text-fill",
     path: "/mensajes",
+    permission: ["Mensajes", "Consulta familiar"],
     colorClass: "messages-card",
     },
+  {
+    title: "Reportes",
+    description: "Consultar indicadores académicos y exportar resultados.",
+    icon: "bi-bar-chart-line-fill",
+    path: "/reportes",
+    permission: "Reportes",
+    colorClass: "reports-card",
+  },
   {
     title: "Ingreso de estudiantes",
     description: "Registrar y consultar la información de los estudiantes.",
     icon: "bi-person-plus-fill",
     path: "/estudiantes",
+    permission: "Estudiantes",
     colorClass: "students-card",
   },
   {
@@ -66,20 +98,22 @@ const modules: ModuleCard[] = [
   description: "Registrar, editar y administrar la información de los docentes.",
   icon: "bi-person-badge-fill",
   path: "/docentes",
+  permission: "Docentes",
   colorClass: "teachers-card",
 },
 ];
 
 function Home() {
-  const autenticado =
-    localStorage.getItem("usuarioAutenticado") === "true";
-
-  if (!autenticado) {
-    return <Navigate to="/login" replace />;
-  }
-
-  const nombreUsuario =
-    localStorage.getItem("nombreUsuario") || "Usuario";
+  void Navigate;
+  const { sesion } = useAuth();
+  const nombreUsuario = sesion?.usuario ?? "Usuario";
+  const permisos = sesion?.permisos ?? [];
+  const modulosVisibles = modules.filter((modulo) => {
+    const requeridos = Array.isArray(modulo.permission)
+      ? modulo.permission
+      : [modulo.permission];
+    return requeridos.some((permiso) => permisos.includes(permiso));
+  });
 
   return (
     <MainLayout>
@@ -91,8 +125,8 @@ function Home() {
             <h1>Bienvenido, {nombreUsuario}</h1>
 
             <p>
-              Administra la información académica de la Escuela de
-              Educación Básica República de Venezuela.
+              Administra la información académica de la Escuela de Educación
+              Básica República de Venezuela.
             </p>
           </div>
 
@@ -107,28 +141,30 @@ function Home() {
               <i className="bi bi-bullseye"></i>
             </div>
 
-            <div>
-              <h2>Misión</h2>
+            <div className="institution-copy">
+              <span className="institution-label">Propósito institucional</span>
+              <h2>Objetivo Misional</h2>
 
               <p>
-                Formar estudiantes con valores, pensamiento crítico,
-                responsabilidad y compromiso social mediante una educación
-                integral y de calidad.
+                La Escuela de Educación Básica Fiscal República de Venezuela,
+                que educa a niñas y niños desde el nivel inicial hasta la básica
+                media, tiene como propósito fundamental impulsar una educación
+                integral que garantice el desarrollo pleno, armónico y continuo
+                de todos los estudiantes.
               </p>
-            </div>
-          </Card>
-
-          <Card as="article" className="institution-card">
-            <div className="institution-icon">
-              <i className="bi bi-eye-fill"></i>
-            </div>
-
-            <div>
-              <h2>Visión</h2>
 
               <p>
-                Ser una institución reconocida por su excelencia académica,
-                innovación educativa y formación de ciudadanos íntegros.
+                La institución se compromete a construir y sostener un entorno
+                escolar seguro, inclusivo y pedagógicamente enriquecido,
+                promoviendo espacios adecuados para el aprendizaje y la
+                convivencia.
+              </p>
+
+              <p>
+                Asimismo, impulsa la incorporación progresiva de herramientas
+                tecnológicas en el aula y el fortalecimiento de su
+                infraestructura física para brindar una educación de calidad,
+                acorde con las necesidades y desafíos de la sociedad actual.
               </p>
             </div>
           </Card>
@@ -143,7 +179,7 @@ function Home() {
           </div>
 
           <div className="modules-grid">
-            {modules.map((module) => (
+            {modulosVisibles.map((module) => (
               <Link
                 to={module.path}
                 className={`module-card ${module.colorClass}`}

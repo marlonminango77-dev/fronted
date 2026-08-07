@@ -17,8 +17,8 @@
   overflow: hidden;
   color: #ffffff;
   border-radius: 20px;
-  background: linear-gradient(135deg, #087443, #11a460);
-  box-shadow: 0 12px 30px rgba(8, 116, 67, 0.22);
+  background: linear-gradient(135deg, #174ea6, #1e5bb8);
+  box-shadow: 0 12px 30px rgba(23, 78, 166, 0.22);
 }
 
 .welcome-label {
@@ -51,7 +51,7 @@
 
 .section-title p {
   margin-bottom: 4px;
-  color: #087443;
+  color: #174ea6;
   font-weight: 700;
   text-transform: uppercase;
 }
@@ -74,7 +74,7 @@
   flex-direction: column;
   padding: 28px;
   color: #263238;
-  border-top: 5px solid #087443;
+  border-top: 5px solid #174ea6;
   border-radius: 16px;
   background-color: #ffffff;
   box-shadow: 0 8px 25px rgba(38, 50, 56, 0.08);
@@ -95,9 +95,9 @@
   display: grid;
   place-items: center;
   margin-bottom: 22px;
-  color: #087443;
+  color: #174ea6;
   border-radius: 15px;
-  background-color: #e5f5ed;
+  background-color: #e9f0fc;
   font-size: 2rem;
 }
 
@@ -123,8 +123,17 @@
   display: flex;
   align-items: center;
   justify-content: space-between;
-  color: #087443;
+  color: #174ea6;
   font-weight: 700;
+}
+
+.roles-card {
+  border-top-color: #174ea6;
+}
+
+.roles-card .module-icon {
+  color: #174ea6;
+  background-color: #e9f0fc;
 }
 
 .grades-card {
@@ -137,78 +146,114 @@
 }
 
 .attendance-card {
-  border-top-color: #1565c0;
+  border-top-color: var(--color-primary);
 }
 
 .attendance-card .module-icon {
-  color: #1565c0;
-  background-color: #e3f2fd;
+  color: var(--color-primary);
+  background-color: var(--color-primary-soft);
 }
 
-.parents-card {
-  border-top-color: #7b1fa2;
+.parents-module-card {
+  border-top-color: var(--color-primary);
 }
 
-.parents-card .module-icon {
-  color: #7b1fa2;
-  background-color: #f3e5f5;
+.parents-module-card .module-icon {
+  color: var(--color-primary);
+  background-color: var(--color-primary-soft);
 }
 
 .students-card {
-  border-top-color: #00838f;
+  border-top-color: var(--color-primary);
 }
 
 .students-card .module-icon {
-  color: #00838f;
-  background-color: #e0f4f5;
+  color: var(--color-primary);
+  background-color: var(--color-primary-soft);
 }
 
 .institution-section {
   display: grid;
-  grid-template-columns: repeat(2, 1fr);
-  gap: 24px;
+  grid-template-columns: 1fr;
   margin-top: 35px;
 }
 
 .institution-card {
   display: flex;
-  gap: 20px;
-  padding: 30px;
+  align-items: flex-start;
+  gap: 22px;
+  padding: 40px 44px;
   border-radius: 16px;
   background-color: #ffffff;
   box-shadow: 0 8px 25px rgba(38, 50, 56, 0.08);
 }
 
 .institution-icon {
-  min-width: 60px;
-  height: 60px;
+  min-width: 54px;
+  height: 54px;
   display: grid;
   place-items: center;
-  color: #087443;
+  color: #174ea6;
   border-radius: 15px;
-  background-color: #e5f5ed;
+  background-color: #e9f0fc;
   font-size: 1.8rem;
 }
 
 .institution-card h2 {
-  color: #087443;
-  font-size: 1.4rem;
+  margin: 3px 0 24px;
+  color: var(--color-primary);
+  font-size: 1.65rem;
   font-weight: 800;
 }
 
 .institution-card p {
-  margin-bottom: 0;
+  margin-bottom: 20px;
   color: #5f6b70;
-  line-height: 1.7;
+  line-height: 1.8;
+  text-align: justify;
+}
+
+.institution-card p:last-child {
+  margin-bottom: 0;
+}
+
+.institution-copy {
+  min-width: 0;
+}
+
+.institution-label {
+  color: #454b50;
+  font-size: 0.82rem;
+  font-weight: 700;
+  letter-spacing: 0.5px;
+  text-transform: uppercase;
 }
 
 .messages-card {
-  border-top-color: #00897b;
+  border-top-color: var(--color-primary);
 }
 
 .messages-card .module-icon {
-  color: #00897b;
-  background-color: #e0f2f1;
+  color: var(--color-primary);
+  background-color: var(--color-primary-soft);
+}
+
+.reports-card {
+  border-top-color: var(--color-primary);
+}
+
+.reports-card .module-icon {
+  color: var(--color-primary);
+  background-color: var(--color-primary-soft);
+}
+
+.teachers-card {
+  border-top-color: var(--color-primary);
+}
+
+.teachers-card .module-icon {
+  color: var(--color-primary);
+  background-color: var(--color-primary-soft);
 }
 
 @media (max-width: 1000px) {
@@ -234,8 +279,19 @@
   .institution-section {
     grid-template-columns: 1fr;
   }
-  .teachers-card{
-    background: linear-gradient(135deg, #2563eb, #1d4ed8);
-    color: white;
-}
+
+  .institution-card {
+    gap: 15px;
+    padding: 28px 22px;
+  }
+
+  .institution-icon {
+    min-width: 46px;
+    height: 46px;
+    font-size: 1.45rem;
+  }
+
+  .institution-card p {
+    text-align: left;
+  }
 }

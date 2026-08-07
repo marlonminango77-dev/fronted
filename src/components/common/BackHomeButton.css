@@ -6,9 +6,9 @@
   justify-content: center;
   gap: 9px;
   padding: 0 18px;
-  color: #087443;
+  color: var(--color-primary);
   font-weight: 700;
-  border: 1px solid #087443;
+  border: 1px solid var(--color-primary);
   border-radius: 9px;
   background-color: #ffffff;
   transition:
@@ -19,15 +19,15 @@
 
 .back-home-link:hover {
   color: #ffffff;
-  background-color: #087443;
+  background-color: var(--color-primary);
   transform: translateY(-1px);
 }
 
 .back-home-link:focus-visible {
   color: #ffffff;
-  outline: 3px solid rgba(8, 116, 67, 0.22);
+  outline: 3px solid rgba(23, 78, 166, 0.22);
   outline-offset: 3px;
-  background-color: #087443;
+  background-color: var(--color-primary);
 }
 
 @media (max-width: 700px) {

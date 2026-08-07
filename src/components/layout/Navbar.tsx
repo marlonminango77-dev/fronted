@@ -1,16 +1,13 @@
 import { useNavigate } from "react-router-dom";
 import "./Navbar.css";
+import { useAuth } from "../../auth/AuthContext";
 
 function Navbar() {
   const navigate = useNavigate();
+  const { sesion, cerrarSesion: cerrarSesionAuth } = useAuth();
 
-  const nombreUsuario =
-    localStorage.getItem("nombreUsuario") || "Usuario";
-
-  function cerrarSesion() {
-    localStorage.removeItem("usuarioAutenticado");
-    localStorage.removeItem("nombreUsuario");
-
+  async function cerrarSesion() {
+    await cerrarSesionAuth();
     navigate("/login");
   }
 
@@ -30,10 +27,12 @@ function Navbar() {
           <i className="bi bi-person-circle"></i>
 
           <div>
-            <strong>{nombreUsuario}</strong>
-            <span>Usuario del sistema</span>
+            <strong>{sesion?.usuario ?? "Usuario"}</strong>
+            <span>{sesion?.rol ?? "Usuario del sistema"}</span>
           </div>
         </div>
+
+        <span className="navbar-stripes" aria-hidden="true" />
 
         <button
           type="button"

@@ -1,0 +1,91 @@
+/* Reglas compartidas para mantener la misma jerarquía visual entre módulos. */
+.students-page,
+.users-page,
+.subjects-page,
+.roles-page,
+.parent-entry-page,
+.parents-content,
+.mensajes-content,
+.reports-page,
+.contenedor-notas,
+.contenido-asistencia {
+  width: 100%;
+  max-width: 1250px;
+  margin-right: auto;
+  margin-left: auto;
+  padding: 35px 25px 50px;
+}
+
+.students-header,
+.users-header,
+.subjects-header,
+.roles-header,
+.parent-entry-heading,
+.parents-header,
+.mensajes-header,
+.reports-header,
+.notas-header,
+.encabezado-pagina {
+  margin-bottom: 24px;
+}
+
+.students-form-card,
+.students-list-card,
+.users-card,
+.subjects-form-card,
+.subjects-list-card,
+.roles-list-card,
+.parent-entry-card,
+.parents-card,
+.mensaje-formulario,
+.lista-mensajes,
+.reports-table-card,
+.filtros-section,
+.tabla-section,
+.tarjeta {
+  border: 1px solid var(--color-primary-border);
+  border-radius: 16px;
+  background: #fff;
+  box-shadow: 0 8px 24px rgba(38, 50, 56, 0.07);
+}
+
+.students-form-card,
+.students-list-card {
+  padding: 28px;
+}
+
+.students-page {
+  gap: 24px;
+}
+
+.students-label {
+  padding: 0;
+  margin: 0 0 5px;
+  color: var(--color-primary);
+  border-radius: 0;
+  background: transparent;
+  font-size: 0.8rem;
+  font-weight: 800;
+  letter-spacing: 0.7px;
+  text-transform: uppercase;
+}
+
+@media (max-width: 700px) {
+  .students-page,
+  .users-page,
+  .subjects-page,
+  .roles-page,
+  .parent-entry-page,
+  .parents-content,
+  .mensajes-content,
+  .reports-page,
+  .contenedor-notas,
+  .contenido-asistencia {
+    padding: 25px 15px 40px;
+  }
+
+  .students-form-card,
+  .students-list-card {
+    padding: 22px 16px;
+  }
+}

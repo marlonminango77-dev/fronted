@@ -1,15 +1,19 @@
 import { useState, type FormEvent } from "react";
-import { useNavigate } from "react-router-dom";
+import { Link, useNavigate, useSearchParams } from "react-router-dom";
 import "./Login.css";
+import { api, getApiErrorMessage } from "../../api/client";
+import { useAuth, type Sesion } from "../../auth/AuthContext";
 
 function Login() {
   const navigate = useNavigate();
+  const [params] = useSearchParams();
+  const { establecerSesion } = useAuth();
 
   const [usuario, setUsuario] = useState("");
   const [contrasena, setContrasena] = useState("");
-  const [error, setError] = useState("");
+  const [error, setError] = useState(params.get("sesion") === "expirada" ? "Tu sesión expiró. Inicia sesión nuevamente." : "");
 
-  function iniciarSesion(event: FormEvent<HTMLFormElement>) {
+  async function iniciarSesion(event: FormEvent<HTMLFormElement>) {
     event.preventDefault();
 
     if (!usuario.trim() || !contrasena.trim()) {
@@ -17,15 +21,17 @@ function Login() {
       return;
     }
 
-    /*
-     * Login temporal:
-     * mientras no exista backend, aceptamos cualquier usuario
-     * y contraseña que no estén vacíos.
-     */
-    localStorage.setItem("usuarioAutenticado", "true");
-    localStorage.setItem("nombreUsuario", usuario);
-
-    navigate("/home");
+    try {
+      setError("");
+      const sesion = await api.post<Sesion>(
+        "/auth/login",
+        { usuario: usuario.trim(), password: contrasena },
+      );
+      establecerSesion(sesion);
+      navigate("/home");
+    } catch (error) {
+      setError(getApiErrorMessage(error));
+    }
   }
 
   return (
@@ -33,7 +39,7 @@ function Login() {
       <section className="login-container">
         <div className="login-information">
           <div className="institution-logo">
-            <img src="../assets/logoescuela.png" />
+            <img src="/Logo.png" alt="Escudo de la institución" />
           </div>
 
           <p className="login-subtitle">Sistema Académico</p>
@@ -106,6 +112,7 @@ function Login() {
               <i className="bi bi-box-arrow-in-right me-2"></i>
               Ingresar
             </button>
+            <Link to="/recuperar-password" className="d-block text-center mt-3">¿Olvidaste tu contraseña?</Link>
           </form>
         </div>
       </section>

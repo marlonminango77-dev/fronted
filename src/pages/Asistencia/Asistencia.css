@@ -1,44 +1,16 @@
-* {
+.pagina-asistencia,
+.pagina-asistencia * {
   box-sizing: border-box;
 }
 
-html,
-body,
-#root {
-  width: 100%;
-  min-height: 100%;
-  margin: 0;
-}
-
-body {
-  min-width: 320px;
-  margin: 0;
-  color: #17221c;
-  background-color: #f2f7f4;
-  font-family:
-    Inter,
-    system-ui,
-    -apple-system,
-    BlinkMacSystemFont,
-    "Segoe UI",
-    sans-serif;
-}
-
-button,
-input,
-select {
+.pagina-asistencia button,
+.pagina-asistencia input,
+.pagina-asistencia select {
   font: inherit;
 }
 
-button {
+.pagina-asistencia button {
   cursor: pointer;
-}
-
-#root {
-  max-width: none;
-  min-height: 100vh;
-  padding: 0;
-  text-align: left;
 }
 
 /* Página general */
@@ -47,16 +19,17 @@ button {
   display: flex;
   flex-direction: column;
   min-height: 100%;
-  background-color: #f2f7f4;
+  background-color: var(--color-page);
 }
 
 /* Contenido */
 
 .contenido-asistencia {
   flex: 1;
-  width: min(100%, 980px);
+  width: 100%;
+  max-width: 1250px;
   margin: 0 auto;
-  padding: 30px 20px 45px;
+  padding: 35px 25px 50px;
 }
 
 .encabezado-pagina {
@@ -70,7 +43,7 @@ button {
 .etiqueta-pagina {
   display: block;
   margin-bottom: 7px;
-  color: #087a3f;
+  color: var(--color-primary);
   font-size: 11px;
   font-weight: 900;
   letter-spacing: 1.4px;
@@ -78,14 +51,14 @@ button {
 
 .encabezado-pagina h1 {
   margin: 0;
-  color: #12241a;
+  color: #263238;
   font-size: 29px;
   line-height: 1.15;
 }
 
 .encabezado-pagina p {
   margin: 8px 0 0;
-  color: #6d7972;
+  color: var(--color-muted);
   font-size: 13px;
 }
 
@@ -94,9 +67,9 @@ button {
 .tarjeta {
   width: 100%;
   background-color: #ffffff;
-  border: 1px solid #dfe9e3;
+  border: 1px solid var(--color-primary-border);
   border-radius: 13px;
-  box-shadow: 0 6px 18px rgba(25, 70, 45, 0.07);
+  box-shadow: 0 6px 18px rgba(23,78,166,.07);
 }
 
 .tarjeta-filtros {
@@ -115,22 +88,22 @@ button {
   width: 37px;
   min-width: 37px;
   height: 37px;
-  color: #078249;
+  color: var(--color-primary);
   font-size: 16px;
   font-weight: 900;
-  background-color: #e3f5eb;
+  background-color: var(--color-primary-soft);
   border-radius: 9px;
 }
 
 .titulo-tarjeta h2 {
   margin: 0;
-  color: #17231c;
+  color: #263238;
   font-size: 17px;
 }
 
 .titulo-tarjeta p {
   margin: 4px 0 0;
-  color: #6c7771;
+  color: var(--color-muted);
   font-size: 11px;
 }
 
@@ -151,7 +124,7 @@ button {
 }
 
 .campo label {
-  color: #283a30;
+  color: #263238;
   font-size: 12px;
   font-weight: 800;
 }
@@ -161,17 +134,17 @@ button {
   width: 100%;
   height: 42px;
   padding: 0 12px;
-  color: #17251d;
+  color: #263238;
   background-color: #ffffff;
-  border: 1px solid #c9d7cf;
+  border: 1px solid var(--color-primary-border);
   border-radius: 7px;
   outline: none;
 }
 
 .campo input:focus,
 .campo select:focus {
-  border-color: #168b52;
-  box-shadow: 0 0 0 3px rgba(22, 139, 82, 0.12);
+  border-color: var(--color-primary);
+  box-shadow: 0 0 0 3px rgba(23, 78, 166, 0.12);
 }
 
 /* Tarjetas de resumen */
@@ -190,9 +163,9 @@ button {
   min-height: 74px;
   padding: 15px 18px;
   background-color: #ffffff;
-  border: 1px solid #dfe9e3;
+  border: 1px solid var(--color-primary-border);
   border-radius: 11px;
-  box-shadow: 0 5px 15px rgba(25, 70, 45, 0.06);
+  box-shadow: 0 5px 15px rgba(23,78,166,.06);
 }
 
 .resumen-icono {
@@ -207,13 +180,13 @@ button {
 }
 
 .resumen-icono-total {
-  color: #1269a8;
-  background-color: #e3f1fc;
+  color: var(--color-primary);
+  background-color: var(--color-primary-soft);
 }
 
 .resumen-icono-presente {
-  color: #087a3f;
-  background-color: #dff4e8;
+  color: var(--color-primary);
+  background-color: var(--color-primary-soft);
 }
 
 .resumen-icono-ausente {
@@ -257,12 +230,12 @@ button {
   width: min(100%, 295px);
   height: 41px;
   padding: 0 12px;
-  border: 1px solid #c7d6cd;
+  border: 1px solid var(--color-primary-border);
   border-radius: 7px;
 }
 
 .buscador-estudiantes span {
-  color: #078249;
+  color: var(--color-primary);
   font-size: 18px;
 }
 
@@ -270,7 +243,7 @@ button {
   width: 100%;
   height: 100%;
   padding: 0 9px;
-  color: #1f3027;
+  color: #263238;
   background: transparent;
   border: none;
   outline: none;
@@ -289,16 +262,16 @@ button {
 .boton-secundario {
   min-height: 40px;
   padding: 0 14px;
-  color: #087a3f;
+  color: var(--color-primary);
   font-size: 11px;
   font-weight: 800;
   background-color: #ffffff;
-  border: 1px solid #9ed0b5;
+  border: 1px solid #9db9e4;
   border-radius: 7px;
 }
 
 .boton-secundario:hover {
-  background-color: #ecf8f1;
+  background-color: var(--color-primary-soft);
 }
 
 /* Tabla */
@@ -307,7 +280,7 @@ button {
   width: 100%;
   max-height: 350px;
   overflow: auto;
-  border: 1px solid #dce6e0;
+  border: 1px solid var(--color-primary-border);
   border-radius: 8px;
 }
 
@@ -328,7 +301,7 @@ button {
   color: #ffffff;
   font-size: 11px;
   text-align: left;
-  background-color: #087a3f;
+  background-color: var(--color-primary);
 }
 
 .tabla-asistencia th:first-child {
@@ -344,9 +317,9 @@ button {
 
 .tabla-asistencia td {
   padding: 12px 16px;
-  color: #25342c;
+  color: #263238;
   font-size: 12px;
-  border-bottom: 1px solid #e6ece8;
+  border-bottom: 1px solid var(--color-primary-border);
 }
 
 .tabla-asistencia td:first-child,
@@ -356,7 +329,7 @@ button {
 }
 
 .tabla-asistencia tbody tr:hover {
-  background-color: #f6fbf8;
+  background-color: var(--color-primary-softest);
 }
 
 .tabla-asistencia tbody tr:last-child td {
@@ -375,10 +348,10 @@ button {
   width: 34px;
   min-width: 34px;
   height: 34px;
-  color: #087a3f;
+  color: var(--color-primary);
   font-size: 12px;
   font-weight: 900;
-  background-color: #e1f5e9;
+  background-color: var(--color-primary-soft);
   border-radius: 50%;
 }
 
@@ -388,7 +361,7 @@ button {
 }
 
 .informacion-estudiante strong {
-  color: #17251d;
+  color: #263238;
   font-size: 12px;
 }
 
@@ -412,8 +385,8 @@ button {
 }
 
 .estado-presente {
-  color: #087a3f;
-  background-color: #dff4e8;
+  color: var(--color-primary);
+  background-color: var(--color-primary-soft);
 }
 
 .estado-ausente {
@@ -439,7 +412,7 @@ button {
 .interruptor-control {
   position: absolute;
   inset: 0;
-  background-color: #cad6cf;
+  background-color: var(--color-primary-border);
   border-radius: 22px;
   cursor: pointer;
   transition: 0.25s;
@@ -459,7 +432,7 @@ button {
 }
 
 .interruptor input:checked + .interruptor-control {
-  background-color: #078249;
+  background-color: var(--color-primary);
 }
 
 .interruptor input:checked + .interruptor-control::before {
@@ -478,7 +451,7 @@ button {
 
 .pie-lista p {
   margin: 0;
-  color: #65726b;
+  color: var(--color-muted);
   font-size: 10px;
 }
 
@@ -488,14 +461,14 @@ button {
   color: #ffffff;
   font-size: 11px;
   font-weight: 900;
-  background-color: #087a3f;
+  background-color: var(--color-primary);
   border: none;
   border-radius: 7px;
-  box-shadow: 0 5px 12px rgba(8, 122, 63, 0.2);
+  box-shadow: 0 5px 12px rgba(23, 78, 166, 0.20);
 }
 
 .boton-guardar:hover {
-  background-color: #066735;
+  background-color: var(--color-primary);
 }
 
 .boton-guardar:disabled {
@@ -506,17 +479,17 @@ button {
 .mensaje-exito {
   margin-top: 13px;
   padding: 10px 13px;
-  color: #087a3f;
+  color: var(--color-primary);
   font-size: 11px;
   font-weight: 700;
-  background-color: #e7f6ed;
-  border: 1px solid #bae0ca;
+  background-color: var(--color-primary-soft);
+  border: 1px solid var(--color-primary-border);
   border-radius: 7px;
 }
 
 .sin-resultados {
   padding: 35px;
-  color: #718078;
+  color: var(--color-muted);
   font-size: 13px;
   text-align: center;
 }
@@ -579,3 +552,13 @@ button {
     width: 100%;
   }
 }
+
+.resumen-icono-atraso { color: #a86400; background-color: #fff0c9; }
+.estado-atraso { color: #9a5b00; background-color: #fff0c9; }
+.selector-asistencia { min-width: 120px; padding: 8px 10px; border: 1px solid var(--color-primary-border); border-radius: 8px; background: #fff; color: #263238; font-weight: 700; }
+
+.checks-asistencia { display: flex; align-items: center; justify-content: center; gap: 14px; flex-wrap: nowrap; white-space: nowrap; }
+.checks-asistencia label { display: inline-flex; align-items: center; gap: 6px; font-weight: 700; color: #454b50; cursor: pointer; }
+.checks-asistencia input { width: 18px; height: 18px; accent-color: var(--color-primary); cursor: pointer; }
+.checks-asistencia label:nth-child(2) input { accent-color: #c83737; }
+.checks-asistencia label:nth-child(3) input { accent-color: #c27a00; }

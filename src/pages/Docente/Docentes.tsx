@@ -1,10 +1,12 @@
-import { useMemo, useState, type FormEvent } from "react";
-import { Navigate } from "react-router-dom";
+import { useEffect, useMemo, useState, type FormEvent } from "react";
+import { Navigate, useSearchParams } from "react-router-dom";
 import MainLayout from "../../layouts/MainLayout";
 
 import "./Docentes.css";
 import BackHomeButton from "../../components/common/BackHomeButton";
 import Card from "../../components/common/Card";
+import type { RolSistema } from "../../utils/rolesStorage";
+import { api, getApiErrorMessage } from "../../api/client";
 
 interface Docente {
   id: number;
@@ -16,32 +18,16 @@ interface Docente {
   titulo: string;
   telefono: string;
   correo: string;
+  rolId: number | null;
+  materiaIds: number[];
+  cursos: string[];
 }
-
-const docentesIniciales: Docente[] = [
-  {
-    id: 1,
-    cedula: "1712345678",
-    nombres: "Carlos",
-    apellidos: "Ramírez Pérez",
-    fechaNacimiento: "1985-06-15",
-    especialidad: "Matemáticas",
-    titulo: "Licenciado en Matemáticas",
-    telefono: "0991234567",
-    correo: "carlos.ramirez@escuela.edu.ec",
-  },
-  {
-    id: 2,
-    cedula: "1723456789",
-    nombres: "Andrea",
-    apellidos: "Mendoza López",
-    fechaNacimiento: "1990-03-20",
-    especialidad: "Lengua y Literatura",
-    titulo: "Licenciada en Educación",
-    telefono: "0987654321",
-    correo: "andrea.mendoza@escuela.edu.ec",
-  },
-];
+interface DocenteApi extends Omit<Docente,"rolId"|"materiaIds">{rol?:{id:number}}
+interface MateriaApi {
+  id: number;
+  nombre: string;
+  docentes?: Array<{ id: number }>;
+}
 
 const formularioInicial = {
   cedula: "",
@@ -52,17 +38,17 @@ const formularioInicial = {
   titulo: "",
   telefono: "",
   correo: "",
+  rolId: "",
 };
 
 function Docentes() {
-  const autenticado =
-    localStorage.getItem("usuarioAutenticado") === "true";
-
+  void Navigate;
+  const [parametros] = useSearchParams();
   const [docentes, setDocentes] =
-    useState<Docente[]>(docentesIniciales);
+    useState<Docente[]>([]);
 
   const [formulario, setFormulario] =
-    useState(formularioInicial);
+    useState(() => ({ ...formularioInicial, rolId: parametros.get("rol") ?? "" }));
 
   const [busqueda, setBusqueda] = useState("");
 
@@ -74,6 +60,38 @@ function Docentes() {
     useState<number | null>(null);
 
   const docentesPorPagina = 10;
+  const [rolesActivos, setRolesActivos] = useState<RolSistema[]>([]);
+  const [materias, setMaterias] = useState<MateriaApi[]>([]);
+  const [materiasSeleccionadas, setMateriasSeleccionadas] = useState<number[]>([]);
+  const [cursosDisponibles, setCursosDisponibles] = useState<string[]>([]);
+  const [cursosSeleccionados, setCursosSeleccionados] = useState<string[]>([]);
+
+  useEffect(() => {
+    Promise.all([
+      api.get<DocenteApi[]>("/docentes"),
+      api.get<RolSistema[]>("/roles"),
+      api.get<MateriaApi[]>("/materias"),
+      api.get<Array<{ grado: string; paralelo: string; estado: string }>>("/alumnos"),
+    ])
+      .then(([lista, roles, listaMaterias, alumnos]) => {
+        setDocentes(lista.map((docente) => ({
+          ...docente,
+          rolId: docente.rol?.id ?? null,
+          materiaIds: listaMaterias
+            .filter((materia) => materia.docentes?.some((asignado) => asignado.id === docente.id))
+            .map((materia) => materia.id),
+          cursos: docente.cursos ?? [],
+        })));
+        setRolesActivos(roles.filter((rol) => rol.estado === "Activo"));
+        setMaterias(listaMaterias);
+        setCursosDisponibles([...new Set(
+          alumnos
+            .filter((alumno) => alumno.estado === "Activo")
+            .map((alumno) => `${alumno.grado}|${alumno.paralelo.toUpperCase()}`),
+        )].sort());
+      })
+      .catch((error) => setMensaje(getApiErrorMessage(error)));
+  }, []);
 
   const docentesFiltrados = useMemo(() => {
     const termino = busqueda.trim().toLowerCase();
@@ -106,9 +124,6 @@ function Docentes() {
       inicioPagina + docentesPorPagina
     );
 
-  if (!autenticado) {
-    return <Navigate to="/login" replace />;
-  }
   // ===========================================
 // ACTUALIZAR CAMPOS DEL FORMULARIO
 // ===========================================
@@ -123,8 +138,26 @@ function actualizarCampo(
   setMensaje("");
 }
 
+function alternarMateria(id: number) {
+  setMateriasSeleccionadas((actuales) =>
+    actuales.includes(id)
+      ? actuales.filter((materiaId) => materiaId !== id)
+      : [...actuales, id],
+  );
+  setMensaje("");
+}
 
-function registrarDocente(event: FormEvent<HTMLFormElement>) {
+function alternarCurso(curso: string) {
+  setCursosSeleccionados((actuales) =>
+    actuales.includes(curso)
+      ? actuales.filter((item) => item !== curso)
+      : [...actuales, curso],
+  );
+  setMensaje("");
+}
+
+
+async function registrarDocente(event: FormEvent<HTMLFormElement>) {
   event.preventDefault();
 
   const cedulaRepetida = docentes.some(
@@ -147,27 +180,49 @@ function registrarDocente(event: FormEvent<HTMLFormElement>) {
     titulo: formulario.titulo.trim(),
     telefono: formulario.telefono.trim(),
     correo: formulario.correo.trim(),
+    rolId: formulario.rolId ? Number(formulario.rolId) : null,
   };
 
-  if (editandoId !== null) {
-    setDocentes((actuales) =>
-      actuales.map((docente) =>
-        docente.id === editandoId
-          ? { ...docente, ...datosDocente }
-          : docente
-      )
+  try {
+    const payload = { ...datosDocente, cursos: cursosSeleccionados, rol: { id: datosDocente.rolId } };
+    let guardado: DocenteApi;
+    if (editandoId !== null) {
+      guardado = await api.put<DocenteApi>(`/docentes/${editandoId}`, payload);
+    } else {
+      guardado = await api.post<DocenteApi>("/docentes", payload);
+    }
+    const asignadas = await api.put<MateriaApi[]>(
+      `/docentes/${guardado.id}/materias`,
+      { materiaIds: materiasSeleccionadas },
     );
-  } else {
-    setDocentes((actuales) => [
-      ...actuales,
-      {
-        id: Date.now(),
-        ...datosDocente,
-      },
-    ]);
-  }
+    const docenteCompleto: Docente = {
+      ...guardado,
+      rolId: guardado.rol?.id ?? null,
+      materiaIds: asignadas.map((materia) => materia.id),
+      cursos: cursosSeleccionados,
+    };
+    setDocentes((actuales) =>
+      editandoId !== null
+        ? actuales.map((docente) => docente.id === editandoId ? docenteCompleto : docente)
+        : [...actuales, docenteCompleto],
+    );
+    setMaterias((actuales) => actuales.map((materia) => {
+      const docentesMateria = materia.docentes ?? [];
+      if (materiasSeleccionadas.includes(materia.id)) {
+        return docentesMateria.some((docente) => docente.id === guardado.id)
+          ? materia
+          : { ...materia, docentes: [...docentesMateria, { id: guardado.id }] };
+      }
+      if (docentesMateria.some((docente) => docente.id === guardado.id)) {
+        return { ...materia, docentes: docentesMateria.filter((docente) => docente.id !== guardado.id) };
+      }
+      return materia;
+    }));
+  } catch (error) { setMensaje(getApiErrorMessage(error)); return; }
 
   setFormulario(formularioInicial);
+  setMateriasSeleccionadas([]);
+  setCursosSeleccionados([]);
   setEditandoId(null);
 
   setMensaje(
@@ -188,7 +243,10 @@ function editarDocente(docente: Docente) {
     titulo: docente.titulo,
     telefono: docente.telefono,
     correo: docente.correo,
+    rolId: docente.rolId ? String(docente.rolId) : "",
   });
+  setMateriasSeleccionadas(docente.materiaIds);
+  setCursosSeleccionados(docente.cursos ?? []);
 
   setEditandoId(docente.id);
   setMensaje("");
@@ -200,17 +258,17 @@ function editarDocente(docente: Docente) {
 }
 
 
-function eliminarDocente(docente: Docente) {
+async function eliminarDocente(docente: Docente) {
   if (
     window.confirm(
       `¿Deseas eliminar a ${docente.nombres} ${docente.apellidos}?`
     )
   ) {
-    setDocentes((actuales) =>
-      actuales.filter((item) => item.id !== docente.id)
-    );
-
-    setMensaje("Docente eliminado correctamente.");
+    try {
+      await api.delete(`/docentes/${docente.id}`);
+      setDocentes((actuales) => actuales.filter((item) => item.id !== docente.id));
+      setMensaje("Docente eliminado correctamente.");
+    } catch (error) { setMensaje(getApiErrorMessage(error)); }
   }
 }
 
@@ -351,6 +409,14 @@ return (
             </label>
 
             <label>
+              <span>Rol asignado</span>
+              <select required value={formulario.rolId} onChange={(e) => actualizarCampo("rolId", e.target.value)}>
+                <option value="">Seleccione un rol</option>
+                {rolesActivos.map((rol) => <option key={rol.id} value={rol.id}>{rol.nombre}</option>)}
+              </select>
+            </label>
+
+            <label>
               <span>Correo electrónico</span>
 
               <input
@@ -365,6 +431,82 @@ return (
             </label>
 
           </div>
+
+          <fieldset className="teachers-subjects">
+            <div className="teachers-subjects-heading">
+              <div>
+                <legend>Materias asignadas</legend>
+                <p>Selecciona las materias y cursos que tendrá a cargo el docente.</p>
+              </div>
+              <span>{materiasSeleccionadas.length} seleccionadas</span>
+            </div>
+            <div className="teachers-subjects-grid">
+              {materias.map((materia) => {
+                const otrosDocentes = (materia.docentes ?? [])
+                  .filter((docente) => docente.id !== editandoId).length;
+                return (
+                  <label
+                    key={materia.id}
+                    className={[
+                      materiasSeleccionadas.includes(materia.id)
+                        ? "teachers-subject--selected"
+                        : "",
+                    ].join(" ")}
+                  >
+                    <input
+                      type="checkbox"
+                      checked={materiasSeleccionadas.includes(materia.id)}
+                      onChange={() => alternarMateria(materia.id)}
+                    />
+                    <span>
+                      <strong>{materia.nombre}</strong>
+                      <small>{otrosDocentes ? `${otrosDocentes} docente(s) adicional(es)` : "Disponible"}</small>
+                    </span>
+                  </label>
+                );
+              })}
+              {!materias.length && (
+                <p className="teachers-subjects-empty">
+                  Primero registra materias y cursos en el módulo Materias.
+                </p>
+              )}
+            </div>
+          </fieldset>
+
+          <fieldset className="teachers-subjects">
+            <div className="teachers-subjects-heading">
+              <div>
+                <legend>Cursos asignados</legend>
+                <p>El docente solo podrá consultar y modificar información de estos cursos.</p>
+              </div>
+              <span>{cursosSeleccionados.length} seleccionados</span>
+            </div>
+            <div className="teachers-subjects-grid">
+              {cursosDisponibles.map((curso) => (
+                <label
+                  key={curso}
+                  className={cursosSeleccionados.includes(curso)
+                    ? "teachers-subject--selected"
+                    : ""}
+                >
+                  <input
+                    type="checkbox"
+                    checked={cursosSeleccionados.includes(curso)}
+                    onChange={() => alternarCurso(curso)}
+                  />
+                  <span>
+                    <strong>{curso.replace("|", " ")}</strong>
+                    <small>Curso registrado</small>
+                  </span>
+                </label>
+              ))}
+              {!cursosDisponibles.length && (
+                <p className="teachers-subjects-empty">
+                  Primero registra estudiantes para crear los cursos disponibles.
+                </p>
+              )}
+            </div>
+          </fieldset>
 
           <div className="students-form-actions">
 
@@ -439,6 +581,9 @@ return (
                 <th>Título</th>
                 <th>Teléfono</th>
                 <th>Correo</th>
+                <th>Rol</th>
+                <th>Materias</th>
+                <th>Cursos</th>
                 <th>Acciones</th>
               </tr>
             </thead>
@@ -468,6 +613,11 @@ return (
                   <td>{docente.telefono}</td>
 
                   <td>{docente.correo}</td>
+
+                  <td><span className="students-role-badge">{rolesActivos.find((rol) => rol.id === docente.rolId)?.nombre ?? "Sin rol"}</span></td>
+
+                  <td>{docente.materiaIds.length}</td>
+                  <td>{docente.cursos.length}</td>
 
                   <td>
 
