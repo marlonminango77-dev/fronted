@@ -1,117 +1,126 @@
-import { useEffect, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import MainLayout from "../../layouts/MainLayout";
 import BackHomeButton from "../../components/common/BackHomeButton";
-import "./Mensajes.css";
 import { api, getApiErrorMessage } from "../../api/client";
+import "./Mensajes.css";
+import { useAuth } from "../../auth/AuthContext";
 
-
-//Logica temporal para la funcionalidad de mensajes. Posteriormente se conectará con la base de datos
-//con su respectiva logica
 interface Curso {
   id: number;
   nombre: string;
 }
 
-//Estructura de cada mensaje enviado.
-interface MensajeEnviado {
+interface MensajeApi {
   id: number;
   fecha: string;
-  cursoId: number;
-  cursoNombre: string;
+  curso: string;
   contenido: string;
 }
 
 function Mensajes() {
-
-//datos temporales de cursos
-  const cursos: Curso[] = [
-    { id: 1, nombre: "Quinto A" },
-    { id: 2, nombre: "Quinto B" },
-    { id: 3, nombre: "Sexto A" },
-    { id: 4, nombre: "Sexto B" },
-    { id: 5, nombre: "Séptimo A" },
-    { id: 6, nombre: "Séptimo B" },
-  ];
-
-  //Para obtener fechas actuales y futuras, y no enviar mensajes en fechas antiguas
+  const { tienePermiso } = useAuth();
+  const puedeGestionar = tienePermiso("Mensajes");
   const fechaActual = new Date().toLocaleDateString("en-CA");
-
-  //Estados para manejar los datos del formulario y la lista de mensajes enviados
+  const [cursos, setCursos] = useState<Curso[]>([]);
   const [fecha, setFecha] = useState("");
   const [cursoSeleccionado, setCursoSeleccionado] = useState("");
-  const [mensaje, setMensaje] = useState("");
+  const [contenido, setContenido] = useState("");
+  const [mensajes, setMensajes] = useState<MensajeApi[]>([]);
+  const [error, setError] = useState("");
+  const [busqueda, setBusqueda] = useState("");
+  const [filtroCurso, setFiltroCurso] = useState("");
 
-  //Estado para almacenar los mensajes enviados
-  const [mensajesEnviados, setMensajesEnviados] = useState<MensajeEnviado[]>([]);
+  const cursosConMensajes = useMemo(
+    () => [...new Set(mensajes.map((mensaje) => mensaje.curso))].sort(),
+    [mensajes],
+  );
 
-  useEffect(() => {
-    api.get<any[]>("/mensajes").then((lista) => setMensajesEnviados(lista.map((item) => ({ id: item.id, fecha: item.fecha, cursoId: 0, cursoNombre: item.curso, contenido: item.contenido })))).catch((error) => alert(getApiErrorMessage(error)));
-  }, []);
-
-  //funcion para enviar mensaje, valida que los campos no esten vacios y 
-  // que la fecha no sea anterior a la actual
-  async function enviarMensaje() {
-
-//Validar que los campos no estén vacíos
-    if (
-      fecha === "" ||
-      cursoSeleccionado === "" ||
-      mensaje.trim() === ""
-    ) {
-      alert("Complete todos los campos.");
-      return;
-    }
-
-    //Validar que la fecha no sea anterior a la fecha actual
-
-    if (fecha < fechaActual) {
-      alert("No puede seleccionar una fecha anterior a hoy.");
-      return;
-    }
-
-
-//Buscar el curso seleccionado en la lista de cursos
-    const cursoEncontrado = cursos.find(
-      (curso) => curso.id === Number(cursoSeleccionado)
+  const mensajesFiltrados = useMemo(() => {
+    const texto = busqueda.trim().toLowerCase();
+    return mensajes.filter(
+      (mensaje) =>
+        (!filtroCurso || mensaje.curso === filtroCurso) &&
+        (!texto ||
+          `${mensaje.curso} ${mensaje.contenido} ${mensaje.fecha}`
+            .toLowerCase()
+            .includes(texto)),
     );
+  }, [busqueda, filtroCurso, mensajes]);
 
-    if (!cursoEncontrado) {
-      alert("El curso seleccionado no existe.");
-      return;
-    }
-
-//Crear un nuevo mensaje con los datos ingresados
-
-    try {
-      const guardado = await api.post<any>("/mensajes", { fecha, curso: cursoEncontrado.nombre, contenido: mensaje.trim(), estado: "Enviado" });
-      const nuevoMensaje: MensajeEnviado = { id: guardado.id, fecha: guardado.fecha, cursoId: cursoEncontrado.id, cursoNombre: guardado.curso, contenido: guardado.contenido };
-      setMensajesEnviados((anteriores) => [nuevoMensaje, ...anteriores]);
-      alert("Mensaje enviado correctamente.");
-      limpiarFormulario();
-    } catch (error) { alert(getApiErrorMessage(error)); }
+  function mostrarFecha(valor: string) {
+    const [anio, mes, dia] = valor.split("-");
+    return anio && mes && dia ? `${dia}/${mes}/${anio}` : valor;
   }
 
-  //funcion para limpiar el formulario
+  useEffect(() => {
+    const cargar = async () => {
+      try {
+        setError("");
+        const lista = await api.get<MensajeApi[]>("/mensajes");
+        setMensajes(lista);
+
+        if (puedeGestionar) {
+          const nombres = await api.get<string[]>("/mensajes/cursos");
+          setCursos(
+            nombres.map((nombre, indice) => ({ id: indice + 1, nombre })),
+          );
+        }
+      } catch (error) {
+        setError(getApiErrorMessage(error));
+      }
+    };
+
+    void cargar();
+  }, [puedeGestionar]);
+
   function limpiarFormulario() {
     setFecha("");
     setCursoSeleccionado("");
-    setMensaje("");
+    setContenido("");
   }
 
-  //funcion para eliminar el mensaje almacenado en el estado de mensajes enviados.
-  async function eliminarMensaje(id: number) {
-    const confirmarEliminacion = window.confirm(
-      "¿Está seguro de eliminar este mensaje?"
-    );
+  async function enviarMensaje() {
+    if (!fecha || !cursoSeleccionado || !contenido.trim()) {
+      setError("Complete todos los campos.");
+      return;
+    }
+    if (fecha < fechaActual) {
+      setError("No puede seleccionar una fecha anterior a hoy.");
+      return;
+    }
 
-    if (!confirmarEliminacion) {
+    const curso = cursos.find(
+      (item) => item.id === Number(cursoSeleccionado),
+    );
+    if (!curso) {
+      setError("El curso seleccionado no existe.");
       return;
     }
 
     try {
+      setError("");
+      const guardado = await api.post<MensajeApi>("/mensajes", {
+        fecha,
+        curso: curso.nombre,
+        contenido: contenido.trim(),
+        estado: "Enviado",
+      });
+      setMensajes((actuales) => [guardado, ...actuales]);
+      limpiarFormulario();
+    } catch (error) {
+      setError(getApiErrorMessage(error));
+    }
+  }
+
+  async function eliminarMensaje(id: number) {
+    if (!window.confirm("¿Está seguro de eliminar este mensaje?")) return;
+    try {
+      setError("");
       await api.delete(`/mensajes/${id}`);
-      setMensajesEnviados((anteriores) => anteriores.filter((item) => item.id !== id));
-    } catch (error) { alert(getApiErrorMessage(error)); }
+      setMensajes((actuales) => actuales.filter((item) => item.id !== id));
+    } catch (error) {
+      setError(getApiErrorMessage(error));
+    }
   }
 
   return (
@@ -120,104 +129,55 @@ function Mensajes() {
         <header className="mensajes-header">
           <div>
             <p>Comunicación académica</p>
-            <h1>Mensajes</h1>
+            <h1>{puedeGestionar ? "Mensajes" : "Mensajes recibidos"}</h1>
+            <span>{puedeGestionar ? "Envía comunicados dirigidos a un curso específico." : "Consulta los comunicados enviados a los cursos de tus hijos."}</span>
           </div>
-
           <BackHomeButton />
         </header>
 
-        <div className="mensaje-formulario">
-          <label htmlFor="fecha">Ingrese la fecha:</label>
+        {error && <div className="mensajes-alerta"><i className="bi bi-exclamation-circle-fill"/>{error}</div>}
 
-          <input
-            id="fecha"
-            type="date"
-            min={fechaActual}
-            value={fecha}
-            onChange={(event) => setFecha(event.target.value)}
-          />
+        {puedeGestionar && (
+          <section className="mensaje-formulario">
+            <div className="mensajes-section-title">
+              <span><i className="bi bi-send-fill"/></span>
+              <div><p>Nuevo comunicado</p><h2>Redactar mensaje</h2></div>
+            </div>
+            <div className="mensaje-form-grid">
+              <label htmlFor="fecha"><span>Fecha *</span><input id="fecha" type="date" min={fechaActual} value={fecha} onChange={(event) => setFecha(event.target.value)}/></label>
+              <label htmlFor="curso"><span>Curso destinatario *</span><select id="curso" value={cursoSeleccionado} onChange={(event) => setCursoSeleccionado(event.target.value)}><option value="">Seleccione un curso</option>{cursos.map((curso) => <option key={curso.id} value={curso.id}>{curso.nombre}</option>)}</select></label>
+            </div>
+            <label className="mensaje-contenido" htmlFor="mensaje"><span>Mensaje *</span><textarea id="mensaje" rows={4} value={contenido} onChange={(event) => setContenido(event.target.value)} placeholder="Escriba aquí el contenido del comunicado..."/></label>
+            <div className="mensaje-acciones">
+              <button type="button" className="mensaje-limpiar" onClick={limpiarFormulario}><i className="bi bi-eraser"/>Limpiar</button>
+              <button type="button" className="mensaje-enviar" onClick={enviarMensaje}><i className="bi bi-send"/>Enviar mensaje</button>
+            </div>
+          </section>
+        )}
 
-          <label htmlFor="curso">Seleccione el curso a enviar:</label>
-
-          <select
-            id="curso"
-            name="curso"
-            value={cursoSeleccionado}
-            onChange={(event) =>
-              setCursoSeleccionado(event.target.value)
-            }
-          >
-            <option value="">Seleccione un curso</option>
-
-            {cursos.map((curso) => (
-              <option key={curso.id} value={curso.id}>
-                {curso.nombre}
-              </option>
-            ))}
-          </select>
-
-          <label htmlFor="mensaje">Escriba su mensaje:</label>
-
-          <textarea
-            id="mensaje"
-            name="mensaje"
-            rows={4}
-            value={mensaje}
-            onChange={(event) => setMensaje(event.target.value)}
-            placeholder="Escriba aquí el contenido del mensaje..."
-          />
-
-          <div className="mensaje-acciones">
-            <button type="button" onClick={enviarMensaje}>
-              Enviar mensaje
-            </button>
-
-            <button type="button" onClick={limpiarFormulario}>
-              Limpiar
-            </button>
+        <section className="lista-mensajes">
+          <div className="mensajes-list-header">
+            <div><p>Comunicados</p><h2>{puedeGestionar ? "Mensajes enviados" : "Comunicados de sus cursos"}</h2><span>{mensajesFiltrados.length} resultado(s)</span></div>
+            <div className="mensajes-filtros">
+              <label><i className="bi bi-search"/><input type="search" value={busqueda} onChange={(event)=>setBusqueda(event.target.value)} placeholder="Buscar en los mensajes"/></label>
+              <select aria-label="Filtrar por curso" value={filtroCurso} onChange={(event)=>setFiltroCurso(event.target.value)}><option value="">Todos los cursos</option>{cursosConMensajes.map((curso)=><option key={curso}>{curso}</option>)}</select>
+            </div>
           </div>
-        </div>
-
-        <div className="lista-mensajes">
-          <h2>Mensajes enviados</h2>
-
-          {mensajesEnviados.length === 0 ? (
-            <p>No existen mensajes enviados.</p>
+          {mensajesFiltrados.length === 0 ? (
+            <div className="mensajes-vacio"><i className="bi bi-chat-left-text"/><h3>No hay mensajes</h3><p>{puedeGestionar ? "No existen mensajes enviados." : "No existen mensajes para los cursos de sus hijos."}</p></div>
           ) : (
-            mensajesEnviados.map((mensajeEnviado) => (
-              <div
-                className="mensaje-enviado"
-                key={mensajeEnviado.id}
-              >
+            <div className="mensajes-grid">{mensajesFiltrados.map((mensaje) => (
+              <article className="mensaje-enviado" key={mensaje.id}>
+                <div className="mensaje-icono"><i className="bi bi-megaphone-fill"/></div>
                 <div className="mensaje-informacion">
-                  <p>
-                    <strong>Fecha:</strong> {mensajeEnviado.fecha}
-                  </p>
-
-                  <p>
-                    <strong>Curso:</strong>{" "}
-                    {mensajeEnviado.cursoNombre}
-                  </p>
-
-                  <p>
-                    <strong>Mensaje:</strong>{" "}
-                    {mensajeEnviado.contenido}
-                  </p>
+                  <div className="mensaje-meta"><strong>{mensaje.curso}</strong><time dateTime={mensaje.fecha}><i className="bi bi-calendar3"/> {mostrarFecha(mensaje.fecha)}</time></div>
+                  <p>{mensaje.contenido}</p>
                 </div>
-
-                <button
-                  type="button"
-                  className="btn-eliminar"
-                  onClick={() =>
-                    eliminarMensaje(mensajeEnviado.id)
-                  }
-                >
-                  Eliminar
-                </button>
-              </div>
-            ))
+                {puedeGestionar && <button type="button" className="btn-eliminar" onClick={() => eliminarMensaje(mensaje.id)} aria-label="Eliminar mensaje"><i className="bi bi-trash3"/></button>}
+              </article>
+            ))}</div>
           )}
-        </div>
+        </section>
       </div>
     </MainLayout>
   );

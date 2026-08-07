@@ -19,6 +19,14 @@ interface Docente {
   telefono: string;
   correo: string;
   rolId: number | null;
+  materiaIds: number[];
+  cursos: string[];
+}
+interface DocenteApi extends Omit<Docente,"rolId"|"materiaIds">{rol?:{id:number}}
+interface MateriaApi {
+  id: number;
+  nombre: string;
+  docentes?: Array<{ id: number }>;
 }
 
 const formularioInicial = {
@@ -34,10 +42,8 @@ const formularioInicial = {
 };
 
 function Docentes() {
+  void Navigate;
   const [parametros] = useSearchParams();
-  const autenticado =
-    localStorage.getItem("usuarioAutenticado") === "true";
-
   const [docentes, setDocentes] =
     useState<Docente[]>([]);
 
@@ -55,12 +61,34 @@ function Docentes() {
 
   const docentesPorPagina = 10;
   const [rolesActivos, setRolesActivos] = useState<RolSistema[]>([]);
+  const [materias, setMaterias] = useState<MateriaApi[]>([]);
+  const [materiasSeleccionadas, setMateriasSeleccionadas] = useState<number[]>([]);
+  const [cursosDisponibles, setCursosDisponibles] = useState<string[]>([]);
+  const [cursosSeleccionados, setCursosSeleccionados] = useState<string[]>([]);
 
   useEffect(() => {
-    Promise.all([api.get<any[]>("/docentes"), api.get<RolSistema[]>("/roles")])
-      .then(([lista, roles]) => {
-        setDocentes(lista.map((docente) => ({ ...docente, rolId: docente.rol?.id ?? null })));
+    Promise.all([
+      api.get<DocenteApi[]>("/docentes"),
+      api.get<RolSistema[]>("/roles"),
+      api.get<MateriaApi[]>("/materias"),
+      api.get<Array<{ grado: string; paralelo: string; estado: string }>>("/alumnos"),
+    ])
+      .then(([lista, roles, listaMaterias, alumnos]) => {
+        setDocentes(lista.map((docente) => ({
+          ...docente,
+          rolId: docente.rol?.id ?? null,
+          materiaIds: listaMaterias
+            .filter((materia) => materia.docentes?.some((asignado) => asignado.id === docente.id))
+            .map((materia) => materia.id),
+          cursos: docente.cursos ?? [],
+        })));
         setRolesActivos(roles.filter((rol) => rol.estado === "Activo"));
+        setMaterias(listaMaterias);
+        setCursosDisponibles([...new Set(
+          alumnos
+            .filter((alumno) => alumno.estado === "Activo")
+            .map((alumno) => `${alumno.grado}|${alumno.paralelo.toUpperCase()}`),
+        )].sort());
       })
       .catch((error) => setMensaje(getApiErrorMessage(error)));
   }, []);
@@ -96,9 +124,6 @@ function Docentes() {
       inicioPagina + docentesPorPagina
     );
 
-  if (!autenticado) {
-    return <Navigate to="/login" replace />;
-  }
   // ===========================================
 // ACTUALIZAR CAMPOS DEL FORMULARIO
 // ===========================================
@@ -110,6 +135,24 @@ function actualizarCampo(
     ...actual,
     [campo]: valor,
   }));
+  setMensaje("");
+}
+
+function alternarMateria(id: number) {
+  setMateriasSeleccionadas((actuales) =>
+    actuales.includes(id)
+      ? actuales.filter((materiaId) => materiaId !== id)
+      : [...actuales, id],
+  );
+  setMensaje("");
+}
+
+function alternarCurso(curso: string) {
+  setCursosSeleccionados((actuales) =>
+    actuales.includes(curso)
+      ? actuales.filter((item) => item !== curso)
+      : [...actuales, curso],
+  );
   setMensaje("");
 }
 
@@ -141,17 +184,45 @@ async function registrarDocente(event: FormEvent<HTMLFormElement>) {
   };
 
   try {
-    const payload = { ...datosDocente, rol: { id: datosDocente.rolId } };
+    const payload = { ...datosDocente, cursos: cursosSeleccionados, rol: { id: datosDocente.rolId } };
+    let guardado: DocenteApi;
     if (editandoId !== null) {
-      const guardado = await api.put<any>(`/docentes/${editandoId}`, payload);
-      setDocentes((actuales) => actuales.map((docente) => docente.id === editandoId ? { ...guardado, rolId: guardado.rol?.id ?? null } : docente));
+      guardado = await api.put<DocenteApi>(`/docentes/${editandoId}`, payload);
     } else {
-      const guardado = await api.post<any>("/docentes", payload);
-      setDocentes((actuales) => [...actuales, { ...guardado, rolId: guardado.rol?.id ?? null }]);
+      guardado = await api.post<DocenteApi>("/docentes", payload);
     }
+    const asignadas = await api.put<MateriaApi[]>(
+      `/docentes/${guardado.id}/materias`,
+      { materiaIds: materiasSeleccionadas },
+    );
+    const docenteCompleto: Docente = {
+      ...guardado,
+      rolId: guardado.rol?.id ?? null,
+      materiaIds: asignadas.map((materia) => materia.id),
+      cursos: cursosSeleccionados,
+    };
+    setDocentes((actuales) =>
+      editandoId !== null
+        ? actuales.map((docente) => docente.id === editandoId ? docenteCompleto : docente)
+        : [...actuales, docenteCompleto],
+    );
+    setMaterias((actuales) => actuales.map((materia) => {
+      const docentesMateria = materia.docentes ?? [];
+      if (materiasSeleccionadas.includes(materia.id)) {
+        return docentesMateria.some((docente) => docente.id === guardado.id)
+          ? materia
+          : { ...materia, docentes: [...docentesMateria, { id: guardado.id }] };
+      }
+      if (docentesMateria.some((docente) => docente.id === guardado.id)) {
+        return { ...materia, docentes: docentesMateria.filter((docente) => docente.id !== guardado.id) };
+      }
+      return materia;
+    }));
   } catch (error) { setMensaje(getApiErrorMessage(error)); return; }
 
   setFormulario(formularioInicial);
+  setMateriasSeleccionadas([]);
+  setCursosSeleccionados([]);
   setEditandoId(null);
 
   setMensaje(
@@ -174,6 +245,8 @@ function editarDocente(docente: Docente) {
     correo: docente.correo,
     rolId: docente.rolId ? String(docente.rolId) : "",
   });
+  setMateriasSeleccionadas(docente.materiaIds);
+  setCursosSeleccionados(docente.cursos ?? []);
 
   setEditandoId(docente.id);
   setMensaje("");
@@ -359,6 +432,82 @@ return (
 
           </div>
 
+          <fieldset className="teachers-subjects">
+            <div className="teachers-subjects-heading">
+              <div>
+                <legend>Materias asignadas</legend>
+                <p>Selecciona las materias y cursos que tendrá a cargo el docente.</p>
+              </div>
+              <span>{materiasSeleccionadas.length} seleccionadas</span>
+            </div>
+            <div className="teachers-subjects-grid">
+              {materias.map((materia) => {
+                const otrosDocentes = (materia.docentes ?? [])
+                  .filter((docente) => docente.id !== editandoId).length;
+                return (
+                  <label
+                    key={materia.id}
+                    className={[
+                      materiasSeleccionadas.includes(materia.id)
+                        ? "teachers-subject--selected"
+                        : "",
+                    ].join(" ")}
+                  >
+                    <input
+                      type="checkbox"
+                      checked={materiasSeleccionadas.includes(materia.id)}
+                      onChange={() => alternarMateria(materia.id)}
+                    />
+                    <span>
+                      <strong>{materia.nombre}</strong>
+                      <small>{otrosDocentes ? `${otrosDocentes} docente(s) adicional(es)` : "Disponible"}</small>
+                    </span>
+                  </label>
+                );
+              })}
+              {!materias.length && (
+                <p className="teachers-subjects-empty">
+                  Primero registra materias y cursos en el módulo Materias.
+                </p>
+              )}
+            </div>
+          </fieldset>
+
+          <fieldset className="teachers-subjects">
+            <div className="teachers-subjects-heading">
+              <div>
+                <legend>Cursos asignados</legend>
+                <p>El docente solo podrá consultar y modificar información de estos cursos.</p>
+              </div>
+              <span>{cursosSeleccionados.length} seleccionados</span>
+            </div>
+            <div className="teachers-subjects-grid">
+              {cursosDisponibles.map((curso) => (
+                <label
+                  key={curso}
+                  className={cursosSeleccionados.includes(curso)
+                    ? "teachers-subject--selected"
+                    : ""}
+                >
+                  <input
+                    type="checkbox"
+                    checked={cursosSeleccionados.includes(curso)}
+                    onChange={() => alternarCurso(curso)}
+                  />
+                  <span>
+                    <strong>{curso.replace("|", " ")}</strong>
+                    <small>Curso registrado</small>
+                  </span>
+                </label>
+              ))}
+              {!cursosDisponibles.length && (
+                <p className="teachers-subjects-empty">
+                  Primero registra estudiantes para crear los cursos disponibles.
+                </p>
+              )}
+            </div>
+          </fieldset>
+
           <div className="students-form-actions">
 
             {mensaje && (
@@ -433,6 +582,8 @@ return (
                 <th>Teléfono</th>
                 <th>Correo</th>
                 <th>Rol</th>
+                <th>Materias</th>
+                <th>Cursos</th>
                 <th>Acciones</th>
               </tr>
             </thead>
@@ -464,6 +615,9 @@ return (
                   <td>{docente.correo}</td>
 
                   <td><span className="students-role-badge">{rolesActivos.find((rol) => rol.id === docente.rolId)?.nombre ?? "Sin rol"}</span></td>
+
+                  <td>{docente.materiaIds.length}</td>
+                  <td>{docente.cursos.length}</td>
 
                   <td>
 

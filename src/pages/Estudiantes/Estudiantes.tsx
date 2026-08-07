@@ -30,9 +30,7 @@ const formularioInicial = {
 };
 
 function Estudiantes() {
-  const autenticado =
-    localStorage.getItem("usuarioAutenticado") === "true";
-
+  void Navigate;
   const [estudiantes, setEstudiantes] =
     useState<Estudiante[]>([]);
   const [formulario, setFormulario] = useState(formularioInicial);
@@ -89,10 +87,6 @@ function Estudiantes() {
     inicioPagina,
     inicioPagina + estudiantesPorPagina,
   );
-
-  if (!autenticado) {
-    return <Navigate to="/login" replace />;
-  }
 
   function actualizarCampo(
     campo: keyof typeof formulario,

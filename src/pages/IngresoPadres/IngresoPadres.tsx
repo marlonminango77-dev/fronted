@@ -1,281 +1,61 @@
-import { useEffect, useMemo, useState, type FormEvent } from "react";
-import { Link, Navigate } from "react-router-dom";
+import { useCallback, useEffect, useMemo, useState, type FormEvent } from "react";
+import { Link } from "react-router-dom";
 import MainLayout from "../../layouts/MainLayout";
 import "./IngresoPadres.css";
 import { api, getApiErrorMessage } from "../../api/client";
 
-interface Representante {
-    id: number;
-    nombres: string;
-    apellidos: string;
-    identificacion: string;
-    telefono: string;
-    correo: string;
-    parentesco: string;
-    estudiante: string;
-    curso: string;
-}
+interface Representante {id:number;nombres:string;apellidos:string;identificacion:string;telefono:string;correo:string;parentesco:string}
+interface Alumno {id:number;cedula:string;nombres:string;apellidos:string;grado:string;paralelo:string;representanteRegistro?:{id:number}|null;representantes?:Array<{id:number}>}
+type RepresentanteForm=Omit<Representante,"id">;
+const formularioVacio:RepresentanteForm={nombres:"",apellidos:"",identificacion:"",telefono:"",correo:"",parentesco:""};
 
-type RepresentanteForm = Omit<Representante, "id">;
-
-const formularioVacio: RepresentanteForm = {
-    nombres: "",
-    apellidos: "",
-    identificacion: "",
-    telefono: "",
-    correo: "",
-    parentesco: "",
-    estudiante: "",
-    curso: "",
-};
-
-export default function IngresoPadres() {
-    const autenticado = localStorage.getItem("usuarioAutenticado") === "true";
-    const [representantes, setRepresentantes] =
-        useState<Representante[]>([]);
-    const [formulario, setFormulario] =
-        useState<RepresentanteForm>(formularioVacio);
-    const [editandoId, setEditandoId] = useState<number | null>(null);
-    const [busqueda, setBusqueda] = useState("");
-    const [mensaje, setMensaje] = useState("");
-
-    useEffect(() => {
-        api.get<Representante[]>("/representantes").then(setRepresentantes).catch((error) => setMensaje(getApiErrorMessage(error)));
-    }, []);
-
-    const representantesFiltrados = useMemo(() => {
-        const texto = busqueda.trim().toLowerCase();
-        if (!texto) return representantes;
-
-        return representantes.filter((representante) =>
-            [
-                representante.nombres,
-                representante.apellidos,
-                representante.identificacion,
-                representante.estudiante,
-                representante.curso,
-            ]
-                .join(" ")
-                .toLowerCase()
-                .includes(texto),
-        );
-    }, [busqueda, representantes]);
-
-    if (!autenticado) return <Navigate to="/login" replace />;
-
-    function actualizarCampo(
-        campo: keyof RepresentanteForm,
-        valor: string,
-    ) {
-        setFormulario((actual) => ({ ...actual, [campo]: valor }));
-        setMensaje("");
-    }
-
-    async function guardarRepresentante(event: FormEvent<HTMLFormElement>) {
-        event.preventDefault();
-
-        const datos = Object.fromEntries(
-            Object.entries(formulario).map(([clave, valor]) => [
-                clave,
-                valor.trim(),
-            ]),
-        ) as unknown as RepresentanteForm;
-
-        try {
-            if (editandoId !== null) {
-                const guardado = await api.put<Representante>(`/representantes/${editandoId}`, datos);
-                setRepresentantes((lista) => lista.map((item) => item.id === editandoId ? guardado : item));
-                setMensaje("Los datos del representante se actualizaron correctamente.");
-            } else {
-                const guardado = await api.post<Representante>("/representantes", datos);
-                setRepresentantes((lista) => [...lista, guardado]);
-                setMensaje("El representante fue registrado correctamente.");
-            }
-        } catch (error) { setMensaje(getApiErrorMessage(error)); return; }
-
-        setFormulario(formularioVacio);
-        setEditandoId(null);
-    }
-
-    function editarRepresentante(representante: Representante) {
-        const { id, ...datos } = representante;
-        setEditandoId(id);
-        setFormulario(datos);
-        setMensaje("");
-        window.scrollTo({ top: 0, behavior: "smooth" });
-    }
-
-    function cancelarEdicion() {
-        setEditandoId(null);
-        setFormulario(formularioVacio);
-        setMensaje("");
-    }
-
-    async function eliminarRepresentante(representante: Representante) {
-        if (
-            window.confirm(
-                `¿Deseas eliminar a ${representante.nombres} ${representante.apellidos}?`,
-            )
-        ) {
-            try {
-                await api.delete(`/representantes/${representante.id}`);
-                setRepresentantes((lista) => lista.filter((item) => item.id !== representante.id));
-            } catch (error) { setMensaje(getApiErrorMessage(error)); }
-        }
-    }
-
-    return (
-        <MainLayout>
-            <div className="parent-entry-page">
-                <header className="parent-entry-heading">
-                    <div>
-                        <p className="parent-entry-eyebrow">Gestión estudiantil</p>
-                        <h1>Registro de padres de familia</h1>
-                        <p>
-                            Registra los datos del representante y relaciónalo con un
-                            estudiante.
-                        </p>
-                    </div>
-
-                    <Link to="/home" className="parent-entry-back">
-                        <i className="bi bi-arrow-left"></i>
-                        Volver al inicio
-                    </Link>
-                </header>
-
-                <section className="parent-entry-form-card">
-                    <div className="parent-entry-card-title">
-                        <span><i className="bi bi-person-plus-fill"></i></span>
-                        <div>
-                            <p>{editandoId ? "Actualización de información" : "Nuevo registro"}</p>
-                            <h2>{editandoId ? "Editar representante" : "Datos del representante"}</h2>
-                        </div>
-                    </div>
-
-                    <form onSubmit={guardarRepresentante}>
-                        <fieldset>
-                            <legend>Información personal</legend>
-                            <div className="parent-entry-grid">
-                                <label>
-                                    <span>Nombres *</span>
-                                    <input required value={formulario.nombres} onChange={(e) => 
-                                        actualizarCampo("nombres", e.target.value)} placeholder="Ingrese los nombres" />
-                                </label>
-                                <label>
-                                    <span>Apellidos *</span>
-                                    <input required value={formulario.apellidos} onChange={(e) => 
-                                        actualizarCampo("apellidos", e.target.value)} placeholder="Ingrese los apellidos" />
-                                </label>
-                                <label>
-                                    <span>Cédula de identidad *</span>
-                                    <input required inputMode="numeric" pattern="[0-9]{10}" maxLength={10} value={formulario.identificacion} onChange={(e) => 
-                                        actualizarCampo("identificacion", e.target.value.replace(/\D/g, ""))} placeholder="10 dígitos" />
-                                </label>
-                                <label>
-                                    <span>Parentesco *</span>
-                                    <select required value={formulario.parentesco} onChange={(e) => 
-                                        actualizarCampo("parentesco", e.target.value)}>
-                                        <option value="">Seleccione</option>
-                                        <option>Madre</option>
-                                        <option>Padre</option>
-                                        <option>Representante legal</option>
-                                        <option>Otro familiar</option>
-                                    </select>
-                                </label>
-                            </div>
-                        </fieldset>
-
-                        <fieldset>
-                            <legend>Datos de contacto</legend>
-                            <div className="parent-entry-grid">
-                                <label>
-                                    <span>Teléfono *</span>
-                                    <input required type="tel" value={formulario.telefono} onChange={(e) => 
-                                        actualizarCampo("telefono", e.target.value)} placeholder="Ej. 099 123 4567" />
-                                </label>
-                                <label>
-                                    <span>Correo electrónico *</span>
-                                    <input required type="email" value={formulario.correo} onChange={(e) => 
-                                        actualizarCampo("correo", e.target.value)} placeholder="correo@ejemplo.com" />
-                                </label>
-                            </div>
-                        </fieldset>
-
-                        <fieldset>
-                            <legend>Estudiante asociado</legend>
-                            <div className="parent-entry-grid">
-                                <label>
-                                    <span>Nombre del estudiante *</span>
-                                    <input required value={formulario.estudiante} onChange={(e) => 
-                                        actualizarCampo("estudiante", e.target.value)} placeholder="Nombres y apellidos" />
-                                </label>
-                                <label>
-                                    <span>Curso y paralelo *</span>
-                                    <select required value={formulario.curso} onChange={(e) => 
-                                        actualizarCampo("curso", e.target.value)}>
-                                        <option value="">Seleccione un curso</option>
-                                        <option>1.º EGB - A</option><option>2.º EGB - A</option>
-                                        <option>3.º EGB - A</option><option>4.º EGB - A</option>
-                                        <option>5.º EGB - A</option><option>5.º EGB - B</option>
-                                        <option>6.º EGB - A</option><option>7.º EGB - A</option>
-                                    </select>
-                                </label>
-                            </div>
-                        </fieldset>
-
-                        {mensaje && <div className="parent-entry-message"><i className="bi bi-check-circle-fill"></i>{mensaje}</div>}
-
-                        <div className="parent-entry-form-actions">
-                            {editandoId && <button type="button" className="parent-entry-secondary" onClick={cancelarEdicion}>Cancelar</button>}
-                            <button type="submit" className="parent-entry-primary">
-                                <i className={`bi ${editandoId ? "bi-check-lg" : "bi-floppy-fill"}`}></i>
-                                {editandoId ? "Guardar cambios" : "Registrar representante"}
-                            </button>
-                        </div>
-                    </form>
-                </section>
-
-                <section className="parent-entry-list-card">
-                    <div className="parent-entry-list-header">
-                        <div>
-                            <p className="parent-entry-eyebrow">Registros</p>
-                            <h2>Representantes registrados</h2>
-                            <span>{representantesFiltrados.length} resultados</span>
-                        </div>
-                        <label className="parent-entry-search">
-                            <i className="bi bi-search"></i>
-                            <span className="parent-entry-sr-only">Buscar representante</span>
-                            <input type="search" value={busqueda} onChange={(e) => setBusqueda(e.target.value)} placeholder="Buscar representante o estudiante..." />
-                        </label>
-                    </div>
-
-                    <div className="parent-entry-table-wrapper">
-                        <table className="parent-entry-table">
-                            <thead><tr><th>Representante</th><th>Contacto</th><th>Estudiante</th><th>Parentesco</th><th>Acciones</th></tr></thead>
-                            <tbody>
-                                {representantesFiltrados.map((representante) => (
-                                    <tr key={representante.id}>
-                                        <td><div className="parent-entry-person">
-                                            <span>{representante.nombres.charAt(0)}{representante.apellidos.charAt(0)}</span><div><strong>
-                                                {representante.nombres} {representante.apellidos}</strong><small>C.I. {representante.identificacion}</small></div></div></td>
-                                        <td><div className="parent-entry-contact">
-                                            <span>{representante.telefono}</span><small>{representante.correo}</small></div></td>
-                                        <td><strong>{representante.estudiante}</strong>
-                                        <small className="parent-entry-course">{representante.curso}</small></td>
-                                        <td><span className="parent-entry-relation">{representante.parentesco}</span></td>
-                                        <td><div className="parent-entry-actions">
-                                            <button onClick={() => editarRepresentante(representante)} aria-label="Editar representante">
-                                                <i className="bi bi-pencil-square"></i></button><button onClick={() => 
-                                                    eliminarRepresentante(representante)} aria-label="Eliminar representante"><i className="bi bi-trash3"></i></button></div></td>
-                                    </tr>
-                                ))}
-                            </tbody>
-                        </table>
-                        {!representantesFiltrados.length && <div className="parent-entry-empty"><i className="bi bi-people">
-                            </i><h3>No hay resultados</h3><p>Intenta buscar con otros datos.</p></div>}
-                    </div>
-                </section>
-            </div>
-        </MainLayout>
-    );
+export default function IngresoPadres(){
+ const[representantes,setRepresentantes]=useState<Representante[]>([]);
+ const[alumnos,setAlumnos]=useState<Alumno[]>([]);
+ const[estadosCuenta,setEstadosCuenta]=useState<Record<number,string>>({});
+ const[formulario,setFormulario]=useState<RepresentanteForm>(formularioVacio);
+ const[crearCuenta,setCrearCuenta]=useState(true),[passwordTemporal,setPasswordTemporal]=useState("");
+ const[seleccionados,setSeleccionados]=useState<number[]>([]);
+ const[buscarAlumno,setBuscarAlumno]=useState(""),[cursoAlumno,setCursoAlumno]=useState(""),[cursoListado,setCursoListado]=useState(""),[busqueda,setBusqueda]=useState(""),[mensaje,setMensaje]=useState("");
+ const[editandoId,setEditandoId]=useState<number|null>(null),[guardando,setGuardando]=useState(false);
+ useEffect(()=>{Promise.all([api.get<Representante[]>("/representantes"),api.get<Alumno[]>("/alumnos"),api.get<Record<number,string>>("/representantes/cuentas-estados")]).then(([r,a,e])=>{setRepresentantes(r);setAlumnos(a);setEstadosCuenta(e)}).catch(e=>setMensaje(getApiErrorMessage(e)))},[]);
+ const vinculado=(a:Alumno,id:number)=>a.representanteRegistro?.id===id||a.representantes?.some(r=>r.id===id);
+ const hijosDe=useCallback((id:number)=>alumnos.filter(a=>vinculado(a,id)),[alumnos]);
+ const cursos=useMemo(()=>[...new Set(alumnos.map(a=>`${a.grado}|${a.paralelo.toUpperCase()}`))].sort(),[alumnos]);
+ const busquedaAlumnoActiva=cursoAlumno!==""||buscarAlumno.trim().length>=2;
+ const disponibles=useMemo(()=>{const t=buscarAlumno.trim().toLowerCase();if(!busquedaAlumnoActiva)return editandoId===null?[]:alumnos.filter(a=>vinculado(a,editandoId));return alumnos.filter(a=>(!cursoAlumno||`${a.grado}|${a.paralelo.toUpperCase()}`===cursoAlumno)&&(!t||`${a.cedula} ${a.nombres} ${a.apellidos} ${a.grado} ${a.paralelo}`.toLowerCase().includes(t)))},[alumnos,buscarAlumno,busquedaAlumnoActiva,cursoAlumno,editandoId]);
+ const estudiantesPorCurso=useMemo(()=>disponibles.reduce<Record<string,Alumno[]>>((grupos,a)=>{const curso=`${a.grado} ${a.paralelo}`.trim();(grupos[curso]??=[]).push(a);return grupos},{}),[disponibles]);
+ const cursosRegistrados=useMemo(()=>cursos.map(c=>({clave:c,nombre:c.replace("|"," "),cantidad:alumnos.filter(a=>a.representanteRegistro&&`${a.grado}|${a.paralelo.toUpperCase()}`===c).length})).filter(c=>c.cantidad>0),[alumnos,cursos]);
+ const totalEstudiantesVinculados=useMemo(()=>alumnos.filter(a=>a.representanteRegistro).length,[alumnos]);
+ const filtrados=useMemo(()=>{const t=busqueda.trim().toLowerCase();return representantes.filter(r=>{const hijos=hijosDe(r.id);const coincideCurso=!cursoListado||hijos.some(a=>`${a.grado}|${a.paralelo.toUpperCase()}`===cursoListado);const coincideBusqueda=!t||`${r.nombres} ${r.apellidos} ${r.identificacion} ${r.correo} ${hijos.map(a=>`${a.cedula} ${a.nombres} ${a.apellidos}`).join(" ")}`.toLowerCase().includes(t);return coincideCurso&&coincideBusqueda})},[busqueda,cursoListado,hijosDe,representantes]);
+ const campo=(nombre:keyof RepresentanteForm,valor:string)=>{setFormulario(a=>({...a,[nombre]:valor}));setMensaje("")};
+ const alternar=(id:number)=>setSeleccionados(a=>a.includes(id)?a.filter(x=>x!==id):[...a,id]);
+ const limpiar=()=>{setFormulario(formularioVacio);setSeleccionados([]);setBuscarAlumno("");setCursoAlumno("");setEditandoId(null);setCrearCuenta(true);setPasswordTemporal("")};
+ async function guardar(e:FormEvent){e.preventDefault();if(!seleccionados.length)return setMensaje("Selecciona al menos un estudiante.");if(editandoId===null&&crearCuenta&&passwordTemporal.length<8)return setMensaje("La contraseña temporal debe tener al menos 8 caracteres.");setGuardando(true);setMensaje("");const datos=Object.fromEntries(Object.entries(formulario).map(([k,v])=>[k,v.trim()])) as unknown as RepresentanteForm;try{const payload={representante:datos,crearCuenta:editandoId===null&&crearCuenta,password:editandoId===null&&crearCuenta?passwordTemporal:undefined,alumnoIds:seleccionados};const r=editandoId===null?await api.post<Representante>("/representantes/registro-completo",payload):await api.put<Representante>(`/representantes/${editandoId}/registro-completo`,payload);setRepresentantes(a=>editandoId===null?[...a,r]:a.map(x=>x.id===editandoId?r:x));if(editandoId===null&&crearCuenta)setEstadosCuenta(a=>({...a,[r.id]:"Activo"}));setAlumnos(a=>a.map(x=>{const otros=(x.representantes??[]).filter(rep=>rep.id!==r.id);return seleccionados.includes(x.id)?{...x,representanteRegistro:x.representanteRegistro??r,representantes:[...otros,r]}:{...x,representantes:otros,representanteRegistro:x.representanteRegistro?.id===r.id?(otros[0]??null):x.representanteRegistro}}));setMensaje(crearCuenta&&editandoId===null?"Representante registrado. Su usuario de acceso es el correo electrónico.":"Representante y estudiantes guardados correctamente.");limpiar()}catch(error){setMensaje(getApiErrorMessage(error))}finally{setGuardando(false)}}
+ function editar(r:Representante){setEditandoId(r.id);setFormulario({nombres:r.nombres,apellidos:r.apellidos,identificacion:r.identificacion,telefono:r.telefono,correo:r.correo,parentesco:r.parentesco});setSeleccionados(hijosDe(r.id).map(a=>a.id));setBuscarAlumno("");setCursoAlumno("");window.scrollTo({top:0,behavior:"smooth"})}
+ async function eliminar(r:Representante){if(!window.confirm(`¿Deseas eliminar a ${r.nombres} ${r.apellidos}? También se eliminará su cuenta de acceso.`))return;try{await api.delete(`/representantes/${r.id}`);setRepresentantes(a=>a.filter(x=>x.id!==r.id));setAlumnos(a=>a.map(x=>{const otros=(x.representantes??[]).filter(rep=>rep.id!==r.id);return{...x,representantes:otros,representanteRegistro:x.representanteRegistro?.id===r.id?(otros[0]??null):x.representanteRegistro}}));setMensaje("Representante y cuenta eliminados correctamente.")}catch(error){setMensaje(getApiErrorMessage(error))}}
+ async function marcarPrincipal(r:Representante,a:Alumno){try{const actualizado=await api.put<Alumno>(`/representantes/${r.id}/estudiantes/${a.id}/principal`,{});setAlumnos(lista=>lista.map(x=>x.id===a.id?actualizado:x));setMensaje(`${r.nombres} ${r.apellidos} es ahora el representante principal de ${a.nombres}.`)}catch(error){setMensaje(getApiErrorMessage(error))}}
+ async function cambiarEstadoCuenta(r:Representante){const actual=estadosCuenta[r.id];if(!actual)return setMensaje("Este representante no tiene una cuenta de acceso.");const nuevo=actual==="Activo"?"Inactivo":"Activo";try{await api.put(`/representantes/${r.id}/cuenta/estado?estado=${nuevo}`,{});setEstadosCuenta(a=>({...a,[r.id]:nuevo}));setMensaje(`Cuenta ${nuevo.toLowerCase()} correctamente.`)}catch(error){setMensaje(getApiErrorMessage(error))}}
+ return <MainLayout><div className="parent-entry-page">
+  <header className="parent-entry-heading"><div><p className="parent-entry-eyebrow">Gestión estudiantil</p><h1>Registro de representantes</h1><p>Busca estudiantes ya registrados y vincula uno o varios al representante.</p></div><Link to="/home" className="parent-entry-back"><i className="bi bi-arrow-left"/>Volver al inicio</Link></header>
+  <section className="parent-entry-form-card"><div className="parent-entry-card-title"><span><i className="bi bi-person-plus-fill"/></span><div><p>{editandoId?"Actualización de información":"Nuevo registro"}</p><h2>{editandoId?"Editar representante":"Datos del representante"}</h2></div></div>
+   <form onSubmit={guardar}><fieldset><legend>Información personal</legend><div className="parent-entry-grid">
+    <label><span>Nombres *</span><input required value={formulario.nombres} onChange={e=>campo("nombres",e.target.value)}/></label>
+    <label><span>Apellidos *</span><input required value={formulario.apellidos} onChange={e=>campo("apellidos",e.target.value)}/></label>
+    <label><span>Cédula de identidad *</span><input required inputMode="numeric" pattern="[0-9]{10}" maxLength={10} value={formulario.identificacion} onChange={e=>campo("identificacion",e.target.value.replace(/\D/g,""))}/></label>
+    <label><span>Parentesco *</span><select required value={formulario.parentesco} onChange={e=>campo("parentesco",e.target.value)}><option value="">Seleccione</option><option>Madre</option><option>Padre</option><option>Representante legal</option><option>Otro familiar</option></select></label>
+   </div></fieldset>
+   <fieldset><legend>Datos de contacto</legend><div className="parent-entry-grid"><label><span>Teléfono *</span><input required type="tel" value={formulario.telefono} onChange={e=>campo("telefono",e.target.value)}/></label><label><span>Correo electrónico *</span><input required type="email" maxLength={254} value={formulario.correo} onChange={e=>campo("correo",e.target.value)}/><small>Este correo puede utilizarse como usuario de acceso.</small></label></div></fieldset>
+   {editandoId===null&&<fieldset className="parent-account-fieldset"><legend>Acceso al sistema</legend><label className="parent-account-toggle"><input type="checkbox" checked={crearCuenta} onChange={e=>setCrearCuenta(e.target.checked)}/><span><strong>Crear usuario para el representante</strong><small>Ingresará con su correo electrónico y quedará vinculado automáticamente a sus estudiantes.</small></span></label>{crearCuenta&&<div className="parent-entry-grid parent-account-password"><label><span>Usuario</span><input readOnly value={formulario.correo.trim().toLowerCase()} placeholder="Se completará con el correo"/></label><label><span>Contraseña temporal *</span><input required type="password" minLength={8} value={passwordTemporal} onChange={e=>setPasswordTemporal(e.target.value)} placeholder="Mínimo 8 caracteres"/><small>Comunícala de forma segura al representante.</small></label></div>}</fieldset>}
+   <fieldset><legend>Estudiantes asociados *</legend><p className="parent-student-help">Para ver estudiantes, selecciona un curso o escribe al menos 2 caracteres de la cédula, nombre o apellido. Puedes vincular estudiantes de cursos diferentes.</p><div className="parent-student-filters"><label className="parent-student-search"><i className="bi bi-search"/><input type="search" placeholder="Buscar por cédula, nombre o apellido" value={buscarAlumno} onChange={e=>setBuscarAlumno(e.target.value)}/></label><label className="parent-student-course"><span>Curso</span><select value={cursoAlumno} onChange={e=>setCursoAlumno(e.target.value)}><option value="">Todos los cursos</option>{cursos.map(c=><option key={c} value={c}>{c.replace("|"," ")}</option>)}</select></label></div><div className="parent-student-groups">{Object.entries(estudiantesPorCurso).map(([curso,lista])=><section key={curso} className="parent-student-group"><div className="parent-student-group-title"><strong>{curso}</strong><span>{lista.length} estudiante(s)</span></div><div className="parent-student-list">{lista.map(a=><label key={a.id} className={seleccionados.includes(a.id)?"parent-student-option parent-student-option--selected":"parent-student-option"}><input type="checkbox" checked={seleccionados.includes(a.id)} onChange={()=>alternar(a.id)}/><span><strong>{a.nombres} {a.apellidos}</strong><small>C.I. {a.cedula}</small></span></label>)}</div></section>)}{!busquedaAlumnoActiva&&editandoId===null&&<div className="parent-student-empty parent-student-empty--prompt"><i className="bi bi-funnel"/><strong>Usa los filtros para buscar estudiantes</strong><span>No se mostrará la lista completa automáticamente.</span></div>}{buscarAlumno.trim().length===1&&cursoAlumno===""&&<p className="parent-student-empty">Escribe al menos 2 caracteres para buscar.</p>}{busquedaAlumnoActiva&&!disponibles.length&&<p className="parent-student-empty">No se encontraron estudiantes con esos filtros.</p>}</div><strong className="parent-student-count">{seleccionados.length} estudiante(s) seleccionado(s)</strong></fieldset>
+   {mensaje&&<div className="parent-entry-message"><i className="bi bi-info-circle-fill"/>{mensaje}</div>}<div className="parent-entry-form-actions">{editandoId&&<button type="button" className="parent-entry-secondary" onClick={limpiar}>Cancelar</button>}<button disabled={guardando} className="parent-entry-primary">{guardando?"Guardando…":editandoId?"Guardar cambios":"Registrar representante"}</button></div></form>
+  </section>
+  <nav className="parent-course-cards" aria-label="Filtrar representantes por curso">
+   <button type="button" className={!cursoListado?"parent-course-card parent-course-card--active":"parent-course-card"} onClick={()=>setCursoListado("")}><span><i className="bi bi-people-fill"/></span><div><strong>Todos los cursos</strong><small>{totalEstudiantesVinculados} estudiante(s)</small></div></button>
+   {cursosRegistrados.map(c=><button type="button" key={c.clave} className={cursoListado===c.clave?"parent-course-card parent-course-card--active":"parent-course-card"} onClick={()=>setCursoListado(c.clave)}><span><i className="bi bi-mortarboard-fill"/></span><div><strong>{c.nombre}</strong><small>{c.cantidad} estudiante(s)</small></div></button>)}
+  </nav>
+  <section className="parent-entry-list-card"><div className="parent-entry-list-header"><div><p className="parent-entry-eyebrow">Registros</p><h2>Representantes registrados</h2><span>{filtrados.length} resultado(s){cursoListado&&` en ${cursoListado.replace("|"," ")}`}</span></div><label className="parent-entry-search"><i className="bi bi-search"/><span className="parent-entry-sr-only">Buscar representante</span><input type="search" value={busqueda} onChange={e=>setBusqueda(e.target.value)} placeholder="Buscar representante o estudiante"/></label></div>
+   <div className="parent-entry-table-wrapper"><table className="parent-entry-table"><thead><tr><th>Representante</th><th>Contacto y cuenta</th><th>Estudiantes vinculados</th><th>Parentesco</th><th>Acciones</th></tr></thead><tbody>{filtrados.map(r=><tr key={r.id}><td><div className="parent-entry-person"><span>{r.nombres[0]}{r.apellidos[0]}</span><div><strong>{r.nombres} {r.apellidos}</strong><small>C.I. {r.identificacion}</small></div></div></td><td><div className="parent-entry-contact"><span>{r.telefono}</span><small>{r.correo}</small><em className={`parent-account-status parent-account-status--${(estadosCuenta[r.id]??"sin-cuenta").toLowerCase()}`}>{estadosCuenta[r.id]??"Sin cuenta"}</em></div></td><td><div className="parent-linked-students">{hijosDe(r.id).map(a=><span key={a.id}>{a.nombres} {a.apellidos}<small>{a.grado} {a.paralelo}</small><button type="button" className={a.representanteRegistro?.id===r.id?"parent-primary parent-primary--active":"parent-primary"} onClick={()=>marcarPrincipal(r,a)} disabled={a.representanteRegistro?.id===r.id} title={a.representanteRegistro?.id===r.id?"Representante principal":"Definir como representante principal"}><i className="bi bi-star-fill"/>{a.representanteRegistro?.id===r.id?" Principal":" Hacer principal"}</button></span>)}{!hijosDe(r.id).length&&<em>Sin estudiantes</em>}</div></td><td><span className="parent-entry-relation">{r.parentesco}</span></td><td><div className="parent-entry-actions">{estadosCuenta[r.id]&&<button onClick={()=>cambiarEstadoCuenta(r)} aria-label={estadosCuenta[r.id]==="Activo"?"Suspender cuenta":"Reactivar cuenta"} title={estadosCuenta[r.id]==="Activo"?"Suspender cuenta":"Reactivar cuenta"}><i className={`bi ${estadosCuenta[r.id]==="Activo"?"bi-lock":"bi-unlock"}`}/></button>}<button onClick={()=>editar(r)} aria-label="Editar representante"><i className="bi bi-pencil-square"/></button><button onClick={()=>eliminar(r)} aria-label="Eliminar representante"><i className="bi bi-trash3"/></button></div></td></tr>)}</tbody></table>{!filtrados.length&&<div className="parent-entry-empty"><i className="bi bi-people"/><h3>No hay resultados</h3><p>Intenta buscar con otros datos.</p></div>}</div>
+  </section>
+ </div></MainLayout>
 }

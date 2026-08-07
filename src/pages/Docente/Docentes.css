@@ -21,8 +21,8 @@
 
 .students-label{
     display:inline-block;
-    background:#eef4ff;
-    color:#087443;
+    background:var(--color-primary-softest);
+    color:var(--color-primary);
     padding:.35rem .8rem;
     border-radius:999px;
     font-size:.8rem;
@@ -68,7 +68,7 @@
     display:flex;
     justify-content:center;
     align-items:center;
-    background:#087443;
+    background:var(--color-primary);
     color:#fff;
     font-size:1.5rem;
 }
@@ -120,7 +120,7 @@
 
 .students-form-grid input:focus,
 .students-form-grid select:focus{
-    border-color:#087443;
+    border-color:var(--color-primary);
     box-shadow:0 0 0 3px rgba(37,99,235,.15);
 }
 /* ==========================================================
@@ -144,7 +144,7 @@
     padding:.9rem 1.8rem;
     border:none;
     border-radius:12px;
-    background:#087443;
+    background:var(--color-primary);
     color:#fff;
     font-size:.95rem;
     font-weight:600;
@@ -153,7 +153,7 @@
 }
 
 .students-save-button:hover{
-    background:#087443;
+    background:var(--color-primary);
     transform:translateY(-2px);
 }
 
@@ -162,7 +162,7 @@
 }
 
 .students-message{
-    color:#16a34a;
+    color:var(--color-primary);
     font-weight:600;
 }
 
@@ -213,7 +213,7 @@
 }
 
 .students-search input:focus{
-    border-color:#087443;
+    border-color:var(--color-primary);
     box-shadow:0 0 0 3px rgba(37,99,235,.15);
 }
 
@@ -249,7 +249,7 @@
 }
 
 .students-table thead{
-    background:#087443;
+    background:var(--color-primary);
     color:#fff;
 }
 
@@ -287,7 +287,7 @@
     display:flex;
     justify-content:center;
     align-items:center;
-    background:#087443;
+    background:var(--color-primary);
     color:#fff;
     font-weight:bold;
     font-size:1rem;
@@ -354,7 +354,7 @@
 
 .students-empty i{
     font-size:3rem;
-    color:#cbd5e1;
+    color:var(--color-primary-border);
     margin-bottom:1rem;
 }
 
@@ -387,7 +387,7 @@
 }
 
 .students-pagination button:hover:not(:disabled){
-    background:#087443;
+    background:var(--color-primary);
     color:#fff;
 }
 
@@ -402,7 +402,7 @@
 }
 
 .students-page-button--active{
-    background:#087443 !important;
+    background:var(--color-primary) !important;
     color:#fff !important;
 }
 
@@ -501,4 +501,6 @@
     }
 
 }
-.students-role-badge{display:inline-block;padding:.35rem .65rem;color:#087443;border-radius:999px;background:#e4f4ec;font-size:.82rem;font-weight:700;white-space:nowrap}
+.students-role-badge{display:inline-block;padding:.35rem .65rem;color:var(--color-primary);border-radius:999px;background:var(--color-primary-soft);font-size:.82rem;font-weight:700;white-space:nowrap}
+
+.teachers-subjects{margin:24px 0 0;padding:0;border:0}.teachers-subjects-heading{display:flex;align-items:flex-end;justify-content:space-between;gap:16px;margin-bottom:14px}.teachers-subjects-heading legend{color:#263238;font-size:1rem;font-weight:800}.teachers-subjects-heading p{margin:4px 0 0;color:#748085;font-size:.86rem}.teachers-subjects-heading>span{color:var(--color-primary);font-size:.82rem;font-weight:800}.teachers-subjects-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:10px}.teachers-subjects-grid>label{display:flex;align-items:center;gap:11px;padding:12px 14px;border:1px solid var(--color-primary-border);border-radius:10px;background:#fff;cursor:pointer}.teachers-subjects-grid input{width:19px;height:19px;flex:0 0 auto;accent-color:var(--color-primary)}.teachers-subjects-grid label>span{display:flex;min-width:0;flex-direction:column}.teachers-subjects-grid strong{color:#263238}.teachers-subjects-grid small{color:#748085}.teachers-subjects-grid .teachers-subject--selected{border-color:var(--color-primary);background:var(--color-primary-softest)}.teachers-subjects-grid .teachers-subject--disabled{cursor:not-allowed;opacity:.55;background:#f3f5f4}.teachers-subjects-empty{grid-column:1/-1;margin:0;padding:18px;color:#6f7c77;border:1px dashed var(--color-primary-border);border-radius:10px;text-align:center}@media(max-width:700px){.teachers-subjects-heading{align-items:flex-start;flex-direction:column}.teachers-subjects-grid{grid-template-columns:1fr}}

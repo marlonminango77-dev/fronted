@@ -19,7 +19,7 @@
 
 .students-label {
   margin: 0 0 5px;
-  color: #087443;
+  color: var(--color-primary);
   font-size: 0.84rem;
   font-weight: 800;
   letter-spacing: 0.8px;
@@ -60,7 +60,7 @@
 
 .students-form-card {
   margin-bottom: 25px;
-  border-left: 5px solid #087443;
+  border-left: 5px solid var(--color-primary);
 }
 
 .students-course-summary {
@@ -78,7 +78,7 @@
   padding: 17px;
   color: #263238;
   text-align: left;
-  border: 1px solid #e1e9e5;
+  border: 1px solid var(--color-primary-border);
   border-radius: 13px;
   background: #fff;
   box-shadow: 0 6px 18px rgba(38, 50, 56, 0.06);
@@ -87,13 +87,13 @@
 
 .students-course-card:hover,
 .students-course-card--active {
-  border-color: #087443;
+  border-color: var(--color-primary);
   transform: translateY(-2px);
-  box-shadow: 0 9px 22px rgba(8, 116, 67, 0.13);
+  box-shadow: 0 9px 22px rgba(23, 78, 166, 0.13);
 }
 
 .students-course-card--active {
-  background: #f0faf5;
+  background: var(--color-primary-softest);
 }
 
 .students-course-card > span {
@@ -102,9 +102,9 @@
   display: grid;
   flex: 0 0 auto;
   place-items: center;
-  color: #087443;
+  color: var(--color-primary);
   border-radius: 11px;
-  background: #e3f4eb;
+  background: var(--color-primary-soft);
   font-size: 1.25rem;
 }
 
@@ -134,15 +134,15 @@
   height: 50px;
   display: grid;
   place-items: center;
-  color: #087443;
+  color: var(--color-primary);
   border-radius: 13px;
-  background: #e3f4eb;
+  background: var(--color-primary-soft);
   font-size: 1.45rem;
 }
 
 .students-card-title p {
   margin: 0 0 2px;
-  color: #087443;
+  color: var(--color-primary);
   font-size: 0.75rem;
   font-weight: 800;
   text-transform: uppercase;
@@ -189,8 +189,8 @@
 .students-form-grid input:focus,
 .students-form-grid select:focus,
 .students-search:focus-within {
-  border-color: #087443;
-  box-shadow: 0 0 0 3px rgba(8, 116, 67, 0.12);
+  border-color: var(--color-primary);
+  box-shadow: 0 0 0 3px rgba(23, 78, 166, 0.12);
 }
 
 .students-form-actions {
@@ -204,18 +204,18 @@
 .students-save-button {
   color: #fff;
   border: 0;
-  background: #087443;
-  box-shadow: 0 6px 16px rgba(8, 116, 67, 0.2);
+  background: var(--color-primary);
+  box-shadow: 0 6px 16px rgba(23, 78, 166, 0.20);
 }
 
 .students-save-button:hover {
-  background: #056239;
+  background: var(--color-primary-dark);
   transform: translateY(-1px);
 }
 
 .students-message {
   margin: 0 auto 0 0;
-  color: #087443;
+  color: var(--color-primary);
   font-weight: 700;
 }
 
@@ -234,7 +234,7 @@
   padding: 16px;
   margin-bottom: 20px;
   border-radius: 11px;
-  background: #f4f8f6;
+  background: var(--color-primary-softest);
 }
 
 .students-filters label {
@@ -261,8 +261,8 @@
 }
 
 .students-filters select:focus {
-  border-color: #087443;
-  box-shadow: 0 0 0 3px rgba(8, 116, 67, 0.1);
+  border-color: var(--color-primary);
+  box-shadow: 0 0 0 3px var(--shadow-primary-soft);
 }
 
 .students-filters p {
@@ -279,9 +279,9 @@
   gap: 10px;
   padding: 0 14px;
   color: #81908a;
-  border: 1px solid #d5ddda;
+  border: 1px solid var(--color-primary-border);
   border-radius: 9px;
-  background: #f8faf9;
+  background: var(--color-primary-softest);
 }
 
 .students-search input {
@@ -303,14 +303,14 @@
 .students-table th,
 .students-table td {
   padding: 14px 12px;
-  border-bottom: 1px solid #e6ece9;
+  border-bottom: 1px solid var(--color-primary-border);
   text-align: left;
   white-space: nowrap;
 }
 
 .students-table th {
   color: #fff;
-  background: #087443;
+  background: var(--color-primary);
   font-size: 0.82rem;
 }
 
@@ -323,7 +323,7 @@
 }
 
 .students-table tbody tr:hover {
-  background: #f6faf8;
+  background: var(--color-primary-softest);
 }
 
 .students-person {
@@ -337,9 +337,9 @@
   height: 36px;
   display: grid;
   place-items: center;
-  color: #087443;
+  color: var(--color-primary);
   border-radius: 50%;
-  background: #e3f4eb;
+  background: var(--color-primary-soft);
   font-weight: 800;
 }
 
@@ -363,12 +363,12 @@
 }
 
 .students-action-button--edit {
-  color: #1565c0;
-  background: #eaf4ff;
+  color: var(--color-primary);
+  background: var(--color-primary-soft);
 }
 
 .students-action-button--edit:hover {
-  background: #d7eafe;
+  background: var(--color-primary-soft);
 }
 
 .students-action-button--delete {
@@ -382,7 +382,7 @@
 
 .students-empty {
   padding: 40px 20px;
-  color: #74817c;
+  color: var(--color-muted);
   text-align: center;
 }
 
@@ -415,8 +415,8 @@
   justify-content: center;
   gap: 7px;
   padding: 0 11px;
-  color: #52625b;
-  border: 1px solid #d5ddda;
+  color: #526066;
+  border: 1px solid var(--color-primary-border);
   border-radius: 8px;
   background: #fff;
   font-weight: 700;
@@ -425,8 +425,8 @@
 .students-pagination button:hover:not(:disabled),
 .students-pagination .students-page-button--active {
   color: #fff;
-  border-color: #087443;
-  background: #087443;
+  border-color: var(--color-primary);
+  background: var(--color-primary);
 }
 
 .students-pagination button:disabled {

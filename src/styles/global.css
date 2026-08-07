@@ -1,3 +1,23 @@
+:root {
+    --color-primary: #174ea6;
+    --color-primary-dark: #123f89;
+    --color-primary-light: #1e5bb8;
+    --color-primary-soft: #e9f0fc;
+    --color-primary-softest: #f4f7fd;
+    --color-primary-border: #dbe3ef;
+    --color-accent: #ffd54f;
+    --color-danger: #c8102e;
+    --color-danger-dark: #a90d27;
+    --color-neutral: #a7adb3;
+    --color-neutral-dark: #454b50;
+    --color-page: #f3f5f4;
+    --color-surface: #ffffff;
+    --color-text: #263238;
+    --color-muted: #667277;
+    --shadow-primary-soft: rgba(23, 78, 166, 0.10);
+    --shadow-primary: rgba(23, 78, 166, 0.18);
+}
+
 *{
     margin:0;
     padding:0;
@@ -6,7 +26,8 @@
 
 body{
     font-family: Arial, Helvetica, sans-serif;
-    background:#f4f7f6;
+    color: var(--color-text);
+    background:var(--color-page);
 }
 
 a{
@@ -15,4 +36,24 @@ a{
 
 ul{
     list-style:none;
+}
+
+.btn-success,
+.btn-success:disabled {
+    color: #ffffff;
+    border-color: var(--color-primary);
+    background-color: var(--color-primary);
+}
+
+.btn-success:hover,
+.btn-success:focus-visible {
+    color: #ffffff;
+    border-color: var(--color-primary-dark);
+    background-color: var(--color-primary-dark);
+}
+
+.form-control:focus,
+.form-select:focus {
+    border-color: #5f8fd8;
+    box-shadow: 0 0 0 0.2rem var(--shadow-primary);
 }

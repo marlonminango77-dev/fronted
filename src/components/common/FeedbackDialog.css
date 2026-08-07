@@ -5,7 +5,7 @@
   display: grid;
   place-items: center;
   padding: 20px;
-  background: rgba(21, 35, 30, 0.58);
+  background: rgba(31,55,74,.58);
   -webkit-backdrop-filter: blur(3px);
   backdrop-filter: blur(3px);
 }
@@ -14,7 +14,7 @@
   width: min(100%, 430px);
   padding: 34px 30px 30px;
   text-align: center;
-  border: 1px solid #e1e9e5;
+  border: 1px solid var(--color-primary-border);
   border-radius: 18px;
   background: #ffffff;
   box-shadow: 0 25px 70px rgba(0, 0, 0, 0.24);
@@ -36,14 +36,14 @@
   margin: 0 auto 17px;
   color: #ffffff;
   border-radius: 50%;
-  background: linear-gradient(135deg, #087443, #11a460);
-  box-shadow: 0 9px 22px rgba(8, 116, 67, 0.25);
+  background: linear-gradient(135deg, var(--color-primary), var(--color-primary-light));
+  box-shadow: 0 9px 22px rgba(23, 78, 166, 0.25);
   font-size: 2rem;
 }
 
 .feedback-label {
   margin: 0 0 5px;
-  color: #087443;
+  color: var(--color-primary);
   font-size: 0.76rem;
   font-weight: 800;
   letter-spacing: 0.8px;
@@ -69,16 +69,16 @@
   color: #ffffff;
   border: 0;
   border-radius: 9px;
-  background: #087443;
+  background: var(--color-primary);
   font-weight: 700;
   transition: 0.2s ease;
 }
 
 .feedback-dialog button:hover {
-  background: #056239;
+  background: var(--color-primary-dark);
 }
 
 .feedback-dialog button:focus-visible {
-  outline: 3px solid rgba(8, 116, 67, 0.22);
+  outline: 3px solid rgba(23, 78, 166, 0.22);
   outline-offset: 3px;
 }

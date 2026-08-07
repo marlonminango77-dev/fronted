@@ -1,4 +1,4 @@
-const API_URL = import.meta.env.VITE_API_URL ?? "http://localhost:8080/api";
+const API_URL = import.meta.env.VITE_API_URL ?? "/api";
 
 type ApiErrorBody = {
   error?: string;
@@ -53,7 +53,13 @@ async function request<T>(
   options: RequestInit = {},
 ): Promise<T> {
   const method = options.method ?? "GET";
-  if (!["GET", "HEAD", "OPTIONS"].includes(method)) await ensureCsrf();
+  if (!["GET", "HEAD", "OPTIONS"].includes(method)) {
+    try { await ensureCsrf(); }
+    catch {
+      if (window.location.pathname !== "/servidor-desconectado") window.location.assign("/servidor-desconectado");
+      throw new ApiError("No se pudo conectar con el servidor.", 0);
+    }
+  }
 
   const headers = new Headers(options.headers);
   if (options.body) headers.set("Content-Type", "application/json");
@@ -61,14 +67,30 @@ async function request<T>(
     headers.set(csrfHeader, csrfToken);
   }
 
-  const response = await fetch(`${API_URL}${path}`, {
-    ...options,
-    headers,
-    credentials: "include",
-  });
+  let response: Response;
+  try {
+    response = await fetch(`${API_URL}${path}`, {
+      ...options,
+      headers,
+      credentials: "include",
+    });
+  } catch {
+    if (window.location.pathname !== "/servidor-desconectado") {
+      window.location.assign("/servidor-desconectado");
+    }
+    throw new ApiError("No se pudo conectar con el servidor.", 0);
+  }
 
-  if (response.status === 403 && method !== "GET") {
+  if (response.status === 401 && path !== "/auth/login") {
     csrfToken = null;
+    if (window.location.pathname !== "/login") {
+      window.location.assign("/login?sesion=expirada");
+    }
+  }
+
+  if (response.status === 403) {
+    csrfToken = null;
+    if (window.location.pathname !== "/403") window.location.assign("/403");
   }
 
   return parseResponse<T>(response);

@@ -1,14 +1,17 @@
 import { useState, type FormEvent } from "react";
-import { useNavigate } from "react-router-dom";
+import { Link, useNavigate, useSearchParams } from "react-router-dom";
 import "./Login.css";
 import { api, getApiErrorMessage } from "../../api/client";
+import { useAuth, type Sesion } from "../../auth/AuthContext";
 
 function Login() {
   const navigate = useNavigate();
+  const [params] = useSearchParams();
+  const { establecerSesion } = useAuth();
 
   const [usuario, setUsuario] = useState("");
   const [contrasena, setContrasena] = useState("");
-  const [error, setError] = useState("");
+  const [error, setError] = useState(params.get("sesion") === "expirada" ? "Tu sesión expiró. Inicia sesión nuevamente." : "");
 
   async function iniciarSesion(event: FormEvent<HTMLFormElement>) {
     event.preventDefault();
@@ -20,14 +23,11 @@ function Login() {
 
     try {
       setError("");
-      const sesion = await api.post<{ usuario: string; rol: string; permisos: string[] }>(
+      const sesion = await api.post<Sesion>(
         "/auth/login",
         { usuario: usuario.trim(), password: contrasena },
       );
-      localStorage.setItem("usuarioAutenticado", "true");
-      localStorage.setItem("nombreUsuario", sesion.usuario);
-      localStorage.setItem("rolUsuario", sesion.rol);
-      localStorage.setItem("permisosUsuario", JSON.stringify(sesion.permisos));
+      establecerSesion(sesion);
       navigate("/home");
     } catch (error) {
       setError(getApiErrorMessage(error));
@@ -39,7 +39,7 @@ function Login() {
       <section className="login-container">
         <div className="login-information">
           <div className="institution-logo">
-            <img src="../assets/logoescuela.png" />
+            <img src="/Logo.png" alt="Escudo de la institución" />
           </div>
 
           <p className="login-subtitle">Sistema Académico</p>
@@ -112,6 +112,7 @@ function Login() {
               <i className="bi bi-box-arrow-in-right me-2"></i>
               Ingresar
             </button>
+            <Link to="/recuperar-password" className="d-block text-center mt-3">¿Olvidaste tu contraseña?</Link>
           </form>
         </div>
       </section>

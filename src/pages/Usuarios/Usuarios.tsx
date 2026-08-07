@@ -16,18 +16,26 @@ type Usuario = {
   usuario: string;
   estado: "Activo" | "Inactivo";
   rol: Rol;
+  representante: Representante | null;
+  docente: Docente | null;
 };
+type Representante = {id:number;nombres:string;apellidos:string;identificacion:string};
+type Docente = {id:number;nombres:string;apellidos:string;cedula:string};
 
 const formularioInicial = {
   usuario: "",
   password: "",
   rolId: "",
+  representanteId: "",
+  docenteId: "",
   estado: "Activo" as "Activo" | "Inactivo",
 };
 
 export default function Usuarios() {
   const [usuarios, setUsuarios] = useState<Usuario[]>([]);
   const [roles, setRoles] = useState<Rol[]>([]);
+  const [representantes, setRepresentantes] = useState<Representante[]>([]);
+  const [docentes, setDocentes] = useState<Docente[]>([]);
   const [formulario, setFormulario] = useState(formularioInicial);
   const [editandoId, setEditandoId] = useState<number | null>(null);
   const [busqueda, setBusqueda] = useState("");
@@ -38,10 +46,14 @@ export default function Usuarios() {
     Promise.all([
       api.get<Usuario[]>("/usuarios"),
       api.get<Rol[]>("/roles"),
+      api.get<Representante[]>("/representantes"),
+      api.get<Docente[]>("/docentes"),
     ])
-      .then(([listaUsuarios, listaRoles]) => {
+      .then(([listaUsuarios, listaRoles, listaRepresentantes, listaDocentes]) => {
         setUsuarios(listaUsuarios);
         setRoles(listaRoles.filter((rol) => rol.estado === "Activo"));
+        setRepresentantes(listaRepresentantes);
+        setDocentes(listaDocentes);
       })
       .catch((err) => setError(getApiErrorMessage(err)));
   }, []);
@@ -71,6 +83,12 @@ export default function Usuarios() {
       password: formulario.password,
       estado: formulario.estado,
       rol: { id: Number(formulario.rolId) },
+      representante: formulario.representanteId
+        ? { id: Number(formulario.representanteId) }
+        : null,
+      docente: formulario.docenteId
+        ? { id: Number(formulario.docenteId) }
+        : null,
     };
 
     try {
@@ -100,6 +118,8 @@ export default function Usuarios() {
       usuario: item.usuario,
       password: "",
       rolId: String(item.rol.id),
+      representanteId: item.representante?.id ? String(item.representante.id) : "",
+      docenteId: item.docente?.id ? String(item.docente.id) : "",
       estado: item.estado,
     });
     setMensaje("");
@@ -205,6 +225,47 @@ export default function Usuarios() {
                 <option>Inactivo</option>
               </select>
             </label>
+            <label>
+              <span>Representante vinculado</span>
+              <select
+                value={formulario.representanteId}
+                onChange={(e) =>
+                  setFormulario((actual) => ({
+                    ...actual,
+                    representanteId: e.target.value,
+                  }))
+                }
+              >
+                <option value="">No aplica</option>
+                {representantes.map((representante) => (
+                  <option key={representante.id} value={representante.id}>
+                    {representante.nombres} {representante.apellidos} — {representante.identificacion}
+                  </option>
+                ))}
+              </select>
+              <small>Selecciónalo únicamente para cuentas de padres o representantes.</small>
+            </label>
+
+            <label>
+              <span>Docente vinculado</span>
+              <select
+                value={formulario.docenteId}
+                onChange={(e) =>
+                  setFormulario((actual) => ({
+                    ...actual,
+                    docenteId: e.target.value,
+                  }))
+                }
+              >
+                <option value="">No aplica</option>
+                {docentes.map((docente) => (
+                  <option key={docente.id} value={docente.id}>
+                    {docente.nombres} {docente.apellidos} — {docente.cedula}
+                  </option>
+                ))}
+              </select>
+              <small>Selecciónalo para que la cuenta solo acceda a sus cursos y materias.</small>
+            </label>
 
             <div className="users-form-actions">
               {editandoId && (
@@ -237,6 +298,8 @@ export default function Usuarios() {
                 <tr>
                   <th>Usuario</th>
                   <th>Rol</th>
+                  <th>Representante</th>
+                  <th>Docente</th>
                   <th>Estado</th>
                   <th>Acciones</th>
                 </tr>
@@ -246,6 +309,8 @@ export default function Usuarios() {
                   <tr key={item.id}>
                     <td><strong>{item.usuario}</strong></td>
                     <td><span className="users-role">{item.rol?.nombre}</span></td>
+                    <td>{item.representante ? `${item.representante.nombres} ${item.representante.apellidos}` : "No aplica"}</td>
+                    <td>{item.docente ? `${item.docente.nombres} ${item.docente.apellidos}` : "No aplica"}</td>
                     <td>{item.estado}</td>
                     <td>
                       <div className="users-actions">
